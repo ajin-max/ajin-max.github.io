@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>page | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="PHP 超级全局变量PHP中预定义了几个超级全局变量（superglobals） ，这意味着它们在一个脚本的全部作用域中都可用。 你不需要特别说明，就可以在函数及类中使用。 PHP 超级全局变量列表:  $GLOBALS $_SERVER $_REQUEST $_POST $_GET $_FILES $_ENV $_COOKIE $_SESSION  本章节我们将讲解几个常用的超级全局变量,其余变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="page">
+<meta property="og:url" content="http://example.com/2020/11/07/php%20%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="PHP 超级全局变量PHP中预定义了几个超级全局变量（superglobals） ，这意味着它们在一个脚本的全部作用域中都可用。 你不需要特别说明，就可以在函数及类中使用。 PHP 超级全局变量列表:  $GLOBALS $_SERVER $_REQUEST $_POST $_GET $_FILES $_ENV $_COOKIE $_SESSION  本章节我们将讲解几个常用的超级全局变量,其余变">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-07T10:25:30.000Z">
+<meta property="article:modified_time" content="2020-11-07T10:27:40.384Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-php 超级全局变量" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/07/php%20%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F/" class="article-date">
+  <time datetime="2020-11-07T10:25:30.000Z" itemprop="datePublished">2020-11-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      page
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="PHP-超级全局变量"><a href="#PHP-超级全局变量" class="headerlink" title="PHP 超级全局变量"></a>PHP 超级全局变量</h2><p>PHP中预定义了几个超级全局变量（superglobals） ，这意味着它们在一个脚本的全部作用域中都可用。 你不需要特别说明，就可以在函数及类中使用。</p>
+<p>PHP 超级全局变量列表:</p>
+<ul>
+<li>$GLOBALS</li>
+<li>$_SERVER</li>
+<li>$_REQUEST</li>
+<li>$_POST</li>
+<li>$_GET</li>
+<li>$_FILES</li>
+<li>$_ENV</li>
+<li>$_COOKIE</li>
+<li>$_SESSION</li>
+</ul>
+<p>本章节我们将讲解几个常用的超级全局变量,其余变量我们在接下来几个章节会介绍到。</p>
+<hr>
+<h2 id="PHP-GLOBALS"><a href="#PHP-GLOBALS" class="headerlink" title="PHP $GLOBALS"></a>PHP $GLOBALS</h2><p>$GLOBALS 是PHP的一个超级全局变量组，在一个PHP脚本的全部作用域中都可以访问。</p>
+<p>$GLOBALS 是一个包含了全部变量的全局组合数组。变量的名字就是数组的键。</p>
+<p>以下实例介绍了如何使用超级全局变量 $GLOBALS:</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><?php 
+
+ $x = 75; 
+
+ $y = 25; 
+
+ function addition()  {    
+
+ $GLOBALS['z'] = $GLOBALS['x'] + $GLOBALS['y']; 
+
+ } 
+
+ addition(); 
+
+ echo $z; 
+
+ ?>
+
+<p>以上实例中 z 是一个$GLOBALS数组中的超级全局变量，该变量同样可以在函数外访问</p>
+<h2 id="PHP-SERVER"><a href="#PHP-SERVER" class="headerlink" title="PHP $_SERVER"></a>PHP $_SERVER</h2><p>$_SERVER 是一个包含了诸如头信息(header)、路径(path)、以及脚本位置(script locations)等等信息的数组。这个数组中的项目由 Web 服务器创建。不能保证每个服务器都提供全部项目；服务器可能会忽略一些，或者提供一些没有在这里列举出来的项目。</p>
+<p>以下实例中展示了如何使用$_SERVER中的元素:</p>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><?php  echo $_SERVER['PHP_SELF']; echo "<br>"; echo $_SERVER['SERVER_NAME']; echo "<br>"; echo $_SERVER['HTTP_HOST']; echo "<br>"; echo $_SERVER['HTTP_REFERER']; echo "<br>"; echo $_SERVER['HTTP_USER_AGENT']; echo "<br>"; echo $_SERVER['SCRIPT_NAME']; ?>
+
+<table>
+<thead>
+<tr>
+<th align="left">元素/代码</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$_SERVER[‘PHP_SELF’]</td>
+<td align="left">当前执行脚本的文件名，与 document root 有关。例如，在地址为 <a href="http://example.com/test.php/foo.bar">http://example.com/test.php/foo.bar</a> 的脚本中使用 $<em>SERVER[‘PHP_SELF’] 将得到 /test.php/foo.bar。__FILE_</em> 常量包含当前(例如包含)文件的完整路径和文件名。 从 PHP 4.3.0 版本开始，如果 PHP 以命令行模式运行，这个变量将包含脚本名。之前的版本该变量不可用。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘GATEWAY_INTERFACE’]</td>
+<td align="left">服务器使用的 CGI 规范的版本；例如，”CGI/1.1”。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_ADDR’]</td>
+<td align="left">当前运行脚本所在的服务器的 IP 地址。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_NAME’]</td>
+<td align="left">当前运行脚本所在的服务器的主机名。如果脚本运行于虚拟主机中，该名称是由那个虚拟主机所设置的值决定。(如: <a target="_blank" rel="noopener" href="http://www.runoob.com/">www.runoob.com</a>)</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_SOFTWARE’]</td>
+<td align="left">服务器标识字符串，在响应请求时的头信息中给出。 (如：Apache/2.2.24)</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_PROTOCOL’]</td>
+<td align="left">请求页面时通信协议的名称和版本。例如，”HTTP/1.0”。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘REQUEST_METHOD’]</td>
+<td align="left">访问页面使用的请求方法；例如，”GET”, “HEAD”，”POST”，”PUT”。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘REQUEST_TIME’]</td>
+<td align="left">请求开始时的时间戳。从 PHP 5.1.0 起可用。 (如：1377687496)</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘QUERY_STRING’]</td>
+<td align="left">query string（查询字符串），如果有的话，通过它进行页面访问。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘HTTP_ACCEPT’]</td>
+<td align="left">当前请求头中 Accept: 项的内容，如果存在的话。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘HTTP_ACCEPT_CHARSET’]</td>
+<td align="left">当前请求头中 Accept-Charset: 项的内容，如果存在的话。例如：”iso-8859-1,*,utf-8”。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘HTTP_HOST’]</td>
+<td align="left">当前请求头中 Host: 项的内容，如果存在的话。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘HTTP_REFERER’]</td>
+<td align="left">引导用户代理到当前页的前一页的地址（如果存在）。由 user agent 设置决定。并不是所有的用户代理都会设置该项，有的还提供了修改 HTTP_REFERER 的功能。简言之，该值并不可信。)</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘HTTPS’]</td>
+<td align="left">如果脚本是通过 HTTPS 协议被访问，则被设为一个非空的值。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘REMOTE_ADDR’]</td>
+<td align="left">浏览当前页面的用户的 IP 地址。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘REMOTE_HOST’]</td>
+<td align="left">浏览当前页面的用户的主机名。DNS 反向解析不依赖于用户的 REMOTE_ADDR。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘REMOTE_PORT’]</td>
+<td align="left">用户机器上连接到 Web 服务器所使用的端口号。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SCRIPT_FILENAME’]</td>
+<td align="left">当前执行脚本的绝对路径。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_ADMIN’]</td>
+<td align="left">该值指明了 Apache 服务器配置文件中的 SERVER_ADMIN 参数。如果脚本运行在一个虚拟主机上，则该值是那个虚拟主机的值。(如：<a href="mailto:&#115;&#x6f;&#x6d;&#x65;&#x6f;&#x6e;&#x65;&#64;&#114;&#x75;&#110;&#111;&#x6f;&#x62;&#46;&#x63;&#111;&#x6d;">&#115;&#x6f;&#x6d;&#x65;&#x6f;&#x6e;&#x65;&#64;&#114;&#x75;&#110;&#111;&#x6f;&#x62;&#46;&#x63;&#111;&#x6d;</a>)</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_PORT’]</td>
+<td align="left">Web 服务器使用的端口。默认值为 “80”。如果使用 SSL 安全连接，则这个值为用户设置的 HTTP 端口。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SERVER_SIGNATURE’]</td>
+<td align="left">包含了服务器版本和虚拟主机名的字符串。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘PATH_TRANSLATED’]</td>
+<td align="left">当前脚本所在文件系统（非文档根目录）的基本路径。这是在服务器进行虚拟到真实路径的映像后的结果。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SCRIPT_NAME’]</td>
+<td align="left">包含当前脚本的路径。这在页面需要指向自己时非常有用。<strong>FILE</strong> 常量包含当前脚本(例如包含文件)的完整路径和文件名。</td>
+</tr>
+<tr>
+<td align="left">$_SERVER[‘SCRIPT_URI’]</td>
+<td align="left">URI 用来指定要访问的页面。例如 “/index.html”。</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/07/php%20%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F/" data-id="ckh7jtxa90001qcv74nyn15xr" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          page
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/11/05/php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">page</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2020/11/07/php%20%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2020/11/05/php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2020/11/04/page-1/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/18/page/">page</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
