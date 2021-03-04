@@ -5,11 +5,11 @@
   
 
   
-  <title>十六实在不会 | Hexo</title>
+  <title>十六看懂了 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="前记upload-labs,是一个关于文件上传的靶场.具体的write-up社区里也都有文章.不过我在看了pass-16的源码后,发现了一些有意思的东西. 分析问题关于检测gif的代码  第71行检测$fileext和$filetype是否为gif格式. 然后73行使用move_uploaded_file函数来做判断条件,如果成功将文件移动到$target_path,就会进入二次渲染的代码,反之">
 <meta property="og:type" content="article">
-<meta property="og:title" content="十六实在不会">
+<meta property="og:title" content="十六看懂了">
 <meta property="og:url" content="http://example.com/2021/03/01/page-33/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="前记upload-labs,是一个关于文件上传的靶场.具体的write-up社区里也都有文章.不过我在看了pass-16的源码后,发现了一些有意思的东西. 分析问题关于检测gif的代码  第71行检测$fileext和$filetype是否为gif格式. 然后73行使用move_uploaded_file函数来做判断条件,如果成功将文件移动到$target_path,就会进入二次渲染的代码,反之">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30d3a1a0-ab24-1.png">
 <meta property="og:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30e17b68-ab24-1.png">
 <meta property="article:published_time" content="2021-03-01T14:29:00.000Z">
-<meta property="article:modified_time" content="2021-03-01T14:44:11.102Z">
+<meta property="article:modified_time" content="2021-03-02T03:17:50.850Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-2fdf5136-ab24-1.png">
@@ -98,7 +98,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      十六实在不会
+      十六看懂了
     </h1>
   
 
@@ -171,6 +171,11 @@
 <p>需要注意的是,有一些jpg图片不能被处理,所以要多尝试一些jpg图片.</p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/notice">https://xz.aliyun.com/notice</a>)</p>
 <p>转载自<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-7">https://xz.aliyun.com/t/2657#toc-7</a>  实在是看不懂之后再研究一下</p>
+<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA">https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA</a> 提取码：aaaa</p>
+<p><strong>其实这关就是要绕过二次渲染 然后用十六进制编辑器编辑一下</strong></p>
+<p><strong>先找一下上传到服务器上的图片和本地图片不变的代码是那一部分然后就可以把后门代码编辑进去就可成功上传</strong></p>
+<p><strong>链接里的文件是大佬 o(<em>^▽^</em>)┛已经制作好了的图片可以直接使用</strong></p>
+<p><strong>然后配合漏洞菜刀使用即可</strong></p>
 
       
     </div>
@@ -183,6 +188,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2021/03/04/page-34/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          upload labs 17
+        
+      </div>
+    </a>
   
   
     <a href="/2021/03/01/page-32/" id="article-nav-older" class="article-nav-link-wrap">
@@ -224,7 +238,11 @@
       <ul>
         
           <li>
-            <a href="/2021/03/01/page-33/">十六实在不会</a>
+            <a href="/2021/03/04/page-34/">upload labs 17</a>
+          </li>
+        
+          <li>
+            <a href="/2021/03/01/page-33/">十六看懂了</a>
           </li>
         
           <li>
@@ -237,10 +255,6 @@
         
           <li>
             <a href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
-          </li>
-        
-          <li>
-            <a href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
           </li>
         
       </ul>
