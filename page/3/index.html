@@ -71,6 +71,147 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-68/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:39.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-68/">0CTF 2016piapiapia</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>一来就试了一下sql注入 无<br>然后<strong>找到一个register.php</strong> 的页面 那边有个上传 也无上传漏洞<br>dirsearch 添加延时参数 <strong>找到<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></strong> 下载下来得到源码<br>拿到源码 <strong>class.php config.php index.php profile.php register.php update.php</strong><br><strong>config.php 那边有flag 从那边应该可以拿到flag</strong><br>update.php 这边正则匹配了 过滤提交的数据 但是判断nickname那边有长度限制可以用nickname的数组来绕过长度限制就不会die</p>
+<p>png29 这边用到了serialize() 可以试一下反序列化</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/29.PNG?raw=true" alt="29.PNG"></p>
+<p>前面<br>有个update_profile  到class.php 看一下update_profile  的定义方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update_profile</span>(<span class="params"><span class="variable">$username</span>, <span class="variable">$new_profile</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$username</span> = <span class="built_in">parent</span>::filter(<span class="variable">$username</span>);</span><br><span class="line">		<span class="variable">$new_profile</span> = <span class="built_in">parent</span>::filter(<span class="variable">$new_profile</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$where</span> = <span class="string">&quot;username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">parent</span>::update(<span class="keyword">$this</span>-&gt;table, <span class="string">&#x27;profile&#x27;</span>, <span class="variable">$new_profile</span>, <span class="variable">$where</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>再往下有个<strong>filter()</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>update()</strong> </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span>(<span class="params"><span class="variable">$table</span>, <span class="variable">$key</span>, <span class="variable">$value</span>, <span class="variable">$where</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$sql</span> = <span class="string">&quot;UPDATE <span class="subst">$table</span> SET <span class="subst">$key</span> = &#x27;<span class="subst">$value</span>&#x27; WHERE <span class="subst">$where</span>&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> mysql_query(<span class="variable">$sql</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>update.php 就先正则表达式将提交的参数值过滤 再序列化将非法字符替换成hacker<br>这反序列化还有文件读取       </p>
+<p>  <strong>flag在config中</strong> 这边有序列化 过滤替换 反序列化 文件读取<br>就是反序列化字符逃逸  构造包含config.php的数据利用字符串逃逸 再在profile.php中读取得到<br>反序列化是以”;}结束的 把这个往前放置 就可以将反序列化提前结束的内容就丢弃了<br>突破口：<br> 反序列化字符逃逸，首先序列化的字符是可控的 前面的长度是可控的 但是update.php将参数序列化，可控变量的长度就被写死了<br>要控制得通过序列化后数据过滤替代那边</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p>select insert update delete where替换成hacker  写入where替换成hacker 字符串长度+1 因此实际的长的都大于序列化固定长度<br>i:0;s:3:”123”;     -&gt; 就是类似于s:后面这个值           反序列化字符串的逃逸，反序列化只能将nickname的s长度反序列化成功其他的长度已经被写死了， 剩下的字符串 构造class.php因为里面包含了flag 并将其位置放到photo上然后将photo扔掉<br>这样profile.php 中读取的photo就是我么构造的config.php 就能拿到flag了<br>假设：</p>
+<?php
+//$a = array('123', 'abc', 'defg');
+//var_dump(serialize($a));
+//"a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}"
+$a = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}';
+$b = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:5:"qwert";}";i:2;s:4:"defg";}';
+var_dump(unserialize($b));
+var_dump(unserialize($b));
+?><p>构造这样一个 defg会被丢弃qwert占了原本的位置<br>目的是将”;}s:5:photo;s:10:”config.php”;}  这串总共34位  插入到序列化的字符串中<br>hacker比where多一个字符那就得需要挤出34位 也就是34个where 上传后再去profile查看内容</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/30.PNG?raw=true" alt="30.PNG"></p>
+<p>payload ：wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere”;}s:5:photo;s:10:”config.php”;}</p>
+<p>profile.php 那边查看源码 base64解码一下就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/31.PNG?raw=true" alt="31.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/32.PNG?raw=true" alt="32.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-68/" data-id="ckroqtfm5001cyww70axr0e8p" data-title="0CTF 2016piapiapia" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-67" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-67/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:35:42.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-67/">misc</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>ACTF新生赛2020 outguess</strong></p>
+<p>解压发现一大堆的文件但是大部分都没什么意义<br>flag.txt 打开后发现<br>flag在哪？<br>你Guess一下啊！这么一段话<br>猜测应该是图片隐写 要用到outguess<br>mmm.jpg的属性那边备注这么段信息</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/13.PNG?raw=true" alt="13.PNG"></p>
+<p>有个叫什么社会主义核心价值观的加密<br>解码一下得到abc三个字母<br>那就没错了<br>就拿到flag了ACTF{gue33_Gu3Ss!2020}</p>
+<p><strong>SWPU2019我有一只马里奥</strong></p>
+<p>下载下来得到一个文件运行生成一个1.txt 打开提示如下<br>ntfs<br>flag.txt<br>应该是ntfs隐写<br>用ntfsstreamediter导出即可</p>
+<p><strong>谁赢了比赛？</strong></p>
+<p>丢010 发现还有压缩包<br>文件分离 得压缩包 暴力破解是个四位数密码<br>拿到一张gif 逐帧分析第310帧有不一样的 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/25.PNG?raw=true" alt="25.PNG"></p>
+<p>用stegsolve red plane 0</p>
+<p>那边得到一张二维码 扫一下就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/26.PNG?raw=true" alt="26.PNG"></p>
+<p>**HBNIS2018excel破解 **<br>直接丢010 然后查找一下找到flag is here 就找到flag了 这么简单？</p>
+<p><strong>ACTF新生赛2020 base64隐写</strong></p>
+<p>base64隐写的原理：</p>
+<p>从Base64编码的原理我们很自然推出Base64解码的过程：</p>
+<p>丢掉末尾的所有‘=’；<br>每个字符查表转换为对应的6位索引，得到一串二进制字符串；<br>从头开始，每次取8位转换为对应的ASCII字符，如果不足8位则丢弃。<br>在解码的第3步中，会有部分数据被丢弃（即不会影响解码结果），这些数据正是我们在编码过程中补的0（本文第三第四张图中加粗的部分）。也就是说，如果我们在编码过程中不全用0填充，而是用其他的数据填充，仍然可以正常编码解码，因此这些位置可以用于隐写。</p>
+<p>解开隐写的方法就是将这些不影响解码结果的位提取出来组成二进制串，然后转换成ASCII字符串。<br>依次读取每行，从中提取出隐写位。<br>如果最后没有‘=’，说明没有隐写位，跳过。<br>如果最后是一个‘=’，说明有两位隐写位，将倒数第二个字符转化为对应的二进制索引，然后取后两位。<br>如果最后是两个‘=’，说明有四位隐写位，将倒数第三个字符转化为对应的二进制索引，然后取后四位。<br>将每行提取出的隐写位依次连接起来，每8位为一组转换为ASCII字符，最后不足8位的丢弃。</p>
+<p>贴一下解题脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inttobin</span>(<span class="params">a, n</span>):</span></span><br><span class="line">    ret = <span class="built_in">bin</span>(a)[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(ret) &lt; n:</span><br><span class="line">        ret = <span class="string">&#x27;0&#x27;</span> + ret</span><br><span class="line">    <span class="keyword">return</span> ret</span><br><span class="line"></span><br><span class="line">table = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&#x27;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&quot;ComeOn!.txt&quot;</span>, <span class="string">&quot;r&quot;</span>)</span><br><span class="line">tmpbin = <span class="string">&#x27;&#x27;</span></span><br><span class="line">res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">line = f.readline()</span><br><span class="line"><span class="keyword">while</span> line:</span><br><span class="line">    <span class="keyword">if</span> line[-<span class="number">2</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">        <span class="keyword">if</span> line[-<span class="number">3</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">            tmpbin += inttobin(table.index(line[-<span class="number">4</span>]), <span class="number">6</span>)[<span class="number">2</span>:]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            tmpbin += inttobin(table.index(line[-<span class="number">3</span>]), <span class="number">6</span>)[<span class="number">4</span>:]</span><br><span class="line">    line = f.readline()</span><br><span class="line">quotient = <span class="built_in">len</span>(tmpbin)/<span class="number">8</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(quotient):</span><br><span class="line">    res += <span class="built_in">chr</span>(<span class="built_in">int</span>(tmpbin[<span class="number">8</span>*i:<span class="number">8</span>*i+<span class="number">8</span>], <span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span> res</span><br></pre></td></tr></table></figure>
+
+<p>附一下base64编码解码脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">table = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inttobin</span>(<span class="params">a, n</span>):</span></span><br><span class="line">    res = <span class="built_in">bin</span>(a)[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(res) &lt; n:</span><br><span class="line">        res = <span class="string">&#x27;0&#x27;</span> + res</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">b64encode</span>(<span class="params">strin</span>):</span></span><br><span class="line">    res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    quotient = <span class="built_in">len</span>(strin)/<span class="number">3</span></span><br><span class="line">    remainder = <span class="built_in">len</span>(strin)%<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(quotient):</span><br><span class="line">        tmp = strin[i*<span class="number">3</span>:i*<span class="number">3</span>+<span class="number">3</span>]</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(tmp[<span class="number">0</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(tmp[<span class="number">1</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(tmp[<span class="number">2</span>]), <span class="number">8</span>)</span><br><span class="line">        <span class="built_in">print</span> tmpbin</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">            index = <span class="built_in">int</span>(tmpbin[<span class="number">6</span>*j:<span class="number">6</span>*j+<span class="number">6</span>], <span class="number">2</span>)</span><br><span class="line">            res += table[index]</span><br><span class="line">    <span class="keyword">if</span> remainder == <span class="number">1</span>:</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(strin[-<span class="number">1</span>]), <span class="number">8</span>) + <span class="string">&#x27;0000&#x27;</span></span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[:<span class="number">6</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">6</span>:], <span class="number">2</span>)]</span><br><span class="line">        res += <span class="string">&#x27;==&#x27;</span></span><br><span class="line">    <span class="keyword">elif</span> remainder == <span class="number">2</span>:</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(strin[-<span class="number">2</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(strin[-<span class="number">1</span>]), <span class="number">8</span>) + <span class="string">&#x27;00&#x27;</span></span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[:<span class="number">6</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">6</span>:<span class="number">12</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">12</span>:], <span class="number">2</span>)]</span><br><span class="line">        res += <span class="string">&#x27;=&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">b64decode</span>(<span class="params">strin</span>):</span></span><br><span class="line">    res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> strin[-<span class="number">1</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">        strin = strin[:-<span class="number">1</span>]</span><br><span class="line">    tmpbin = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(strin)):</span><br><span class="line">        tmpbin += inttobin(table.index(strin[i]), <span class="number">6</span>)</span><br><span class="line">    remainder = <span class="built_in">len</span>(tmpbin) / <span class="number">8</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(remainder):</span><br><span class="line">        res += <span class="built_in">chr</span>(<span class="built_in">int</span>(tmpbin[i*<span class="number">8</span>:i*<span class="number">8</span>+<span class="number">8</span>], <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p><strong>sqltest</strong><br>wireshark打开然后导出为http对象列表<br>png28<br>发现这在进行盲注bool注入的语句<br>推断出正确的ascii值，在对一个字符进行bool判断时，被重复判断的ASCII值就是正确的字符</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/28.PNG?raw=true" alt="28.PNG"></p>
+<p>最后提取到：<br>102 108 97 103 123 52 55 101 100 98 56 51 48 48 101 100 53 102 57 98 50 56 102 99 53 52 98 48 100 48 57 101 99 100 101 102 55 125<br>转为字符串得flag<br>flag{47edb8300ed5f9b28fc54b0d09ecdef7}</p>
+<p><strong>GXYCTF2019 gakki</strong></p>
+<p>老样子丢010 发现还有个压缩包 文件分离 暴力破解<br>然后拿到一个文本文档</p>
+<p>#2V0VI_05X$GygD3<em>g@gYurMGim#1=)D_@Z(JcRevlyGq&amp;N-dgPH8XXSGL{@9}zVmlmxv1vEwbqr)ea!YMI2lznoV_bMrXLbwFrgaiQYfsVN14weObXp)(ybmXjXuTkFuj1pG54!mij1){41gKmFL&amp;Zgeho01PPEwE=r</em>csndRof$X7JBJ=CaNRGMjLY_-GiqlDHWaVk-XZ<em>8lD5!kLb(OH%8u2LtQXX3QV{1Lh)LyGF#kpV$}GXRKla)u(pw(&amp;ggmYU82HLWhJgngOjhwofkqqC{Hi)g!GXrY6=UQGvaeOIrVg</em>jkGjgGRTY78Ol$w0&amp;tzZ1t}z#<em>c^t8GrskRcz9YKE</em>)4B(U<br>一堆的乱七八糟的<br><strong>字频统计</strong>    脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-* -coding:utf-8 -* -</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Author: mochu7</span></span><br><span class="line">alphabet = <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&amp;*()_+- =\\&#123;\\&#125;[]&quot;</span></span><br><span class="line">strings = <span class="built_in">open</span>(<span class="string">&#x27;./flag.txt&#x27;</span>).read()</span><br><span class="line"></span><br><span class="line">result = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> alphabet:</span><br><span class="line">	counts = strings.count(i)</span><br><span class="line">	i = <span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(i)</span><br><span class="line">	result[i] = counts</span><br><span class="line"></span><br><span class="line">res = <span class="built_in">sorted</span>(result.items(),key=<span class="keyword">lambda</span> item:item[<span class="number">1</span>],reverse=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> data <span class="keyword">in</span> res:</span><br><span class="line">	<span class="built_in">print</span>(data)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> res:</span><br><span class="line">	flag = <span class="built_in">str</span>(i[<span class="number">0</span>])</span><br><span class="line">	<span class="built_in">print</span>(flag[<span class="number">0</span>],end=<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/27.PNG?raw=true" alt="27.PNG"></p>
+<p>跑完拿到flag<br>有一说一gakki是真的好看</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-67/" data-id="ckroqtfm4001byww768un3s6n" data-title="misc" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-66" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-66/" class="article-date">
@@ -614,127 +755,11 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
 
 
   
-    <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-57/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:44:23.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-57/">GXYCTF2019禁止套娃源码</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码</strong></p>
-<?php
-include "flag.php";
-echo "flag在哪里呢？<br>";
-if(isset($_GET['exp'])){       ；典型的木马get方式  
-    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {    ；这边常用伪协议均被禁止了就很离谱 
-        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {        ；这边正则匹配 ？R表示引用当前表达式  [a-z,_]+[a-z,_]+\((?R)?\)  合法表达式类似于a(b();) 
-            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {   ；过滤一些字眼
-                // echo $_GET['exp'];
-                @e、、v、、a、、l($_GET['exp']);
-            }
-            else{
-                die("还差一点哦！");
-            }
-        }
-        else{
-            die("再好好想想！");
-        }
-    }
-    else{
-        die("还想读flag，臭弟弟！");
-    }
-}
-// highlight_file(__FILE__);
-?>
-
-<p>然其不能使用php伪协议，<strong>但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录</strong>  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了</p>
-<ul>
-<li><strong>scandir</strong>  (语法scandir（dictionary，sorting_order,context);)    使用至少必需要有一个directory的，但是我们又没有办<strong>法去定义一个变量，这时候就要考虑php有没有什么函数是自带常量的</strong>：localeconv()  (这玩意是个数组 然后就得用到current()  这函数就自带常量  current语法current(array)</li>
-</ul>
-<p>构造一下就是array(localeconv)   </p>
-<p>在构造一下就是?exp=print_r(scandir(current(localeconv())));      然后目录爆出来</p>
-<p>这波还需要用到<strong>next函数将内部指针指向数组的下一个元素并输出.</strong></p>
-<p><strong>正常next</strong>需要用到挺多次的 然而scandir函数的返回值是一个数组，如果把<strong>数组逆序排列</strong>，再用一个<strong>next</strong>即可达成目的<br>然后就是<strong>用到array_reverse</strong>这个神奇的函数：以相反的元素按顺序返回数组<br>然后最后<strong>highlight_file 输出文件即可</strong><br>payload：?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-57/" data-id="ckroqtfm10013yww77g68dhn6" data-title="GXYCTF2019禁止套娃源码" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-56" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-56/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:35:08.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-56/">BSidesCF2020Had a badday1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>url有点类似伪协议<br>?categery 这个和php伪协议有点像<br>试一下伪协议     可以获取到源代码 的base64   </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/2.PNG?raw=true" alt="2.PNG"></p>
-<p>解码也没找出什么东西但是吧发现可以用来读取东西<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/3.PNG?raw=true" alt="3.PNG"></p>
-<p>这边可以读到图片的base64后的结果</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/4.PNG?raw=true" alt="4.PNG"></p>
-<p>那么这样就拿到flag了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-56/" data-id="ckroqtflw0010yww78hlxb3ei" data-title="BSidesCF2020Had a badday1" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -766,6 +791,14 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-90/">buuctf  misc zip</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/page-89/">misc2</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
           </li>
         
@@ -775,14 +808,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
         
           <li>
             <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-85/">极客大挑战 2019RCE ME</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
           </li>
         
       </ul>
