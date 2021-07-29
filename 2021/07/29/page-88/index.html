@@ -4,19 +4,26 @@
   <meta charset="utf-8">
   
   
-  <title>GXYCTF2019禁止套娃源码 | Hexo</title>
+  <title>羊城杯 2020逃离东南亚 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码   然其不能使用php伪协议，但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了  scandir  (语法scandir（dictionary，sorting_order,">
+  <meta name="description" content="三个压缩包日记1 无密码2 3 有应该得一个个得到密码日记1一个图片和文档（毫无意义的）图片010 属性 stegsolve都没什么应该是crc校验问题高度问题改一下  日记2的文档这人是被骗去传销了吧 😨test是brainfuck加密但是得在 1首行加一串++++++++  才能解密成功  解密后是base64码再解密 看样子是elf格式的文件  用kali将结果通过标准输出重定向成一个el">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GXYCTF2019禁止套娃源码">
-<meta property="og:url" content="http://example.com/2021/07/08/page-57/index.html">
+<meta property="og:title" content="羊城杯 2020逃离东南亚">
+<meta property="og:url" content="http://example.com/2021/07/29/page-88/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码   然其不能使用php伪协议，但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了  scandir  (语法scandir（dictionary，sorting_order,">
+<meta property="og:description" content="三个压缩包日记1 无密码2 3 有应该得一个个得到密码日记1一个图片和文档（毫无意义的）图片010 属性 stegsolve都没什么应该是crc校验问题高度问题改一下  日记2的文档这人是被骗去传销了吧 😨test是brainfuck加密但是得在 1首行加一串++++++++  才能解密成功  解密后是base64码再解密 看样子是elf格式的文件  用kali将结果通过标准输出重定向成一个el">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-07-08T06:44:23.000Z">
-<meta property="article:modified_time" content="2021-07-08T06:44:54.434Z">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/102.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/103.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/104.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/105.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/106.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/107.PNG?raw=true">
+<meta property="article:published_time" content="2021-07-29T10:25:22.000Z">
+<meta property="article:modified_time" content="2021-07-29T10:28:36.927Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/102.PNG?raw=true">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -73,10 +80,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-page-88" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/07/08/page-57/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:44:23.000Z" itemprop="datePublished">2021-07-08</time>
+    <a href="/2021/07/29/page-88/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T10:25:22.000Z" itemprop="datePublished">2021-07-29</time>
 </a>
     
   </div>
@@ -87,7 +94,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      GXYCTF2019禁止套娃源码
+      羊城杯 2020逃离东南亚
     </h1>
   
 
@@ -95,45 +102,32 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><strong>这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码</strong></p>
-<?php
-include "flag.php";
-echo "flag在哪里呢？<br>";
-if(isset($_GET['exp'])){       ；典型的木马get方式  
-    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {    ；这边常用伪协议均被禁止了就很离谱 
-        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {        ；这边正则匹配 ？R表示引用当前表达式  [a-z,_]+[a-z,_]+\((?R)?\)  合法表达式类似于a(b();) 
-            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {   ；过滤一些字眼
-                // echo $_GET['exp'];
-                @e、、v、、a、、l($_GET['exp']);
-            }
-            else{
-                die("还差一点哦！");
-            }
-        }
-        else{
-            die("再好好想想！");
-        }
-    }
-    else{
-        die("还想读flag，臭弟弟！");
-    }
-}
-// highlight_file(__FILE__);
-?>
+        <p>三个压缩包日记1 无密码2 3 有<br>应该得一个个得到密码<br>日记1一个图片和文档（毫无意义的）<br>图片010 属性 stegsolve都没什么应该是crc校验问题高度问题改一下</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/102.PNG?raw=true" alt="102.PNG"></p>
+<p>日记2的文档这人是被骗去传销了吧 😨<br>test是brainfuck加密但是得在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首行加一串++++++++</span><br></pre></td></tr></table></figure>
 
-<p>然其不能使用php伪协议，<strong>但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录</strong>  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了</p>
-<ul>
-<li><strong>scandir</strong>  (语法scandir（dictionary，sorting_order,context);)    使用至少必需要有一个directory的，但是我们又没有办<strong>法去定义一个变量，这时候就要考虑php有没有什么函数是自带常量的</strong>：localeconv()  (这玩意是个数组 然后就得用到current()  这函数就自带常量  current语法current(array)</li>
-</ul>
-<p>构造一下就是array(localeconv)   </p>
-<p>在构造一下就是?exp=print_r(scandir(current(localeconv())));      然后目录爆出来</p>
-<p>这波还需要用到<strong>next函数将内部指针指向数组的下一个元素并输出.</strong></p>
-<p><strong>正常next</strong>需要用到挺多次的 然而scandir函数的返回值是一个数组，如果把<strong>数组逆序排列</strong>，再用一个<strong>next</strong>即可达成目的<br>然后就是<strong>用到array_reverse</strong>这个神奇的函数：以相反的元素按顺序返回数组<br>然后最后<strong>highlight_file 输出文件即可</strong><br>payload：?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
+<p>才能解密成功</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/103.PNG?raw=true" alt="103.PNG"></p>
+<p>解密后是base64码再解密 看样子是elf格式的文件</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/104.PNG?raw=true" alt="104.PNG"></p>
+<p><strong>用kali将结果通过标准输出重定向成一个elf文件</strong><br>ida那边看一下有些东西感觉</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/105.PNG?raw=true" alt="105.PNG"></p>
+<p>这边这串看了别人的wp是正常的字这个是提示是lsb隐写</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/106.PNG?raw=true" alt="106.PNG"></p>
+<p>那应该是那个wav是lsb隐写 <strong>用silenteye将音频的内容解码出来</strong></p>
+<p>日记3的解压密码 <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/107.PNG?raw=true" alt="107.PNG"><br>这里头的文档看样子正常多了<br>因此通过源代码向外界发送求救信号是一个不错的方法</p>
+<p>但需要满足以下几个条件：</p>
+<ol>
+<li>加入代码隐写的部分不能影响源代码的编译</li>
+<li>不能很容易被公司审计专员看出来</li>
+<li>不能直接明文交流<br>这应该是提示</li>
+</ol>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-57/" data-id="ckroqtfm10013yww77g68dhn6" data-title="GXYCTF2019禁止套娃源码" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/29/page-88/" data-id="ckrory30t00006kw70q8b2fb5" data-title="羊城杯 2020逃离东南亚" class="article-share-link">Share</a>
       
       
       
@@ -143,19 +137,10 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
     
 <nav id="article-nav">
   
-    <a href="/2021/07/08/page-58/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          网鼎杯 2020 朱雀组phpweb
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/07/08/page-56/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/07/29/page-87/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">BSidesCF2020Had a badday1</div>
+      <div class="article-nav-title">GWCTF 2019枯燥的抽奖</div>
     </a>
   
 </nav>

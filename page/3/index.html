@@ -71,6 +71,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-66" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-66/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:32:45.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-66/">BJDCTF2020一叶障目</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>打开就是一个图片什么都没 stegsolve分析也分析不出什么东西  010也看不出什么 百度吧<br><strong>这是png的CRC校验问题，图片的宽高被改了导致无法完全显示</strong></p>
+<p><strong>如何判断这什么crc校验问题？</strong><br><strong>首先010打开1.png</strong><br><strong>前八个字节89 50 4E 47 0D 0A 1A 0A为png的文件头，该段格式是固定的</strong><br><strong>PNG_CHUNK chunk[0] 这段可分为几块：</strong><br><strong>前四个字节00 00 00 0D 代表数据块长度为13 数据块包含了png的宽高等信息 格式是固定的</strong><br><strong>之后四个字节49 48 44 52 （即ASCII码的IHDR） 是文件头数据块的表示 这段也是固定格式的</strong><br><strong>之后进入十三位数据块  前八个字节 00 00 01 41 00 00 01 4C</strong><br><strong>这边前四个字节：00 00 01 41 代表图片的宽  后四个字节 00 00 01 4C代表高</strong><br><strong>这八个字节都属于十三位数据块的内容 因此数据块应再向后5个字节 即 00 00 01 41 00 00 01 4C 08 06 00 00 00 剩余四位C2 0F 1F C6 为该png的crc校验码也就是解题的关键</strong><br><strong>该段数据有IDCh以及十三位的数据块 即 49 48 44 52 00 00 01 41 00 00 01 4C 08 06 00 00 00 计算所得</strong><br>大部分png中CRC检验错误的出题思路：</p>
+<p>对一张正常的图片，通过修改其宽度或者高度隐藏信息，使计算出的CRC校验码与原图的CRC校验码不一致；<strong>windows的图片查看器会忽略错误的CRC校验码，因此会显示图片</strong>，但此时的图片已经是修改过的，所以会有显示不全或扭曲等情况，借此可以隐藏信息。而<strong>Linux下的图片查看器不会忽略</strong>错误的CRC校验码，因此用Linux打开修改过宽或高的png图片时，会出现打不开的情况<br>所以判断一张图<strong>是否为crc校验出错 就丢windows 和 linux 里头看看</strong><br>可以通过爆破图片修改前的宽和高来匹配CRC校验码，并用正确的宽和高来修复图片<br>首先先爆破高度 脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#_ *_ coding:utf-8 _ *_ </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="comment">#\x49 x48 x44 x52 x00 x00 x01 x41 x00 x00 x01 x4C x08 x06 x00 x00 x00</span></span><br><span class="line">crc32key=<span class="number">0xc20f1fc6</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">65535</span>):</span><br><span class="line">    height = struct.pack(<span class="string">&#x27;&gt;i&#x27;</span>,i)</span><br><span class="line">    <span class="comment">#CRC:c20f1fc6</span></span><br><span class="line">    data= <span class="string">&#x27;\x49\x48\x44\x52\x00\x00\x01\x41&#x27;</span> + height + <span class="string">&#x27;\x08\x06\x00\x00\x00&#x27;</span></span><br><span class="line">    crc32result= binascii.crc32(data) &amp; <span class="number">0xffffffff</span></span><br><span class="line">    <span class="keyword">if</span> crc32result == crc32key:</span><br><span class="line">        <span class="built_in">print</span> <span class="string">&#x27; &#x27;</span>.join(<span class="built_in">map</span>(<span class="keyword">lambda</span> c: <span class="string">&quot;%02X&quot;</span> % <span class="built_in">ord</span>(c),height))</span><br></pre></td></tr></table></figure>
+
+<p> 这题就这样爆破出来了 高度被修改了 实则 00 00 03 4C<br>判断是否为crc校验码错误的方法：</p>
+<p>windows下图片可以打开，其他系统下图片不能打开<br>使用010editor的template检测，这也是我16进制编辑器力推010editor的原因之一<br>使用诸如tweakpng，pngcheck等工具<br>修复png的crc检验码方法：</p>
+<p>本文中所列的爆破出正确的宽或高，并用16进制编辑器修复<br>利用windows忽略crc检验码的特性，我们可以用tweakpng任意修改图片的宽和高，直至得到有用的信息，事实上，这是最快的方法</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-66/" data-id="ckroqtfm4001ayww7eqqrahdu" data-title="BJDCTF2020一叶障目" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-65" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-65/" class="article-date">
@@ -684,48 +730,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-page-55" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/06/11/page-55/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T13:30:26.000Z" itemprop="datePublished">2021-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/page-55/">page</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这我真的找不出哪边语法错误怎么改都提示错误┗|｀O′|┛ <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/234.PNG?raw=true" alt="234.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/233.PNG?raw=true" alt="233.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sssq.PNG?raw=true" alt="sssq.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/235.PNG?raw=true" alt="235.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/page-55/" data-id="ckroqtflz0011yww7gq768ntc" data-title="page" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -762,6 +766,10 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-87/">GWCTF 2019枯燥的抽奖</a>
           </li>
         
@@ -775,10 +783,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
         
           <li>
             <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-83/">MRCTF2020套娃</a>
           </li>
         
       </ul>

