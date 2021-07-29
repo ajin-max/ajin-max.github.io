@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>之前的uploadlabs的被安全卫士杀掉了 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="uploadlabs 1-9这次我们换个好玩的 uploadlabs 非常amazing 用burp 和火狐 两个配合一下很快 先写个一句话木马eval POST[‘’] 这个post[‘’] 框框里面的自己填什么都行 第一关上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关 然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 http:&#x2F;&#x2F;127.0.0.1&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="之前的uploadlabs的被安全卫士杀掉了">
+<meta property="og:url" content="http://example.com/2021/04/19/page-37/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="uploadlabs 1-9这次我们换个好玩的 uploadlabs 非常amazing 用burp 和火狐 两个配合一下很快 先写个一句话木马eval POST[‘’] 这个post[‘’] 框框里面的自己填什么都行 第一关上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关 然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 http:&#x2F;&#x2F;127.0.0.1&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200716102620257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200716015655108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp">
+<meta property="og:image" content="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp">
+<meta property="article:published_time" content="2021-04-19T12:21:29.000Z">
+<meta property="article:modified_time" content="2021-04-19T12:30:45.486Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-37" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/19/page-37/" class="article-date">
+  <time class="dt-published" datetime="2021-04-19T12:21:29.000Z" itemprop="datePublished">2021-04-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      之前的uploadlabs的被安全卫士杀掉了
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="uploadlabs-1-9"><a href="#uploadlabs-1-9" class="headerlink" title="uploadlabs 1-9"></a>uploadlabs 1-9</h1><p>这次我们换个好玩的 uploadlabs 非常amazing</p>
+<p>用burp 和火狐 两个配合一下很快</p>
+<p>先写个一句话木马eval POST[‘’] 这个post[‘’] 框框里面的自己填什么都行<img src="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>第一关</strong>上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关</p>
+<p>然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 <a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/.php">http://127.0.0.1/upload-labs/upload/.php</a> 1</p>
+<p>获取权限了就可以控制这电脑了</p>
+<p><strong>第二关</strong> 和第一关差不多只不过type要改成这边允许的类型’image/jpeg 或者 image/png’等等</p>
+<p>那还是老样子另存改个格式 之后抓包改为.php</p>
+<p><strong>第三关</strong>这回没法直接抓包改为.php了 稍稍微改一下 .php3 .phtml</p>
+<p>就把.php后面加个数字 但是得先去apache那边的配置文件添加一下</p>
+<p>配置文件打开找到一行addtype application/x-httpd-php .php .phtml .php3 .php4 就是把这类后缀的文件解析成php 老样子另存. jpg 之后上传时抓包改格式为.php3 然后菜刀连接一下就可以了 关于php3的介绍<img src="https://img-blog.csdnimg.cn/20200716102620257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20200716015655108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>第四关</strong>就太狠了把都给过滤掉了 用一个别的叫做htaccess</p>
+<p>.htaccess文件(或者”分布式配置文件”）,全称是Hypertext Access(超文本入口)。提供了针对目录改变配置的方法， 即，在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置</p>
+<p>先创建一个.htaccess格式的文件 记事本打开写点东西进去</p>
+<p>SetHandler application/x-httpd-php 这串</p>
+<p>这样就可以把所有文件当成php执行</p>
+<p>burp抓包时改一下删掉名字就留下格式 然后把那个.jpg上传上去就可以了 菜刀一连就行了</p>
+<p><strong>第五关</strong> 没有之前的那样子{$file_ext = strtolower($file_ext); //转换为小写} 和前几关的源码对比发现少了这句</p>
+<p>那么就是说可以用大小写混合绕过去 结果是可以这么干</p>
+<p><strong>第六关</strong> $file_ext = trim($file_ext); //首尾去空 少了这句代码 那么就可以改一下burp截个包 改格式. php php前多个空格</p>
+<p>**第七关 **$file_name = deldot($file_name);//删除文件名末尾的点 少了这句代码那么上传时可以用.php. 绕过限制</p>
+<p><strong>第八关</strong> 首先来了解一个东西 ::D A T A : N T F S 文 件 系 统 包 括 对 备 用 数 据 流 的 支 持 。 主 要 包 括 提 供 与 M a c i n t o s h 文 件 系 统 中 的 文 件 的 兼 容 性 。 备 用 数 据 流 允 许 文 件 包 含 多 个 数 据 流 。 每 个 文 件 至 少 有 一 个 数 据 流 。 在 W i n d o w s 中 ， 此 默 认 数 据 流 称 为 ： DATA: NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：DATA:NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：<br>DATA。<br>简单讲就是在php+windows的情况下：如果文件名+”::D A T A “ 会 把 : : DATA”会把::DATA”会把::DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。 这关$file_ext = str_ireplace(‘::$DATA’, ‘’, $file_ext);//去除字符串::$DATA 少了这串代码 那么上传时在burp中这儿</p>
+<p>Content-Disposition: form-data; name=”upload_file”; filename=”yijuhua.jpg**::$DATA**”<br>Content-Type: image/jpeg</p>
+<p>首先标配嘛改格式 然后php后面加个::$DATA 就可以上传成功然后连接</p>
+<p><strong>第九关</strong> 认真看了下源码发现其实这些去头去末尾的操作好像是按顺序来的那么末尾多打几个东西说不定就能耗死这些代码┗|｀O′|┛ nice 那么就抓包改一下格式 .php. .. 然后居然可以上传成功 连接一下就可以了</p>
+<p>那按这么说前面那些也可以这么搞 卧槽┗|｀O′|┛ 嗷~~ <strong>真的可以1-9 都可以这样弄</strong>.php. .. (一个点一个空格两个点)</p>
+<p><strong>第十关</strong> 其实和第九差不多就这关用了替换函数</p>
+<p>双写绕过就可了 .pphphp (好像只能这么个格式)</p>
+<p><strong>第十一关</strong><a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp"><img src="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp" alt="img"></a>img</p>
+<p>存在字符拼接 可以随意变换储存地址%00截断法<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp"><img src="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp" alt="img"></a></p>
+<p>burp中修改个地方 一个是POST那边 upload后面加个yl.php%00</p>
+<p>名字要和filename那边的不一样 然后就能上传成功了</p>
+<p><strong>第十二</strong> 这个<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp"><img src="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp" alt="img"></a></p>
+<p>变成post的方法 要在burp的十六进制那边改所以还挺麻烦的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/19/page-37/" data-id="ckroqtflp000oyww7h55d9yfz" data-title="之前的uploadlabs的被安全卫士杀掉了" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/03/page-42/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          之前的uploadlabs的被安全卫士杀掉了
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/06/page-35/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">dvwa command injection</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

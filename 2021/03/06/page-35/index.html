@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>dvwa command injection | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="a这个就ping一个地址然后后面跟一些命令就能知道服务器的一些信息 例如 127.0.0.1&amp;net user aaa&#x2F;add  这样可以创建一个用户aaa &amp;&amp;、&amp;、||、| 这些可用作命令连接符使用 用户通过浏览器提交执行命令然后服务器这边就会执行 &amp;&amp; 用这个符号意味着 先执行前面的命令在执行后面的若第一条不执行第二条也不执行 &amp; 不管">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dvwa command injection">
+<meta property="og:url" content="http://example.com/2021/03/06/page-35/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="a这个就ping一个地址然后后面跟一些命令就能知道服务器的一些信息 例如 127.0.0.1&amp;net user aaa&#x2F;add  这样可以创建一个用户aaa &amp;&amp;、&amp;、||、| 这些可用作命令连接符使用 用户通过浏览器提交执行命令然后服务器这边就会执行 &amp;&amp; 用这个符号意味着 先执行前面的命令在执行后面的若第一条不执行第二条也不执行 &amp; 不管">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-06T02:16:31.000Z">
+<meta property="article:modified_time" content="2021-03-06T03:34:07.304Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-35" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/06/page-35/" class="article-date">
+  <time class="dt-published" datetime="2021-03-06T02:16:31.000Z" itemprop="datePublished">2021-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      dvwa command injection
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这个就ping一个地址然后后面跟一些命令就能知道服务器的一些信息</p>
+<p>例如 127.0.0.1&amp;net user aaa/add  这样可以创建一个用户aaa</p>
+<p>&amp;&amp;、&amp;、||、| 这些可用作命令连接符使用 用户通过浏览器提交执行命令然后服务器这边就会执行</p>
+<p><strong>&amp;&amp; 用这个符号意味着 先执行前面的命令在执行后面的若第一条不执行第二条也不执行</strong></p>
+<p><strong>&amp; 不管第一条成功与否都执行第二条</strong></p>
+<p><strong>| 只执行第二条</strong></p>
+<p><strong>||第一条执行失败在执行第二条 第一条成功就不执行第二条</strong></p>
+<p><strong>whoami</strong> 查询服务器当前用户  <strong>ipconfig</strong> 网卡那些七七八八的 <strong>dir</strong> 后面再跟个那个盘目录之类的可以看到这个盘里头某个特定文件的大小或者盘目录里头的东西七七八八的  <strong>ls</strong> 列出当前文件夹内容  <strong>sleep 5</strong> 用来看是否存在时间差检测是否存在漏洞  **cat/etc/shadow ** 这个是linux系统的影子文件 </p>
+<p><strong>dvwa的low</strong>  这里头什么都没过滤直接码进去不管他 写什么都能执行</p>
+<p><strong>medium</strong> 这关吧&amp;&amp; ； 替换成了空格 但也能过 多打几个嘛 &amp;&amp;变成&amp;&amp;&amp; 或者&amp;；&amp;  （这样是吧；换成了空格然后帮了我们把这变成&amp;&amp;）</p>
+<p>或者毕竟之过滤&amp;&amp; 那么&amp;还是能运行的  </p>
+<p><strong>High</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;&amp;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line">&#x27;;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;|  &#x27; =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;-&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;$&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;(&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;)&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;`&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;||&#x27; =&gt; &#x27;&#x27;,</span><br></pre></td></tr></table></figure>
+<p>好多都被过滤了 试一下用url编码 %20 =空格 %5c=\ %26=&amp; %7c=| （用不了）</p>
+<p>打好几个&amp; 不行 好几个| ┗|｀O′|┛ 嗷~~  居然可以 nice</p>
+<p> **impossible **  这个是魔鬼没办法的根本过不去 动不动就显示无效ip</p>
+<p>这关用了 stripslashes（$target） 删除字符串的反斜杠 返回已剥离反斜杠的字符串</p>
+<p>explode（”.”,$target） 这个直接把字符串打散成数组  </p>
+<p>explode(separator,string,limit)  separator(必须，规定从哪开始分割)  string（必须，需分割的字符串） limit（可选，规定返回的数组的数目）</p>
+<p>is_nummeric($target)  检测 $target是否为数字挥着数字字符串 </p>
+<p>还加入了Anti-CSRF token  对参数ip进行严格限制 例如只有数字.数字.数字.数字. 的输入才会接收</p>
+<p>那么完全不存在命令行注入了(╬▔皿▔)凸</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/06/page-35/" data-id="ckroqtflp000nyww7e9s70gua" data-title="dvwa command injection" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/19/page-37/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          之前的uploadlabs的被安全卫士杀掉了
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/04/page-34/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">upload labs 17</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>BUUCTF WEB De1CTF 2019 SSRF Me | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="题目直接给了题目源码： 就是看着有点难受 #! &#x2F;usr&#x2F;bin&#x2F;env python#encoding&#x3D;utf-8from flask import Flaskfrom flask import requestimport socketimport hashlibimport urllibimport sysimport osimport jsonreload(sys)sys.setdefaul">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BUUCTF WEB De1CTF 2019 SSRF Me">
+<meta property="og:url" content="http://example.com/2021/07/08/page-64/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="题目直接给了题目源码： 就是看着有点难受 #! &#x2F;usr&#x2F;bin&#x2F;env python#encoding&#x3D;utf-8from flask import Flaskfrom flask import requestimport socketimport hashlibimport urllibimport sysimport osimport jsonreload(sys)sys.setdefaul">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-08T06:52:06.000Z">
+<meta property="article:modified_time" content="2021-07-08T07:29:48.714Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-64" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-64/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:06.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      BUUCTF WEB De1CTF 2019 SSRF Me
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>题目直接给了题目源码： 就是看着有点难受</p>
+<p>#! /usr/bin/env python<br>#encoding=utf-8<br>from flask import Flask<br>from flask import request<br>import socket<br>import hashlib<br>import urllib<br>import sys<br>import os<br>import json<br>reload(sys)<br>sys.setdefaultencoding(‘latin1’)</p>
+<p>app = Flask(<strong>name</strong>)</p>
+<p>secert_key = os.urandom(16)</p>
+<p>class Task:<br>    def <strong>init</strong>(self, action, param, sign, ip):<br>        self.action = action<br>        self.param = param<br>        self.sign = sign<br>        self.sandbox = md5(ip)<br>        if(not os.path.exists(self.sandbox)):          #SandBox For Remote_Addr<br>            os.mkdir(self.sandbox)</p>
+<pre><code>def Exec(self):                                              
+    result = &#123;&#125;
+    result[&#39;code&#39;] = 500
+    if (self.checkSign()):                                               //Exec 这边还有个checkSign的方法 
+        if &quot;scan&quot; in self.action:
+            tmpfile = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;w&#39;)
+            resp = scan(self.param)
+            if (resp == &quot;Connection Timeout&quot;):
+                result[&#39;data&#39;] = resp
+            else:
+                print resp
+                tmpfile.write(resp)
+                tmpfile.close()
+            result[&#39;code&#39;] = 200
+        if &quot;read&quot; in self.action:
+            f = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;r&#39;)
+            result[&#39;code&#39;] = 200
+            result[&#39;data&#39;] = f.read()
+        if result[&#39;code&#39;] == 500:
+            result[&#39;data&#39;] = &quot;Action Error&quot;
+    else:
+        result[&#39;code&#39;] = 500
+        result[&#39;msg&#39;] = &quot;Sign Error&quot;
+    return result
+
+def checkSign(self):
+    if (getSign(self.action, self.param) == self.sign):                        //getSign()方法，结果与sign进行比较
+        return True
+    else:
+        return False
+</code></pre>
+<p>#generate Sign For Action Scan.<br>@app.route(“/geneSign”, methods=[‘GET’, ‘POST’])<br>def geneSign():<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    action = “scan”<br>    return getSign(action, param)</p>
+<p>@app.route(‘/De1ta’,methods=[‘GET’,’POST’])                       //De1ta应该是关键的页面获取了三个参数，其中两个是从cookie中获取的：<br>def challenge():<br>    action = urllib.unquote(request.cookies.get(“action”))                 //第一个参数action是传入read和scan的，<br>                                                                                                         第二个参数看着应该是传入一个文件名，                                                                                                                                                                                                                         第三个参数sign是一个md5值，<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    sign = urllib.unquote(request.cookies.get(“sign”))                       //cookie<br>    ip = request.remote_addr<br>    if(waf(param)):<br>        return “No Hacker!!!!”<br>    task = Task(action, param, sign, ip)                          // 这边的action param sign参数传递到Task<br>    return json.dumps(task.Exec())                                 //并且调用了 Task类中的Exec()<br>@app.route(‘/‘)<br>def index():<br>    return open(“code.txt”,”r”).read()               //这边index 把源码给打开了</p>
+<p>def scan(param):<br>    socket.setdefaulttimeout(1)<br>    try:<br>        return urllib.urlopen(param).read()[:50]<br>    except:<br>        return “Connection Timeout”</p>
+<p>def getSign(action, param):<br>    return hashlib.md5(secert_key + param + action).hexdigest()                            //这边需要一个secert_key </p>
+<p>def md5(content):<br>    return hashlib.md5(content).hexdigest()</p>
+<p>def waf(param):<br>    check=param.strip().lower()<br>    if check.startswith(“gopher”) or check.startswith(“file”):<br>        return True<br>    else:<br>        return False</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    app.debug = False<br>    app.run(host=’0.0.0.0’)<br>python的flask框架，三个路由</p>
+<p>  最终目的就是读取flag.txt<br>所以我们需要构造参数！第一个参数action应该包含read，，第二个param参数应该是文件名<br>最关键就是第三个参数，由于我们不知道secert_key的值，所以不能自己加密<br>  burp  访问一下geneSign这个页面 参数param=flag.txt得到一串MD5值b7e7fa9d237b24617caedc3fa85fe2af  这个就是md5(secert_key+flag.txtscan)的值<br>param 需要read 和scan的值               8a75379bb998db129cca0db40be1a07b   geneSign?param=flag.txtread传入这个后得到的<br>也就是md5(secert_key+flag.txtreadscan)的md5值                 再访问De1ta页面进行参数传递，拿到flag<br>De1ta?param=flag.txt<br>cookie：  action=readscan;sign=8a75379bb998db129cca0db40be1a07b;<br>就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-64/" data-id="ckroqtfm30018yww739c0f7dd" data-title="BUUCTF WEB De1CTF 2019 SSRF Me" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/07/08/page-65/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          强网杯ISO1995
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/07/08/page-63/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">NCTF2019fakeXMLcookbook</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

