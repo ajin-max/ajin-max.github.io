@@ -71,6 +71,123 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/04/page-1/" class="article-date">
+  <time class="dt-published" datetime="2020-11-04T11:11:53.000Z" itemprop="datePublished">2020-11-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/04/page-1/">page</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="PHP-If…Else-语句"><a href="#PHP-If…Else-语句" class="headerlink" title="PHP If…Else 语句"></a>PHP If…Else 语句</h1><hr>
+<p>条件语句用于根据不同条件执行不同动作。</p>
+<hr>
+<h2 id="PHP-条件语句"><a href="#PHP-条件语句" class="headerlink" title="PHP 条件语句"></a>PHP 条件语句</h2><p>当您编写代码时，您常常需要为不同的判断执行不同的动作。您可以在代码中使用条件语句来完成此任务。</p>
+<p>在 PHP 中，提供了下列条件语句：</p>
+<ul>
+<li><strong>if 语句</strong> - 在条件成立时执行代码</li>
+<li><strong>if…else 语句</strong> - 在条件成立时执行一块代码，条件不成立时执行另一块代码</li>
+<li><strong>if…elseif….else 语句</strong> - 在若干条件之一成立时执行一个代码块</li>
+<li><strong>switch 语句</strong> - 在若干条件之一成立时执行一个代码块</li>
+</ul>
+<hr>
+<h2 id="PHP-if-语句"><a href="#PHP-if-语句" class="headerlink" title="PHP - if 语句"></a>PHP - if 语句</h2><p>if 语句用于<strong>仅当指定条件成立时执行代码</strong>。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if (条件)</span><br><span class="line">&#123;</span><br><span class="line">    条件成立时要执行的代码;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果当前时间小于 20，下面的实例将输出 “Have a good day!”：</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><?php 
+
+$t=date("H"); 
+
+if ($t<"20") { 
+
+   echo "Have a good day!";
+
+ } ?>
+
+<h2 id="PHP-if…else-语句"><a href="#PHP-if…else-语句" class="headerlink" title="PHP - if…else 语句"></a>PHP - if…else 语句</h2><p><strong>在条件成立时执行一块代码，条件不成立时执行另一块代码</strong>，请使用 if….else 语句。</p>
+<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><p>if (<em>条件</em>)<br>{<br><em>条件成立时执行的代码;</em><br>}<br>else<br>{<br>*条件不成立时执行的代码;<br>*}</p>
+<p>如果当前时间小于 20，下面的实例将输出 “Have a good day!”，否则输出 “Have a good night!”：</p>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><?php $t=date("H"); 
+
+if ($t<"20") 
+
+{ 
+
+   echo "Have a good day!"; 
+
+} else
+
+ {   
+
+ echo "Have a good night!";
+
+ } 
+
+?>
+
+<h2 id="PHP-if…elseif…-else-语句"><a href="#PHP-if…elseif…-else-语句" class="headerlink" title="PHP - if…elseif….else 语句"></a>PHP - if…elseif….else 语句</h2><p><strong>在若干条件之一成立时执行一个代码块</strong>，请使用 if….elseif…else 语句。.</p>
+<h3 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if (条件)</span><br><span class="line">&#123;</span><br><span class="line">    if 条件成立时执行的代码;</span><br><span class="line">&#125;</span><br><span class="line">elseif (条件)</span><br><span class="line">&#123;</span><br><span class="line">    elseif 条件成立时执行的代码;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    条件不成立时执行的代码;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果当前时间小于 10，下面的实例将输出 “Have a good morning!”，如果当前时间不小于 10 且小于 20，则输出 “Have a good day!”，否则输出 “Have a good night!”：</p>
+<h2 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h2><?php
+
+ $t=date("H");
+
+ if ($t<"10")
+
+ {  
+
+  echo "Have a good morning!";
+
+ } 
+
+elseif ($t<"20") 
+
+{    
+
+echo "Have a good day!";
+
+ } 
+
+else
+
+ {    
+
+echo "Have a good night!";
+
+ }
+
+ ?>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/04/page-1/" data-id="ckroqtfl90001yww7fuck9vkc" data-title="page" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/10/18/page/" class="article-date">
@@ -238,6 +355,10 @@
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -251,10 +372,6 @@
         
           <li>
             <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
           </li>
         
       </ul>

