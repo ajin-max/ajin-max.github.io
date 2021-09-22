@@ -71,6 +71,106 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-53" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/27/page-53/" class="article-date">
+  <time class="dt-published" datetime="2021-05-27T06:59:00.000Z" itemprop="datePublished">2021-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/27/page-53/">那啥ciscn2021杂项的running pixel</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>奔跑的像素点蛤？</p>
+<p>跑？ 把所有的帧给提取出来</p>
+<p>丢Stegsolve 里头看了看 red plane3 看了看 都有一个点比较另类的</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/aaa.jpg?raw=true" alt="aaa.jpg"><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ccc.jpg?raw=true" alt="ccc.jpg"></p>
+<p>然后ps看这个点的像素值总会含有这个RGB: 233,233,233的像素块  部分像素颜色为233，233，233将颜色为233，233，233区块的位置尝试画出来 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/ddd.jpg?raw=true" alt="ddd.jpg"></p>
+<p>from PIL import Image</p>
+<p>flag_img = Image.new(‘1’,(400,400))<br>#mode=1 1位黑白像素，每字节存储一个像素<br>for name in range(10,383):    #这边应给得从1开始<br>    framepic = Image.open(‘0_f’+str(name)+’.gif’)   #然后这边0_f0 应该为这样 跑完前十张图后改称这样<br>    framepic = framepic.convert(“RGB”)<br>    width,height = framepic.size<br>    for w in range(width):<br>        for h in range(height):<br>            if framepic.getpixel((w,h)) == (233,233,233):<br>                flag_img.putpixel((h,w),1)</p>
+<p>flag_img.save(‘./flag/‘+str(name)+’.png’)     （从别的大佬那拿来的脚本）</p>
+<p>和刚才的所有的导出的帧数放在同一个文件夹 跑完程序就<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/bbb.jpg?raw=true" alt="bbb.jpg">可以了  </p>
+<p>得到这张图慢慢拼图就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/27/page-53/" data-id="cksyl7wjm0019w4w75di8f9a5" data-title="那啥ciscn2021杂项的running pixel" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-52" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/27/page-52/" class="article-date">
+  <time class="dt-published" datetime="2021-05-27T05:15:22.000Z" itemprop="datePublished">2021-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/27/page-52/">ciscn robot</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>其实包里面给了这么多东西就只有那个抓包文件有用 其他的不会用</p>
+<p>.pcapng那个文件里面Value.[62,49,0] 有好多这种样子的总共<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sss.PNG?raw=true" alt="sss.PNG"></p>
+<p>这么多个可以试着把这些点抓出来然后python画图一下</p>
+<p>这个先另存txt先</p>
+<p>from PIL import Image<br>import re</p>
+<p>reg = re.compile(r’Value.[(\d+),(\d+),(\d+)]‘)  ;正则匹配符合的项</p>
+<p>with open(‘ro.txt’,’r’) as f:<br>data = reg.findall(f.read())<br># print(data)<br># print(len(data))</p>
+<p>img = Image.new(‘1’, (400, 400))<br>for i in data:<br>xy = (int(i[0]), int(i[1]))<br>img.putpixel(xy, 1)<br>img.save(“md5flag.png”)</p>
+<p>这边ro.txt 和MD5flag.png 自己命名去</p>
+<p>运行一下可以生成图片</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/md5flag.png?raw=true" alt="md5flag.png"></p>
+<p>然后图片内容MD5加密一下就是flag</p>
+<p>但这可能不是预期解法就是了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/27/page-52/" data-id="cksyl7wjl0018w4w7fvkk5dwd" data-title="ciscn robot" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-aaa" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/05/26/aaa/" class="article-date">
@@ -596,117 +696,6 @@ var_dump(serialize($a));
 
 
   
-    <article id="post-page-35" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/06/page-35/" class="article-date">
-  <time class="dt-published" datetime="2021-03-06T02:16:31.000Z" itemprop="datePublished">2021-03-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/06/page-35/">dvwa command injection</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这个就ping一个地址然后后面跟一些命令就能知道服务器的一些信息</p>
-<p>例如 127.0.0.1&amp;net user aaa/add  这样可以创建一个用户aaa</p>
-<p>&amp;&amp;、&amp;、||、| 这些可用作命令连接符使用 用户通过浏览器提交执行命令然后服务器这边就会执行</p>
-<p><strong>&amp;&amp; 用这个符号意味着 先执行前面的命令在执行后面的若第一条不执行第二条也不执行</strong></p>
-<p><strong>&amp; 不管第一条成功与否都执行第二条</strong></p>
-<p><strong>| 只执行第二条</strong></p>
-<p><strong>||第一条执行失败在执行第二条 第一条成功就不执行第二条</strong></p>
-<p><strong>whoami</strong> 查询服务器当前用户  <strong>ipconfig</strong> 网卡那些七七八八的 <strong>dir</strong> 后面再跟个那个盘目录之类的可以看到这个盘里头某个特定文件的大小或者盘目录里头的东西七七八八的  <strong>ls</strong> 列出当前文件夹内容  <strong>sleep 5</strong> 用来看是否存在时间差检测是否存在漏洞  **cat/etc/shadow ** 这个是linux系统的影子文件 </p>
-<p><strong>dvwa的low</strong>  这里头什么都没过滤直接码进去不管他 写什么都能执行</p>
-<p><strong>medium</strong> 这关吧&amp;&amp; ； 替换成了空格 但也能过 多打几个嘛 &amp;&amp;变成&amp;&amp;&amp; 或者&amp;；&amp;  （这样是吧；换成了空格然后帮了我们把这变成&amp;&amp;）</p>
-<p>或者毕竟之过滤&amp;&amp; 那么&amp;还是能运行的  </p>
-<p><strong>High</strong> </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;&amp;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line">&#x27;;&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;|  &#x27; =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;-&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;$&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;(&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;)&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;`&#x27;  =&gt; &#x27;&#x27;, </span><br><span class="line"></span><br><span class="line">&#x27;||&#x27; =&gt; &#x27;&#x27;,</span><br></pre></td></tr></table></figure>
-<p>好多都被过滤了 试一下用url编码 %20 =空格 %5c=\ %26=&amp; %7c=| （用不了）</p>
-<p>打好几个&amp; 不行 好几个| ┗|｀O′|┛ 嗷~~  居然可以 nice</p>
-<p> **impossible **  这个是魔鬼没办法的根本过不去 动不动就显示无效ip</p>
-<p>这关用了 stripslashes（$target） 删除字符串的反斜杠 返回已剥离反斜杠的字符串</p>
-<p>explode（”.”,$target） 这个直接把字符串打散成数组  </p>
-<p>explode(separator,string,limit)  separator(必须，规定从哪开始分割)  string（必须，需分割的字符串） limit（可选，规定返回的数组的数目）</p>
-<p>is_nummeric($target)  检测 $target是否为数字挥着数字字符串 </p>
-<p>还加入了Anti-CSRF token  对参数ip进行严格限制 例如只有数字.数字.数字.数字. 的输入才会接收</p>
-<p>那么完全不存在命令行注入了(╬▔皿▔)凸</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/06/page-35/" data-id="cksyl7wje000zw4w747k2envr" data-title="dvwa command injection" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-34" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/03/04/page-34/" class="article-date">
-  <time class="dt-published" datetime="2021-03-04T07:05:24.000Z" itemprop="datePublished">2021-03-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/03/04/page-34/">upload labs 17</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这关叫做条件竞争 虚拟网卡好像是数据包速率问题反正没试成功过___*( ￣皿￣)/#____</p>
-<p>源码这边说后台先把文件保存进文件夹再判断后缀是否合法 </p>
-<p>那么多线程的情况下就可能出现文件文件夹的文件没处理完就直接绕过了防护</p>
-<p>先创建一个<?php                                                       ?>’);?&gt;</p>
-<p>代码为这个的php文件 意思是当访问这个之后就会创建一个shell2.php的文件并写入一句话木马<br><em>fopen()函数的用法</em><br><em>1、fopen() 函数打开一个文件或 URL。</em><br><em>2、如果 fopen() 失败，它将返回 FALSE 并附带错误信息。您可以通过在函数名前面添加一个 ‘@’ 来隐藏错误输出。</em><br><em>“r” （只读方式打开，将文件指针指向文件头）</em><br><em>“r+” （读写方式打开，将文件指针指向文件头）</em><br><em>“w” （写入方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“w+” （读写方式打开，清除文件内容，如果文件不存在则尝试创建之）</em><br><em>“a” （写入方式打开，将文件指针指向文件末尾进行写入，如果文件不存在则尝试创建之）</em><br><em>“a+” （读写方式打开，通过将文件指针指向文件末尾进行写入来保存文件内容）</em><br><em>“x” （创建一个新的文件并以写入方式打开，如果文件已存在则返回 FALSE 和一个错误）</em><br><em>“x+” （创建一个新的文件并以读写方式打开，如果文件已存在则返回 FALSE 和一个错误）</em></p>
-<p>burp抓包然后 send to intruder</p>
-<p>设置数据包无限重发 payloads那边 payload type选择null payloads 下面的 continue indefinitely选上  然后还要弄个python脚本来检测有没有上传上去</p>
-<p>import requests<br>url = “<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php&quot;">http://127.0.0.1/upload-labs/upload/aaa.php&quot;</a><br>while True:<br>    html = requests.get(url)<br>    if html.status_code == 200:<br>        print(“OK”)<br>        break<br>    else:<br>        print(“NO”)   **脚本代码 ** 如果访问的了就会显示ok 然后就会创建 shell.php 的文件</p>
-<p>burp attack之前就需要运行这个脚本 </p>
-<p>然后就可以连接了 菜刀开启</p>
-<p>也有不用python脚本的方法手动不断访问<a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/upload/aaa.php">http://127.0.0.1/upload-labs/upload/aaa.php</a></p>
-<p>知道访问成功为止</p>
-<p>但是呢这我到现在都没成功</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/04/page-34/" data-id="cksyl7wjd000ww4w77z1ohdun" data-title="upload labs 17" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -743,6 +732,14 @@ var_dump(serialize($a));
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -752,14 +749,6 @@ var_dump(serialize($a));
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>

