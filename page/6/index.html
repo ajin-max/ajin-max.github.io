@@ -71,6 +71,179 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-66" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-66/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:32:45.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-66/">BJDCTF2020一叶障目</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>打开就是一个图片什么都没 stegsolve分析也分析不出什么东西  010也看不出什么 百度吧<br><strong>这是png的CRC校验问题，图片的宽高被改了导致无法完全显示</strong></p>
+<p><strong>如何判断这什么crc校验问题？</strong><br><strong>首先010打开1.png</strong><br><strong>前八个字节89 50 4E 47 0D 0A 1A 0A为png的文件头，该段格式是固定的</strong><br><strong>PNG_CHUNK chunk[0] 这段可分为几块：</strong><br><strong>前四个字节00 00 00 0D 代表数据块长度为13 数据块包含了png的宽高等信息 格式是固定的</strong><br><strong>之后四个字节49 48 44 52 （即ASCII码的IHDR） 是文件头数据块的表示 这段也是固定格式的</strong><br><strong>之后进入十三位数据块  前八个字节 00 00 01 41 00 00 01 4C</strong><br><strong>这边前四个字节：00 00 01 41 代表图片的宽  后四个字节 00 00 01 4C代表高</strong><br><strong>这八个字节都属于十三位数据块的内容 因此数据块应再向后5个字节 即 00 00 01 41 00 00 01 4C 08 06 00 00 00 剩余四位C2 0F 1F C6 为该png的crc校验码也就是解题的关键</strong><br><strong>该段数据有IDCh以及十三位的数据块 即 49 48 44 52 00 00 01 41 00 00 01 4C 08 06 00 00 00 计算所得</strong><br>大部分png中CRC检验错误的出题思路：</p>
+<p>对一张正常的图片，通过修改其宽度或者高度隐藏信息，使计算出的CRC校验码与原图的CRC校验码不一致；<strong>windows的图片查看器会忽略错误的CRC校验码，因此会显示图片</strong>，但此时的图片已经是修改过的，所以会有显示不全或扭曲等情况，借此可以隐藏信息。而<strong>Linux下的图片查看器不会忽略</strong>错误的CRC校验码，因此用Linux打开修改过宽或高的png图片时，会出现打不开的情况<br>所以判断一张图<strong>是否为crc校验出错 就丢windows 和 linux 里头看看</strong><br>可以通过爆破图片修改前的宽和高来匹配CRC校验码，并用正确的宽和高来修复图片<br>首先先爆破高度 脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#_ *_ coding:utf-8 _ *_ </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="comment">#\x49 x48 x44 x52 x00 x00 x01 x41 x00 x00 x01 x4C x08 x06 x00 x00 x00</span></span><br><span class="line">crc32key=<span class="number">0xc20f1fc6</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">65535</span>):</span><br><span class="line">    height = struct.pack(<span class="string">&#x27;&gt;i&#x27;</span>,i)</span><br><span class="line">    <span class="comment">#CRC:c20f1fc6</span></span><br><span class="line">    data= <span class="string">&#x27;\x49\x48\x44\x52\x00\x00\x01\x41&#x27;</span> + height + <span class="string">&#x27;\x08\x06\x00\x00\x00&#x27;</span></span><br><span class="line">    crc32result= binascii.crc32(data) &amp; <span class="number">0xffffffff</span></span><br><span class="line">    <span class="keyword">if</span> crc32result == crc32key:</span><br><span class="line">        <span class="built_in">print</span> <span class="string">&#x27; &#x27;</span>.join(<span class="built_in">map</span>(<span class="keyword">lambda</span> c: <span class="string">&quot;%02X&quot;</span> % <span class="built_in">ord</span>(c),height))</span><br></pre></td></tr></table></figure>
+
+<p> 这题就这样爆破出来了 高度被修改了 实则 00 00 03 4C<br>判断是否为crc校验码错误的方法：</p>
+<p>windows下图片可以打开，其他系统下图片不能打开<br>使用010editor的template检测，这也是我16进制编辑器力推010editor的原因之一<br>使用诸如tweakpng，pngcheck等工具<br>修复png的crc检验码方法：</p>
+<p>本文中所列的爆破出正确的宽或高，并用16进制编辑器修复<br>利用windows忽略crc检验码的特性，我们可以用tweakpng任意修改图片的宽和高，直至得到有用的信息，事实上，这是最快的方法</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-66/" data-id="cksyl7wju001lw4w76267dzla" data-title="BJDCTF2020一叶障目" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-65" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-65/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T09:03:48.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-65/">强网杯ISO1995</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>提示时间属性出问题<br>年月日时分秒以此下来发现</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/9.png?raw=true" alt="9.png"></p>
+<p>除了月的不一样其余均相同 然后将月的对应的数据提取出来 也就是将ffff后面两位的内容提取出来</p>
+<p>第一个是0000也就是十进制的0填充好前四位0000也就是编号为0000的文件对应的文件列表为flag_f00000文件<br><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/7.PNG?raw=true" alt="7.PNG"></p>
+<p>import binascii<br>isofilename= ‘iso1995.iso’<br>fp_iso_file = open(isofilename, ‘rb’)<br>fp_iso_file.read(90198)<br>list=[]<br>num=0<br>while 1:<br>    if (fp_iso_file.read(4) == b’\xff\xff\xff\xff’):<br>        x = str(binascii.b2a_hex(fp_iso_file.read(2)[::1]))<br>        y = ‘0x’+x[2:6]<br>        list.append(int((y),16))<br>        fp_iso_file.read(54)<br>        if (fp_iso_file.tell() - 0x1700A ) % 0x800 ==0:<br>            fp_iso_file.read(8)<br>    else:<br>        break<br>fp_extract_data = open(‘outdata’, ‘wb’)<br>for num in list:<br>    fp_f0_file = open(‘flag_f0’+’%04d’ % num, ‘rb’)<br>    flag0_data = fp_f0_file.read()<br>    fp_extract_data.write(flag0_data)<br>    fp_f0_file.close()<br>fp_extract_data.close()</p>
+<p>运行完成生成outdata 打开找到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/8.PNG?raw=true" alt="8.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-65/" data-id="cksyl7wjs001jw4w74zeq2iu6" data-title="强网杯ISO1995" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-64" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/08/page-64/" class="article-date">
+  <time class="dt-published" datetime="2021-07-08T06:52:06.000Z" itemprop="datePublished">2021-07-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/08/page-64/">BUUCTF WEB De1CTF 2019 SSRF Me</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>题目直接给了题目源码： 就是看着有点难受</p>
+<p>#! /usr/bin/env python<br>#encoding=utf-8<br>from flask import Flask<br>from flask import request<br>import socket<br>import hashlib<br>import urllib<br>import sys<br>import os<br>import json<br>reload(sys)<br>sys.setdefaultencoding(‘latin1’)</p>
+<p>app = Flask(<strong>name</strong>)</p>
+<p>secert_key = os.urandom(16)</p>
+<p>class Task:<br>    def <strong>init</strong>(self, action, param, sign, ip):<br>        self.action = action<br>        self.param = param<br>        self.sign = sign<br>        self.sandbox = md5(ip)<br>        if(not os.path.exists(self.sandbox)):          #SandBox For Remote_Addr<br>            os.mkdir(self.sandbox)</p>
+<pre><code>def Exec(self):                                              
+    result = &#123;&#125;
+    result[&#39;code&#39;] = 500
+    if (self.checkSign()):                                               //Exec 这边还有个checkSign的方法 
+        if &quot;scan&quot; in self.action:
+            tmpfile = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;w&#39;)
+            resp = scan(self.param)
+            if (resp == &quot;Connection Timeout&quot;):
+                result[&#39;data&#39;] = resp
+            else:
+                print resp
+                tmpfile.write(resp)
+                tmpfile.close()
+            result[&#39;code&#39;] = 200
+        if &quot;read&quot; in self.action:
+            f = open(&quot;./%s/result.txt&quot; % self.sandbox, &#39;r&#39;)
+            result[&#39;code&#39;] = 200
+            result[&#39;data&#39;] = f.read()
+        if result[&#39;code&#39;] == 500:
+            result[&#39;data&#39;] = &quot;Action Error&quot;
+    else:
+        result[&#39;code&#39;] = 500
+        result[&#39;msg&#39;] = &quot;Sign Error&quot;
+    return result
+
+def checkSign(self):
+    if (getSign(self.action, self.param) == self.sign):                        //getSign()方法，结果与sign进行比较
+        return True
+    else:
+        return False
+</code></pre>
+<p>#generate Sign For Action Scan.<br>@app.route(“/geneSign”, methods=[‘GET’, ‘POST’])<br>def geneSign():<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    action = “scan”<br>    return getSign(action, param)</p>
+<p>@app.route(‘/De1ta’,methods=[‘GET’,’POST’])                       //De1ta应该是关键的页面获取了三个参数，其中两个是从cookie中获取的：<br>def challenge():<br>    action = urllib.unquote(request.cookies.get(“action”))                 //第一个参数action是传入read和scan的，<br>                                                                                                         第二个参数看着应该是传入一个文件名，                                                                                                                                                                                                                         第三个参数sign是一个md5值，<br>    param = urllib.unquote(request.args.get(“param”, “”))<br>    sign = urllib.unquote(request.cookies.get(“sign”))                       //cookie<br>    ip = request.remote_addr<br>    if(waf(param)):<br>        return “No Hacker!!!!”<br>    task = Task(action, param, sign, ip)                          // 这边的action param sign参数传递到Task<br>    return json.dumps(task.Exec())                                 //并且调用了 Task类中的Exec()<br>@app.route(‘/‘)<br>def index():<br>    return open(“code.txt”,”r”).read()               //这边index 把源码给打开了</p>
+<p>def scan(param):<br>    socket.setdefaulttimeout(1)<br>    try:<br>        return urllib.urlopen(param).read()[:50]<br>    except:<br>        return “Connection Timeout”</p>
+<p>def getSign(action, param):<br>    return hashlib.md5(secert_key + param + action).hexdigest()                            //这边需要一个secert_key </p>
+<p>def md5(content):<br>    return hashlib.md5(content).hexdigest()</p>
+<p>def waf(param):<br>    check=param.strip().lower()<br>    if check.startswith(“gopher”) or check.startswith(“file”):<br>        return True<br>    else:<br>        return False</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    app.debug = False<br>    app.run(host=’0.0.0.0’)<br>python的flask框架，三个路由</p>
+<p>  最终目的就是读取flag.txt<br>所以我们需要构造参数！第一个参数action应该包含read，，第二个param参数应该是文件名<br>最关键就是第三个参数，由于我们不知道secert_key的值，所以不能自己加密<br>  burp  访问一下geneSign这个页面 参数param=flag.txt得到一串MD5值b7e7fa9d237b24617caedc3fa85fe2af  这个就是md5(secert_key+flag.txtscan)的值<br>param 需要read 和scan的值               8a75379bb998db129cca0db40be1a07b   geneSign?param=flag.txtread传入这个后得到的<br>也就是md5(secert_key+flag.txtreadscan)的md5值                 再访问De1ta页面进行参数传递，拿到flag<br>De1ta?param=flag.txt<br>cookie：  action=readscan;sign=8a75379bb998db129cca0db40be1a07b;<br>就能拿到flag了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/08/page-64/" data-id="cksyl7wjt001kw4w741o00zvg" data-title="BUUCTF WEB De1CTF 2019 SSRF Me" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-63" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/08/page-63/" class="article-date">
@@ -557,146 +730,6 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
 
 
   
-    <article id="post-page-55" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/06/11/page-55/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T13:30:26.000Z" itemprop="datePublished">2021-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/page-55/">page</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a这我真的找不出哪边语法错误怎么改都提示错误┗|｀O′|┛ <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/234.PNG?raw=true" alt="234.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/233.PNG?raw=true" alt="233.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/sssq.PNG?raw=true" alt="sssq.PNG"></p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/235.PNG?raw=true" alt="235.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/page-55/" data-id="cksyl7wjo001cw4w7hgve29dd" data-title="page" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-54" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/06/11/page-54/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T12:43:01.000Z" itemprop="datePublished">2021-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/page-54/">page[ASIS 2019]Unicornshop1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>抓包<strong>网页编码格式utf-8</strong> 这个很重要</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/113.PNG?raw=true" alt="113.PNG"></p>
-<p>根据题目的提示，这题应该和unicode有关  寻找一个unicode 用来是金额的</p>
-<p>这里  <strong>post数据id=1&amp;price=23</strong>  这边如果都是数字会提示错误 所有price只能用Unicode 表示 </p>
-<p>找一个足够大的 <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/112.PNG?raw=true" alt="112.PNG"></p>
-<p>然后会发现1 2 3 都没法买</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/111.PNG?raw=true" alt="111.PNG"></p>
-<p>到4 就可以了 </p>
-<p>这边得用utf-8编码的格式进行输入 然后还得改成 url编码0x改成%即可 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/page-54/" data-id="cksyl7wjm001aw4w76a9f47kv" data-title="page[ASIS 2019]Unicornshop1" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/06/11/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-06-11T09:19:15.345Z" itemprop="datePublished">2021-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/11/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/11/hello-world/" data-id="cksyl7wiv0004w4w7fzqb13c3" data-title="Hello World" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -733,23 +766,23 @@ if(isset($_GET['exp'])){       ；典型的木马get方式
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-119/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
           </li>
         
           <li>
             <a href="/2021/09/22/page-117/">第五空间misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-115/">又是misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-114/">page</a>
           </li>
         
       </ul>

