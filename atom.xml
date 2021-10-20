@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hexo</title>
+  <icon>http://example.com/icon.png</icon>
+  
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2021-10-20T07:54:34.998Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>John Doe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>page</title>
+    <link href="http://example.com/2021/10/20/page-127/"/>
+    <id>http://example.com/2021/10/20/page-127/</id>
+    <published>2021-10-20T07:54:34.000Z</published>
+    <updated>2021-10-20T07:54:34.998Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>page</title>
+    <link href="http://example.com/2021/10/20/page-126/"/>
+    <id>http://example.com/2021/10/20/page-126/</id>
+    <published>2021-10-20T07:54:33.000Z</published>
+    <updated>2021-10-20T07:54:33.215Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>杂项杂项</title>
+    <link href="http://example.com/2021/10/20/page-125/"/>
+    <id>http://example.com/2021/10/20/page-125/</id>
+    <published>2021-10-20T07:54:31.000Z</published>
+    <updated>2021-10-20T08:22:23.962Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;RCTF2019-disk&quot;&gt;&lt;a href=&quot;#RCTF2019-disk&quot; class=&quot;headerlink&quot; title=&quot;[RCTF2019]disk&quot;&gt;&lt;/a&gt;[RCTF2019]disk&lt;/h2&gt;&lt;p&gt;一个vmdk文件试着用vol但是识别不了</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>GYCTF2020Easyphp</title>
+    <link href="http://example.com/2021/09/22/page-121/"/>
+    <id>http://example.com/2021/09/22/page-121/</id>
+    <published>2021-09-22T10:02:05.000Z</published>
+    <updated>2021-09-22T10:15:18.652Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h4 id=&quot;源码泄露-www-zip&quot;&gt;&lt;a href=&quot;#源码泄露-www-zip&quot; class=&quot;headerlink&quot; title=&quot;源码泄露 www.zip&quot;&gt;&lt;/a&gt;源码泄露 &lt;a</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>红明谷CTF 2021write shell</title>
+    <link href="http://example.com/2021/09/22/page-120/"/>
+    <id>http://example.com/2021/09/22/page-120/</id>
+    <published>2021-09-22T10:02:02.000Z</published>
+    <updated>2021-09-22T10:10:07.547Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>page</title>
+    <link href="http://example.com/2021/09/22/page-119/"/>
+    <id>http://example.com/2021/09/22/page-119/</id>
+    <published>2021-09-22T10:02:00.000Z</published>
+    <updated>2021-09-22T10:07:43.462Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;首先来注册一个题目说了upload那么应该不会是sql就不管了&lt;br&gt; 然后上传图片马 上传过程抓包能发现user=后面那串怪怪的 &lt;/p&gt;
+&lt;p&gt;解码一下可以看到上传路径和其他的序列化信息&lt;/p&gt;
+&lt;p&gt;&lt;img</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>长城杯flag保熟</title>
+    <link href="http://example.com/2021/09/22/page-118/"/>
+    <id>http://example.com/2021/09/22/page-118/</id>
+    <published>2021-09-22T03:08:10.000Z</published>
+    <updated>2021-09-22T03:15:19.678Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h3 id=&quot;flag保熟吗？&quot;&gt;&lt;a href=&quot;#flag保熟吗？&quot; class=&quot;headerlink&quot; title=&quot;flag保熟吗？&quot;&gt;&lt;/a&gt;flag保熟吗？&lt;/h3&gt;&lt;p&gt;一个压缩包</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第五空间misc</title>
+    <link href="http://example.com/2021/09/22/page-117/"/>
+    <id>http://example.com/2021/09/22/page-117/</id>
+    <published>2021-09-22T03:08:03.000Z</published>
+    <updated>2021-09-22T03:10:28.504Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h3 id=&quot;alpha10&quot;&gt;&lt;a href=&quot;#alpha10&quot; class=&quot;headerlink&quot; title=&quot;alpha10&quot;&gt;&lt;/a&gt;alpha10&lt;/h3&gt;&lt;p&gt;alpha10&lt;br&gt;分离文件得到两个图片</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第五空间WEBFTP pklovecloud</title>
+    <link href="http://example.com/2021/09/19/page-116/"/>
+    <id>http://example.com/2021/09/19/page-116/</id>
+    <published>2021-09-19T12:24:43.000Z</published>
+    <updated>2021-09-19T12:29:53.948Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/wifeat/WebFTP&quot;&gt;https://github.com/wifeat/WebFTP&lt;/a&gt;&lt;/p&gt;
+&lt;h5 id=&quot;github上有源码-上头说到了初始账号和密码&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>又是misc</title>
+    <link href="http://example.com/2021/09/09/page-115/"/>
+    <id>http://example.com/2021/09/09/page-115/</id>
+    <published>2021-09-09T09:00:56.000Z</published>
+    <updated>2021-09-09T10:16:35.152Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h5 id=&quot;RCTF2019-draw&quot;&gt;&lt;a href=&quot;#RCTF2019-draw&quot; class=&quot;headerlink&quot; title=&quot;[RCTF2019]draw&quot;&gt;&lt;/a&gt;[RCTF2019]draw&lt;/h5&gt;&lt;p&gt;文本文档什么 cs pu lt 90 fd</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>page</title>
+    <link href="http://example.com/2021/09/09/page-114/"/>
+    <id>http://example.com/2021/09/09/page-114/</id>
+    <published>2021-09-09T08:37:38.000Z</published>
+    <updated>2021-09-09T09:00:25.663Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h6 id=&quot;这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要&quot;&gt;&lt;a href=&quot;#这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要&quot; class=&quot;headerlink&quot; title=&quot;这是二次注入的关卡</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>一大堆的misc 很大一堆</title>
+    <link href="http://example.com/2021/08/13/page-110/"/>
+    <id>http://example.com/2021/08/13/page-110/</id>
+    <published>2021-08-13T09:37:34.000Z</published>
+    <updated>2021-08-13T10:56:54.492Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;&lt;strong&gt;间谍启示录&lt;/strong&gt;&lt;br&gt;这题很奇怪就瞎找 镜像文件装载一下 一堆的隐藏文件&lt;br&gt;一堆的东西啥都么有除了&lt;strong&gt;systemzx.exe&lt;/strong&gt;可以运行但还提示权限之类的将要销毁&lt;br&gt;丢010 发现还含有压缩包 直接解压</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>网鼎杯 2020 白虎组PicDown</title>
+    <link href="http://example.com/2021/08/13/page-109/"/>
+    <id>http://example.com/2021/08/13/page-109/</id>
+    <published>2021-08-13T09:37:31.000Z</published>
+    <updated>2021-08-13T10:28:59.359Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;抓包存在任意文件读取漏洞  发现可以直接读取flag  好了本题结束 &lt;/p&gt;
+&lt;p&gt;并没有！！！&lt;br&gt;通过这个读取漏洞 获得当前进程执行命令&lt;br&gt;../../../../../proc/self/cmdline&lt;/p&gt;
+&lt;figure</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>b01lers2020Welcome to Earth</title>
+    <link href="http://example.com/2021/08/13/page-108/"/>
+    <id>http://example.com/2021/08/13/page-108/</id>
+    <published>2021-08-13T09:37:28.000Z</published>
+    <updated>2021-08-13T10:26:17.557Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;好奇怪这题 首先一下页面一加载就die 然后查看源码发现发现chase&lt;br&gt;完全不同管七七八八的访问逻辑 页面是通过js来跳转的&lt;br&gt;到chase发现leftt -&amp;gt; shoot -&amp;gt;door&lt;br&gt;door这边一大堆选项 都是die不用点了&lt;br&gt;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>SUCTF 2019EasyWeb</title>
+    <link href="http://example.com/2021/08/13/page-107/"/>
+    <id>http://example.com/2021/08/13/page-107/</id>
+    <published>2021-08-13T09:37:26.000Z</published>
+    <updated>2021-08-13T10:22:23.676Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt; ctf里面什么所谓的easy baby全是骗人的一点都不easy&lt;/p&gt;
+&lt;p&gt; 这&lt;strong&gt;正则直接过滤了所有的字母 可以用异或 取反 自增绕过&lt;/strong&gt;&lt;br&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>WUSTCTF2020CV Maker</title>
+    <link href="http://example.com/2021/08/13/page-106/"/>
+    <id>http://example.com/2021/08/13/page-106/</id>
+    <published>2021-08-13T09:37:24.000Z</published>
+    <updated>2021-08-13T10:12:40.116Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;真不错这个页面打开的效果&lt;br&gt;注册提示了一堆warning 然而并没有sql注入 (；′⌒`)&lt;/p&gt;
+&lt;p&gt;登录后 有一个更换头像 感觉可以试试上传漏洞&lt;br&gt;可以上传图片马 然后抓包可以看到上传路径&lt;/p&gt;
+&lt;p&gt;&lt;img</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>HarekazeCTF2019encode_and_encode</title>
+    <link href="http://example.com/2021/08/13/page-105/"/>
+    <id>http://example.com/2021/08/13/page-105/</id>
+    <published>2021-08-13T09:37:21.000Z</published>
+    <updated>2021-08-13T10:11:32.722Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;给了源码 &lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>NCTF2019SQLi</title>
+    <link href="http://example.com/2021/08/13/page-104/"/>
+    <id>http://example.com/2021/08/13/page-104/</id>
+    <published>2021-08-13T09:37:17.000Z</published>
+    <updated>2021-08-13T10:10:08.448Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;按照惯例 先扫后后台 &lt;strong&gt;一个robots.txt  叫我们访问hint.txt&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>SWPUCTF 2018SimplePHP</title>
+    <link href="http://example.com/2021/08/13/page-103/"/>
+    <id>http://example.com/2021/08/13/page-103/</id>
+    <published>2021-08-13T09:37:15.000Z</published>
+    <updated>2021-08-13T10:07:19.318Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;界面简洁 不错不错&lt;br&gt;查看文件那可以看到一个**?file= 感觉有任意文件读取漏洞**&lt;br&gt;nice  可以 拿到file.php 然后有这个知道还有function.php class.php&lt;br&gt;那些文件的源码&lt;br&gt;链接：&lt;a</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>GYCTF2020Ezsqli</title>
+    <link href="http://example.com/2021/08/13/page-102/"/>
+    <id>http://example.com/2021/08/13/page-102/</id>
+    <published>2021-08-13T09:37:12.000Z</published>
+    <updated>2021-08-13T10:03:32.714Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;是个盲注题&lt;br&gt;但是过滤了好多好多好多东西 &lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
