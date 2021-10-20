@@ -6,15 +6,47 @@
   
   <title>杂项杂项 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
+  <meta name="description" content="[RCTF2019]disk一个vmdk文件试着用vol但是识别不了 可能时加密盘之类的FTK挂载也没用   将里头的文件提取出来0.fathttps:&#x2F;&#x2F;sourceforge.net&#x2F;projects&#x2F;veracrypt&#x2F;  找了一个用来挂载加密盘的软件然后猜测密码 rctf  挂成功了但是password.txt  说还有另一个密码   另一个密码挂载但是打不开磁盘 先不管吧原本的0.fat">
+<meta property="og:type" content="article">
 <meta property="og:title" content="杂项杂项">
 <meta property="og:url" content="http://example.com/2021/10/20/page-125/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[RCTF2019]disk一个vmdk文件试着用vol但是识别不了 可能时加密盘之类的FTK挂载也没用   将里头的文件提取出来0.fathttps:&#x2F;&#x2F;sourceforge.net&#x2F;projects&#x2F;veracrypt&#x2F;  找了一个用来挂载加密盘的软件然后猜测密码 rctf  挂成功了但是password.txt  说还有另一个密码   另一个密码挂载但是打不开磁盘 先不管吧原本的0.fat">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/316.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/317.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/315.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/318.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/319.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/320.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/321.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/322.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/323.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/324.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/325.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/326.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/329.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/330.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/331.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/332.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/333.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/336.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/335.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/337.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/338.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/339.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/340.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/342.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/343.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/344.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/345.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/346.PNG?raw=true">
+<meta property="og:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/347.PNG?raw=true">
 <meta property="article:published_time" content="2021-10-20T07:54:31.000Z">
-<meta property="article:modified_time" content="2021-10-20T08:02:44.593Z">
+<meta property="article:modified_time" content="2021-10-20T08:22:23.962Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/316.PNG?raw=true">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -93,7 +125,103 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h2 id="RCTF2019-disk"><a href="#RCTF2019-disk" class="headerlink" title="[RCTF2019]disk"></a>[RCTF2019]disk</h2><p>一个vmdk文件试着用vol但是识别不了 可能时加密盘之类的<br>FTK挂载也没用   将里头的文件提取出来0.fat<br><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/veracrypt/">https://sourceforge.net/projects/veracrypt/</a>  找了一个用来挂载加密盘的软件<br>然后猜测密码 rctf  挂成功了但是password.txt  说还有另一个密码</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/316.PNG?raw=true" alt="316.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/317.PNG?raw=true" alt="317.PNG"></p>
+<p><strong>另一个密码挂载但是打不开磁盘</strong></p>
+<p>先不管吧原本的0.fat丢进010 找到一半flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/315.PNG?raw=true" alt="315.PNG"></p>
+<p><strong>另一半应该也得从刚才挂载的那个进不去的盘获取</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">weinhex可以打开磁盘文件 tools-&gt;open disk </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>另一半flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/318.PNG?raw=true" alt="318.PNG"></p>
+<h2 id="我爱Linux"><a href="#我爱Linux" class="headerlink" title="我爱Linux"></a>我爱Linux</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">图片直接丢010 发现末尾那一堆有点奇怪  </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/319.PNG?raw=true" alt="319.PNG"></p>
+<p>看了别人的wp这是python的pickle序列化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">序列化是将对象转换为可通过网络传输或可以存储到本地磁盘的数据格式（如：XML、JSON或特定格式的字节串）的过程称为序列化；反之，则称为反序列化。 </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/320.PNG?raw=true" alt="320.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import pickle</span><br><span class="line"></span><br><span class="line">with open(&#x27;1.txt&#x27;, &#x27;rb&#x27;) as f:</span><br><span class="line">    f= pickle.load(f)</span><br><span class="line">data = list()</span><br><span class="line">for i in range(len(f)):</span><br><span class="line">    tem = [&#x27; &#x27;]*100</span><br><span class="line">    data.append(tem)</span><br><span class="line">for i, j in enumerate(f):</span><br><span class="line">    for m in j:</span><br><span class="line">        data[i][m[0]] = m[1]</span><br><span class="line">for i in data:</span><br><span class="line">    print(&#x27;&#x27;.join(i))</span><br></pre></td></tr></table></figure>
+
+<p>跑脚本 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/321.PNG?raw=true" alt="321.PNG"></p>
+<h2 id="GKCTF-2021-签到"><a href="#GKCTF-2021-签到" class="headerlink" title="[GKCTF 2021]签到"></a>[GKCTF 2021]签到</h2><p>流量分析 追踪tcp流<br>流3这边 post了一个whoami</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/322.PNG?raw=true" alt="322.PNG"></p>
+<p><strong>将返回的东西复制出来解密一下</strong></p>
+<p><strong>是倒着的www-data</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/323.PNG?raw=true" alt="323.PNG"></p>
+<p>然后<strong>流5有cat flag  将这个流复制出来</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">然后用kali的rev 进行倒序</span><br><span class="line">cat 1 | rev</span><br></pre></td></tr></table></figure>
+
+<p>之后就是hex 和base64 就可以了<br>然后删掉一半的flag即可</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/324.PNG?raw=true" alt="324.PNG"></p>
+<h2 id="BSidesSF2019-table-tennis"><a href="#BSidesSF2019-table-tennis" class="headerlink" title="[BSidesSF2019]table-tennis"></a>[BSidesSF2019]table-tennis</h2><p>又是流量分析<br><strong>加密的tls 和找不到半点信息的tcp 但是吧意外的找到了icmp流 而且还带有html的标签</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/325.PNG?raw=true" alt="325.PNG"></p>
+<p>将这些数据提取出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from scapy.all import *</span><br><span class="line"></span><br><span class="line">packets = rdpcap(&#x27;out.pcapng&#x27;)    #rdpcap()读取pcapng文件</span><br><span class="line"></span><br><span class="line">for packet in packets:            #遍历每一个数据包</span><br><span class="line">    if packet.haslayer(ICMP):            #haslayer()判断数据包的类型，此处为ICMP</span><br><span class="line">        if packet[ICMP].type == 0:       #每一个ICMP的type值为0的包</span><br><span class="line">            print packet[ICMP].load[-8:],      #打印每个数据包的最后8位，因为前面数据是重复的</span><br></pre></td></tr></table></figure>
+
+<p>base64一下即可</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/326.PNG?raw=true" alt="326.PNG"></p>
+<h2 id="很好的色彩呃？"><a href="#很好的色彩呃？" class="headerlink" title="很好的色彩呃？"></a>很好的色彩呃？</h2><p><strong>每个颜色多多少少有些不同 ps的取色器 查看一下 每个的低位不太一样</strong><br>取出来 hex转字符即可</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/329.PNG?raw=true" alt="329.PNG"></p>
+<h2 id="INSHack2019-gflag"><a href="#INSHack2019-gflag" class="headerlink" title="[INSHack2019]gflag"></a>[INSHack2019]gflag</h2><p><strong>题目叫gflag 有个g 然后还给了一堆类似于坐标的</strong><br>综合搜索一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcode  https://gcode.ws/ 3d打印的坐标 很神奇</span><br></pre></td></tr></table></figure>
+
+<p>用那个网站解一下 得先把文件改一下格式.gcode 就可以了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/330.PNG?raw=true" alt="330.PNG"></p>
+<h3 id="有word的题目一定要先显示一下隐藏的内容！！！！"><a href="#有word的题目一定要先显示一下隐藏的内容！！！！" class="headerlink" title="有word的题目一定要先显示一下隐藏的内容！！！！"></a>有word的题目一定要先显示一下隐藏的内容！！！！</h3><h3 id="ext4-格式的文件-可以用extundelete-恢复试一下-进入恢复的文件夹-打开里头的文件说不定就有flag"><a href="#ext4-格式的文件-可以用extundelete-恢复试一下-进入恢复的文件夹-打开里头的文件说不定就有flag" class="headerlink" title="ext4 格式的文件 可以用extundelete 恢复试一下 进入恢复的文件夹 打开里头的文件说不定就有flag"></a>ext4 格式的文件 可以用extundelete 恢复试一下 进入恢复的文件夹 打开里头的文件说不定就有flag</h3><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/331.PNG?raw=true" alt="331.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/332.PNG?raw=true" alt="332.PNG"></p>
+<h2 id="INSHack2018-42-tar-xz"><a href="#INSHack2018-42-tar-xz" class="headerlink" title="[INSHack2018]42.tar.xz"></a>[INSHack2018]42.tar.xz</h2><p>大量的压缩包 一个包内套42个包 直接解压可能会炸硬盘<br>网上找了个bash命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while [ &quot;`find . -type f -name &#x27;*.tar.xz&#x27; | wc -l`&quot; -gt 0 ]; do find -type f -name &quot;*.tar.xz&quot; -exec tar xf &#x27;&#123;&#125;&#x27; \; -exec rm -- &#x27;&#123;&#125;&#x27; \;; done;</span><br></pre></td></tr></table></figure>
+
+<p>解压到最后就有flag了 很神奇</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/333.PNG?raw=true" alt="333.PNG"></p>
+<p>文件分离：<br>zsteg分析（分析图片的） binwalk foremost </p>
+<h2 id="NPUCTF2020-碰上彩虹，吃定彩虹！"><a href="#NPUCTF2020-碰上彩虹，吃定彩虹！" class="headerlink" title="[NPUCTF2020]碰上彩虹，吃定彩虹！"></a>[NPUCTF2020]碰上彩虹，吃定彩虹！</h2><p>两个文档一个不知道是什么的文件<br>那个<strong>maybehint的文档复制内容粘贴到别的发现长度多了很多</strong> 宽字节隐写 但是得用vim打开看看隐了些什么<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/336.PNG?raw=true" alt="336.PNG"></p>
+<p> bcd的所以<br><a target="_blank" rel="noopener" href="https://330k.github.io/misc_tools/unicode_steganography.html">https://330k.github.io/misc_tools/unicode_steganography.html</a>  这底下<strong>选择bcd的</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/335.PNG?raw=true" alt="335.PNG"></p>
+<p><strong>ntfs流隐写 用软件导出一个out.txt</strong> 乱七八糟不像base64隐写 字频统计一下 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/337.PNG?raw=true" alt="337.PNG"></p>
+<p>base64解一下出现较多的那串</p>
+<p><strong>提示encrypto</strong> 那那个secret应该和这个有关 随便加密一个文件 然后文件头和secret一模一样那么secret的格式就是crypto </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/338.PNG?raw=true" alt="338.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/339.PNG?raw=true" alt="339.PNG"></p>
+<p>还要密码啊 那只能是那个loocatme了 全选发现了不对劲的东西 看样子又是莫斯电码<br>空格当点 tab当杠一个个解出来</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/340.PNG?raw=true" alt="340.PNG"></p>
+<p> 翻译一下就是autokey  用autokey脚本跑一下 拿到密码<strong>iamthepasswd</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/342.PNG?raw=true" alt="342.PNG"></p>
+<p>然后<strong>解密secret那个文件</strong> 但是吧解不出来 因为文件被添加了一串东西 </p>
+<p>用kali的strings命令可以找到 用010把那串删了就可以解出来</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/343.PNG?raw=true" alt="343.PNG"></p>
+<p>然后又是颜色题目照样提取一下颜色的0x值<br>从上到下依次是：<br>ffff70<br>ffff40<br>ffff73<br>ffff73<br>ffff57<br>ffff64</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hex转字符的得到p@ssWd</span><br></pre></td></tr></table></figure>
+
+<p>把刚才的图片分离一下拿到压缩包用那个密码解压拿到word文档然后就是word的老传统显示隐藏字符<br>大写字母组成alphuck </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/344.PNG?raw=true" alt="344.PNG"></p>
+<p><a target="_blank" rel="noopener" href="https://www.dcode.fr/alphuck-language">https://www.dcode.fr/alphuck-language</a><br>把word里的那一长串删掉大写字母后复制进去 就能拿到flag了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/345.PNG?raw=true" alt="345.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0192h: 05 70 6C 61 69 6E DA 06 63 69 70 68 65 72 DA 01  .plainÚ.cipherÚ. </span><br><span class="line">01A2h: 69 A9 00 72 0A 00 00 00 FA 08 63 79 63 6C 65 2E   i©.r....ú.cycle. </span><br><span class="line">01B2h: 70 79 DA 06 65 6E 63 72 79 74                               pyÚ.encryt</span><br></pre></td></tr></table></figure>
+
+<p>有这种的可能是pyc文件 用那个剑龙加密 stegosaurus工具 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stegosaurus.py -x pyc文件</span><br></pre></td></tr></table></figure>
+
+<p>文本比较  可能会在原文本里面添加flag进去 所以重点是找得到原文本</p>
+<p>deep sound 用来往音频中隐藏东西</p>
+<h2 id="De1CTF2019-Mine-Sweeping"><a href="#De1CTF2019-Mine-Sweeping" class="headerlink" title="[De1CTF2019]Mine Sweeping"></a>[De1CTF2019]Mine Sweeping</h2><p>将Assembly-CSharp.dll文件拖进dnspy分析源码<br>（文件路径为\Mine Sweeping\Mine Sweeping_Data\Managed）  游戏题可以改一改试试</p>
+<p>lsb加密脚本使用方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用方法Usage:</span><br><span class="line"></span><br><span class="line">  lsb.py hide &lt;img_file&gt; &lt;payload_file&gt; &lt;password&gt;</span><br><span class="line">  lsb.py extract &lt;stego_file&gt; &lt;out_file&gt; &lt;password&gt;</span><br><span class="line">  lsb.py analyse &lt;stego_file&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">条形码的题目可以用ps的ctrl + t 拉伸</span><br></pre></td></tr></table></figure>
+
+<h2 id="GKCTF-2021-0-03"><a href="#GKCTF-2021-0-03" class="headerlink" title="[GKCTF 2021]0.03"></a>[GKCTF 2021]0.03</h2><p>压缩包打开有三个文件但是解压后只有两个 盲猜ntfs流<br>俩文档对比 然后<strong>这边这个压缩包说是disk但是解压也解压不了 那应该是经过卷加密了</strong> VeraCrypt这个软件加密的应该</p>
+<p>重点是两个文档之间的对比 311可能是第三行第一组的第一个 也可能是第三列第一组第一个</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/346.PNG?raw=true" alt="346.PNG"></p>
+<p>一一对比一下拿到两组密码：<br>UBMMASSJJMU<br>EBCCAFDDCE</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/347.PNG?raw=true" alt="347.PNG"></p>
+<p>然后那个软件输入密码加载一下磁盘就有flag了</p>
+
       
     </div>
     <footer class="article-footer">
