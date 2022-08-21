@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-10-21T02:12:00.266Z</updated>
+  <updated>2022-08-21T10:31:37.174Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,50 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ISCC复现</title>
+    <link href="http://example.com/2022/08/21/page-129/"/>
+    <id>http://example.com/2022/08/21/page-129/</id>
+    <published>2022-08-21T10:23:13.000Z</published>
+    <updated>2022-08-21T10:31:37.174Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h3 id=&quot;黑暗森林&quot;&gt;&lt;a href=&quot;#黑暗森林&quot; class=&quot;headerlink&quot; title=&quot;黑暗森林&quot;&gt;&lt;/a&gt;黑暗森林&lt;/h3&gt;&lt;p&gt;通常bmp文件word bfreserved1和2值为0&lt;/p&gt;
+&lt;h3 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>巅峰极客easy_Forensic</title>
+    <link href="http://example.com/2022/08/21/page-128/"/>
+    <id>http://example.com/2022/08/21/page-128/</id>
+    <published>2022-08-21T10:23:10.000Z</published>
+    <updated>2022-08-21T10:26:39.180Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;压缩包 解压得到raw文件导入diskgenius&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/ajin-max/ajin-max.github.io/blob/master/img/20221.PNG?raw=true&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>web点2</title>
@@ -395,49 +439,6 @@
         
         
     <summary type="html">&lt;p&gt;按照惯例 先扫后后台 &lt;strong&gt;一个robots.txt  叫我们访问hint.txt&lt;/strong&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
-        
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>SWPUCTF 2018SimplePHP</title>
-    <link href="http://example.com/2021/08/13/page-103/"/>
-    <id>http://example.com/2021/08/13/page-103/</id>
-    <published>2021-08-13T09:37:15.000Z</published>
-    <updated>2021-08-13T10:07:19.318Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;界面简洁 不错不错&lt;br&gt;查看文件那可以看到一个**?file= 感觉有任意文件读取漏洞**&lt;br&gt;nice  可以 拿到file.php 然后有这个知道还有function.php class.php&lt;br&gt;那些文件的源码&lt;br&gt;链接：&lt;a</summary>
-        
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>GYCTF2020Ezsqli</title>
-    <link href="http://example.com/2021/08/13/page-102/"/>
-    <id>http://example.com/2021/08/13/page-102/</id>
-    <published>2021-08-13T09:37:12.000Z</published>
-    <updated>2021-08-13T10:03:32.714Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;是个盲注题&lt;br&gt;但是过滤了好多好多好多东西 &lt;/p&gt;
 &lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span</summary>
         
       

